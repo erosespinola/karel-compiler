@@ -1,3 +1,6 @@
+
+var fileReader = require('./file-reader');
+
 const LETTER = 0, DIGIT = 1, PUNCTUATION = 2, PIPE = 3, AMPERSAND = 4, OTHER = 5;
 const VALID_STATES = [1, 2, 3];
 const STATES = [[1, 3, 2, 4, 5, 6],
@@ -63,4 +66,4 @@ var getTokens = function(lines) {
 	return tokens;
 };
 
-console.log(getTokens(["hola dude", "&&", "1235", "%"]));
+console.log(getTokens(fileReader.readFile('inputs/input.txt')));
