@@ -1,27 +1,26 @@
-
 var fileReader = require('./file-reader');
 
-const LETTER = 0, DIGIT = 1, PUNCTUATION = 2, PIPE = 3, AMPERSAND = 4, OTHER = 5;
+const LETTER = 0, DIGIT = 1, PUNCTUATION = 2, PIPE = 3, AMPERSAND = 4, OTHER = 5, WHITESPACE = 6;
 const VALID_STATES = [1, 2, 3];
 const NEXT = 0;
-const NEWT = 1;
+const TNEW = 1;
 const SKIP = 2;
 
-const STATES = [[1, 3, 2, 4, 5, 6],
-				[1, 6, 6, 6, 6, 6],
-				[6, 6, 6, 6, 6, 6],
-				[6, 3, 6, 6, 6, 6],
-				[6, 6, 6, 2, 6, 6],
-				[6, 6, 6, 6, 2, 6],
-				[6, 6, 6, 6, 6, 6]];
+const STATES = [[1, 3, 2, 4, 5, 6, 0],
+				[1, 6, 2, 4, 5, 6, 0], // check id-pipe
+				[1, 3, 2, 4, 5, 6, 0],
+				[6, 3, 2, 6, 6, 6, 0],
+				[6, 6, 6, 2, 6, 6, 6],
+				[6, 6, 6, 6, 2, 6, 6],
+				[0, 0, 0, 0, 0, 5, 0]];
 
-const TRANSITIONS = [[SKIP, NEXT, NEXT, NEXT, NEXT, NEXT],
-					 [NEWT, NEXT, NEWT, NEXT, NEXT, NEXT],
-					 [NEWT, NEXT, NEXT, NEXT, NEXT, NEXT],
-					 [NEWT, NEXT, NEWT, NEXT, NEXT, NEXT],
-					 [NEXT, NEXT, NEXT, NEXT, NEXT, NEXT],
-					 [NEXT, NEXT, NEXT, NEXT, NEXT, NEXT],
-					 [NEXT, NEXT, NEXT, NEXT, NEXT, NEXT]];
+const TRANSITIONS = [[SKIP, SKIP, SKIP, SKIP, SKIP, SKIP, SKIP],
+					 [TNEW, NEXT, TNEW, NEXT, TNEW, TNEW, NEXT],
+					 [TNEW, TNEW, TNEW, TNEW, NEXT, NEXT, NEXT],
+					 [TNEW, NEXT, TNEW, NEXT, NEXT, NEXT, NEXT],
+					 [NEXT, NEXT, NEXT, NEXT, NEXT, NEXT, NEXT],
+					 [NEXT, NEXT, NEXT, NEXT, NEXT, NEXT, NEXT],
+					 [TNEW, TNEW, TNEW, TNEW, TNEW, NEXT, TNEW]];
 
 var map = function(char) {
 	if (char.match(/[{}\(\)!]/))
@@ -34,11 +33,13 @@ var map = function(char) {
 		return AMPERSAND;
 	else if (char.match(/[|]/))
 		return PIPE;
+	else if (char.match(/\s/))
+		return WHITESPACE;
 	return OTHER;
 }
 
 var type = function(token, state) {
-	var types = { 1: "ALPHABETIC", 3: "NUMBER" };
+	var types = { 1: "ALPHABETIC", 3: "NUMBER", 6: "INVALID" };
 	if (state === 2) {
 		var punctuations = { "{": "OPENING BRACE",
 							 "}": "CLOSING BRACE",
@@ -52,46 +53,29 @@ var type = function(token, state) {
 	return types[state];
 }
 
-var getTokenState = function(token) {
-	var currentState = 0;
-	for (var i = 0; i < token.length; i++) {
-		if (currentState === 6)
-			return currentState;
-		currentState = STATES[currentState][map(token[i])];
-	};
-
-	return currentState;
-};
-
-exports.getTokens = function(lines) {
+exports.getTokens = function(program) {
 	var currentState = 0;
 	var tokens = [];
-	lines.forEach(function(line) {
-		var tokenIndex = 0;
-		for (var i = 0; i < line.length; i++) {
-			var nextState = STATES[currentState][map(line[i])];
-			switch(TRANSITIONS[currentState][nextState]) {
-				case NEXT:
-					break;
-				case NEWT: 
-					var currentToken = line.substring(tokenIndex, i);
-					tokens.push({ token: currentToken, type: type(currentToken, currentState) });
-					tokenIndex = i;
-					break;
-				case SKIP:
-					tokenIndex = i;
-					break;
-			}
-			currentState = nextState;
-		};
-		/*line.trim().split(/[\s]+/g).forEach(function(token) {
-			var state = getTokenState(token);
-			if (VALID_STATES.indexOf(state) > -1)
-				tokens.push({ token: token, valid: true, type: type(token, state) });
-			else
-				tokens.push({ token: token, valid: false, type: "NON VALID" });
-		});*/
-	});
+	var tokenIndex = 0;
+
+	for (var i = 0; i < program.length; i++) {
+		var nextState = STATES[currentState][map(program[i])];
+
+		switch(TRANSITIONS[currentState][nextState]) {
+			case NEXT:
+				break;
+			case TNEW:
+				var currentToken = program.substring(tokenIndex, i);
+				tokens.push({ token: currentToken, type: type(currentToken, currentState) });
+				tokenIndex = i;
+				break;
+			case SKIP:
+				tokenIndex = i;
+				break;
+		}
+
+		currentState = nextState;
+	};
 
 	return tokens;
 };
