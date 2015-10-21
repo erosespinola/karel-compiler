@@ -1,10 +1,1 @@
-class program(   )  {    
-	moveRight()
-	moveLeft (     )  
-	if (a&& b||c&&d)
-	*****
-	-
-	&&
-	||
-yeah()
-}   
+frontIsClear && !frontIsClear

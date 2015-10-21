@@ -1,13 +1,11 @@
 var fileReader = require('./file-reader');
 
-const LETTER = 0, DIGIT = 1, PUNCTUATION = 2, PIPE = 3, AMPERSAND = 4, OTHER = 5, WHITESPACE = 6;
+const LETTER = 0, DIGIT = 1, PUNCTUATION = 2, PIPE = 3, AMPERSAND = 4, ERROR = 5, WHITESPACE = 6;
+const NEXT = 0,  TNEW = 1, SKIP = 2;
 const VALID_STATES = [1, 2, 3];
-const NEXT = 0;
-const TNEW = 1;
-const SKIP = 2;
 
 const STATES = [[1, 3, 2, 4, 5, 6, 0],
-				[1, 6, 2, 4, 5, 6, 0], // check id-pipe
+				[1, 6, 2, 4, 5, 6, 0],
 				[1, 3, 2, 4, 5, 6, 0],
 				[6, 3, 2, 6, 6, 6, 0],
 				[6, 6, 6, 2, 6, 6, 6],
@@ -35,7 +33,7 @@ var map = function(char) {
 		return PIPE;
 	else if (char.match(/\s/))
 		return WHITESPACE;
-	return OTHER;
+	return ERROR;
 }
 
 var type = function(token, state) {
@@ -66,7 +64,7 @@ exports.getTokens = function(program) {
 				break;
 			case TNEW:
 				var currentToken = program.substring(tokenIndex, i);
-				tokens.push({ token: currentToken, type: type(currentToken, currentState) });
+				tokens.push({ text: currentToken, type: type(currentToken, currentState) });
 				tokenIndex = i;
 				break;
 			case SKIP:
