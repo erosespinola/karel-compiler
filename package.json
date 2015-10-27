@@ -1,0 +1,24 @@
+{
+  "name": "karel-compiler",
+  "version": "1.0.0",
+  "description": "Karel Compiler",
+  "main": "main.js",
+  "private": true,
+  "dependencies": {
+    "lodash": "^3.10.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erosespinola/karel-compiler.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/erosespinola/karel-compiler/issues"
+  },
+  "homepage": "https://github.com/erosespinola/karel-compiler#readme"
+}

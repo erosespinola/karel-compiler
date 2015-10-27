@@ -1,5 +1,30 @@
 class program {
+	void foo() {
+		iterate(5) {
+			if (leftIsBlocked) {
+				turnleft()
+			}
+		}
+	}
+
 	program() {
-	
+		while (frontIsClear&&leftIsClear) {
+			if (leftIsBlocked) {
+				move()
+				pickbeeper()
+			}
+			else {
+				turnleft()
+				turnright()
+			}
+		}
+
+		iterate(30) {
+			iterate(10) {
+				turnright()
+			}
+			turnleft()
+			foo()
+		}
 	}
 }
