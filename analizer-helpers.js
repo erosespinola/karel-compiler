@@ -13,7 +13,7 @@ exports.read = function(token) {
 
 exports.require = function(token) {
 	if (currentToken >= tokens.length) return false;
-	return tokens[currentToken++].text === token;	
+	return tokens[currentToken++].text === token;
 };
 
 exports.ifRead = function(token) {
@@ -22,18 +22,24 @@ exports.ifRead = function(token) {
 		return true;
 	}
 	return false;
-}
+};
 
 exports.fetchToken = function() {
 	if (currentToken >= tokens.length) return false;
 	return tokens[currentToken++].text;
-}
+};
 
 exports.addNewFunction = function(name, index) {
 	symbolTable[name] = index;
-}
+};
 
 exports.findStartPointOfFunction = function(name) {
 	if (symbolTable.hasOwnProperty(name)) return symbolTable[name];
 	return '0xFF';
-}
+};
+
+exports.peekCurrentToken = function() {
+	if (currentToken >= tokens.length) return false;
+
+	return tokens[currentToken];
+};

@@ -15,13 +15,13 @@ var program = function() {
 			functionsDeclarations();
 			mainFunction();
 			if (!helper.require('}')) {
-				console.log(0);
+				console.log(9);
 			} 
 		} else {
-			console.log(0);
+			console.log(10);
 		}
 	} else {
-		console.log(0);
+		console.log(11);
 	}
 };
 
@@ -30,10 +30,10 @@ var mainFunction = function() {
 		helper.require(')') && helper.require('{')) {
 		body();
 		if (!helper.require('}')) {
-			console.log(0);
+			console.log(12);
 		}
 	} else {
-		console.log(0);
+		console.log(13);
 	}
 };
 
@@ -53,16 +53,16 @@ var functionDeclaration = function() {
 				if (helper.require('}')) {
 					interCode[interCodeIndex++] = 'RETURN';
 				} else {
-					console.log(0);
+					console.log(14);
 				}
 			} else {
-				console.log(0);
+				console.log(15);
 			}
 		} else {
-			console.log(0);
+			console.log(16);
 		}
 	} else {
-		console.log(0);
+		console.log(17);
 	}
 };
 
@@ -75,10 +75,10 @@ var callFunction = function() {
 	nameOfFunction();
 	if (helper.require('(')) {
 		if (!helper.require(')')) {
-			console.log(0);
+			console.log(18);
 		}    
 	} else {
-		console.log(0);
+		console.log(19);
 	}  
 };
 
@@ -117,7 +117,7 @@ var customerFunction = function () {
 		interCode[interCodeIndex++] = 'CALL';
 		interCode[interCodeIndex++] = posFunctionInCodeInter;
 	} else {
-		console.log(0);
+		console.log(20);
 	}
 };
 
@@ -140,21 +140,47 @@ var expressionsPrima = function() {
 };
 
 var expression = function() {
-	if (helper.read('if')) {
-		ifExpression();
-	}
-	else if (helper.read('while')) {
-		whileExpression();
-	} 
-	else if (helper.read('iterate')) {
-		iterateExpression();
-	} else {
-		callFunction();  
+	if (!helper.read('}')) {
+		if (helper.read('if')) {
+			ifExpression();
+		}
+		else if (helper.read('while')) {
+			whileExpression();
+		} 
+		else if (helper.read('iterate')) {
+			iterateExpression();
+		} else {
+			callFunction();  
+		}
 	}
 };
 
 var ifExpression = function() {
-	// TODO
+	if (helper.require('if') && helper.require('(')) {
+		conditional();
+		if (helper.require(')'))
+		{
+			body();
+			if (helper.read('else'))
+			{
+				elseIf();
+			}
+		}
+	}
+};
+
+var elseIf = function() {
+	if (helper.require('else'))
+	{
+		if (helper.require('{'))
+		{
+			body();
+			if (!helper.require('}'))
+			{
+				
+			}
+		}
+	}
 };
 
 var whileExpression = function() {
