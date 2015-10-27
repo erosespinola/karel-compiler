@@ -1,5 +1,18 @@
 class program {
-	program() {
+
+	void hola() {
+		turnleft()
+		move()
+	}
 	
+	void tumama() {
+		turnleft()
+		pickbeeper()
+	}
+
+	program() {
+		hola()
+		tumama()
+		move()
 	}
 }

@@ -37,3 +37,7 @@ exports.findStartPointOfFunction = function(name) {
 	if (symbolTable.hasOwnProperty(name)) return symbolTable[name];
 	return '0xFF';
 }
+
+exports.getCurrentToken = function() {
+	return currentToken;
+}

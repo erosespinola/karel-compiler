@@ -15,13 +15,16 @@ var program = function() {
 			functionsDeclarations();
 			mainFunction();
 			if (!helper.require('}')) {
-				console.log(0);
+				console.log('error on function');
+				process.exit(0);
 			} 
 		} else {
-			console.log(0);
+			console.log('error on function');
+			process.exit(0);
 		}
 	} else {
-		console.log(0);
+		console.log('error on function');
+		process.exit(0);
 	}
 };
 
@@ -30,10 +33,12 @@ var mainFunction = function() {
 		helper.require(')') && helper.require('{')) {
 		body();
 		if (!helper.require('}')) {
-			console.log(0);
+			console.log('error on main function 1');
+			process.exit(0);
 		}
 	} else {
-		console.log(0);
+		console.log('error on main function 2');
+		process.exit(0);
 	}
 };
 
@@ -53,16 +58,20 @@ var functionDeclaration = function() {
 				if (helper.require('}')) {
 					interCode[interCodeIndex++] = 'RETURN';
 				} else {
-					console.log(0);
+					console.log('error on function declaration');
+					process.exit(0);
 				}
 			} else {
-				console.log(0);
+				console.log('error on function declaration');
+				process.exit(0);
 			}
 		} else {
-			console.log(0);
+			console.log('error on function declaration');
+			process.exit(0);
 		}
 	} else {
-		console.log(0);
+		console.log('error on function declaration');
+		process.exit(0);
 	}
 };
 
@@ -75,15 +84,17 @@ var callFunction = function() {
 	nameOfFunction();
 	if (helper.require('(')) {
 		if (!helper.require(')')) {
-			console.log(0);
+			console.log('error on call function');
+			process.exit(0);
 		}    
 	} else {
-		console.log(0);
+		console.log('error on call function');
+		process.exit(0);
 	}  
 };
 
 var nameOfFunction = function() {
-	if (helper.read('move') || helper.read('turnoff') || 
+	if (helper.read('move') || helper.read('turnright') || 
 		helper.read('pickbeeper') || helper.read('turnleft') ||
 		helper.read('putbeeper')) {
 		officialFunction();
@@ -93,20 +104,20 @@ var nameOfFunction = function() {
 };
 
 var officialFunction = function() {
-	if (helper.read('turnleft')) {
-		helper.require('turnleft');
+	if (helper.ifRead('turnleft')) {
+		interCode[interCodeIndex++] = 'turnleft';
 	}  
-	else if (helper.read('turnoff')) {
-		helper.require('turnoff');
+	else if (helper.ifRead('turnright')) {
+		interCode[interCodeIndex++] = 'turnright';
 	}
-	else if (helper.read('move')) {
-		helper.require('move');
+	else if (helper.ifRead('move')) {
+		interCode[interCodeIndex++] = 'move';
 	}
-	else if (helper.read('pickbeeper')) {
-		helper.require('pickbeeper');
+	else if (helper.ifRead('pickbeeper')) {
+		interCode[interCodeIndex++] = 'pickbeeper';
 	}
-	else if (helper.read('putbeeper')) {
-		helper.require('putbeeper');
+	else if (helper.ifRead('putbeeper')) {
+		interCode[interCodeIndex++] = 'putbeeper';
 	}
 };
     
@@ -117,7 +128,8 @@ var customerFunction = function () {
 		interCode[interCodeIndex++] = 'CALL';
 		interCode[interCodeIndex++] = posFunctionInCodeInter;
 	} else {
-		console.log(0);
+		console.log('error on customer function');
+		process.exit(0);
 	}
 };
 
@@ -140,16 +152,18 @@ var expressionsPrima = function() {
 };
 
 var expression = function() {
-	if (helper.read('if')) {
-		ifExpression();
-	}
-	else if (helper.read('while')) {
-		whileExpression();
-	} 
-	else if (helper.read('iterate')) {
-		iterateExpression();
-	} else {
-		callFunction();  
+	if (!helper.read('}')) {
+		if (helper.read('if')) {
+			ifExpression();
+		}
+		else if (helper.read('while')) {
+			whileExpression();
+		} 
+		else if (helper.read('iterate')) {
+			iterateExpression();
+		} else {
+			callFunction();  
+		}
 	}
 };
 
