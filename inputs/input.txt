@@ -1,1 +1,5 @@
-frontIsClear && !frontIsClear
+class program {
+	program() {
+	
+	}
+}
