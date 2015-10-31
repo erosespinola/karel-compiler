@@ -6,7 +6,13 @@ var interCode = [];
 
 exports.parse = function(tokens) {
     helper.setTokens(tokens);
+    interCode[interCodeIndex++] = 'JMP';
+    interCodeIndex++;
     program();
+    if (interCode[interCode.length - 1] != 'turnoff') {
+        console.log('missing turnoff');
+        process.exit(0);
+    }
     return _.map(interCode, function(d, i) {
         return [i, d];
     });
@@ -35,11 +41,12 @@ var program = function() {
 var mainFunction = function() {
     if (helper.require('program') && helper.require('(') &&
         helper.require(')') && helper.require('{')) {
+        interCode[1] = interCodeIndex;
         body();
         if (!helper.require('}')) {
-            console.log('error on main function 1');
-            process.exit(0);
-        }
+                console.log('error on main function 1');
+                process.exit(0);
+            }
     } else {
         console.log('error on main function 2');
         process.exit(0);
@@ -100,7 +107,7 @@ var callFunction = function() {
 var nameOfFunction = function() {
     if (helper.read('move') || helper.read('turnright') || 
         helper.read('pickbeeper') || helper.read('turnleft') ||
-        helper.read('putbeeper')) {
+        helper.read('putbeeper') || helper.read('turnoff')) {
         officialFunction();
     } else {
         customerFunction();
@@ -122,6 +129,9 @@ var officialFunction = function() {
     }
     else if (helper.ifRead('putbeeper')) {
         interCode[interCodeIndex++] = 'putbeeper';
+    }
+    else if (helper.ifRead('turnoff')) {
+        interCode[interCodeIndex++] = 'turnoff';
     }
 };
     
@@ -179,7 +189,7 @@ var ifExpression = function() {
             conditional();
             if (helper.require(')')) {
                 if (helper.require('{')) {
-                    interCode[interCodeIndex++] = 'JUMPF';
+                    interCode[interCodeIndex++] = 'JMP';
                     x_pos = interCodeIndex;
                     interCodeIndex++;
 
@@ -191,7 +201,7 @@ var ifExpression = function() {
                     }
 
                     if (helper.read('else')) {
-                        interCode[interCodeIndex++] = 'JUMP';
+                        interCode[interCodeIndex++] = 'JMP';
                         y_pos = interCodeIndex++;
                         interCode[x_pos] = interCodeIndex;
 
@@ -247,7 +257,7 @@ var whileExpression = function() {
             conditional();
             if (helper.require(')')) {
 
-                interCode[interCodeIndex++] = "JMPF"
+                interCode[interCodeIndex++] = "JMP"
                 end_position = interCodeIndex++;
 
                 if (helper.require('{')) {
@@ -291,7 +301,7 @@ var iterateExpression = function() {
             // WARNING: does not actually validate numbers
             // **************
 
-            interCode[interCodeIndex++] = "MOV"
+            interCode[interCodeIndex++] = "ITE"
             interCode[interCodeIndex++] = iterateCounter;
             interCode[interCodeIndex++] = helper.fetchToken();
 

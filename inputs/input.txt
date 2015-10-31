@@ -8,7 +8,7 @@ class program {
 	}
 
 	program() {
-		while (frontIsClear&&leftIsClear) {
+		while (frontIsClear && leftIsClear) {
 			if (leftIsBlocked) {
 				move()
 				pickbeeper()
@@ -26,5 +26,6 @@ class program {
 			turnleft()
 			foo()
 		}
+		turnoff()
 	}
 }
