@@ -13,9 +13,10 @@ exports.parse = function(tokens) {
         console.log('missing turnoff');
         process.exit(0);
     }
-    return _.map(interCode, function(d, i) {
+    /*return _.map(interCode, function(d, i) {
         return [i, d];
-    });
+    });*/
+    return interCode;
 };
 
 /* Program */
@@ -105,7 +106,7 @@ var callFunction = function() {
 };
 
 var nameOfFunction = function() {
-    if (helper.read('move') || helper.read('turnright') || 
+    if (helper.read('move') ||
         helper.read('pickbeeper') || helper.read('turnleft') ||
         helper.read('putbeeper') || helper.read('turnoff')) {
         officialFunction();
@@ -118,9 +119,7 @@ var officialFunction = function() {
     if (helper.ifRead('turnleft')) {
         interCode[interCodeIndex++] = 'turnleft';
     }  
-    else if (helper.ifRead('turnright')) {
-        interCode[interCodeIndex++] = 'turnright';
-    }
+
     else if (helper.ifRead('move')) {
         interCode[interCodeIndex++] = 'move';
     }
