@@ -45,7 +45,7 @@ exports.peekCurrentToken = function() {
 };
 
 exports.lookAhead = function(n) {
-    if (currentToken + n >= tokens.length) return false;
+    if (currentToken + n >= tokens.length) return {text: null};
 
     return tokens[currentToken + n];
 }

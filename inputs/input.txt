@@ -1,17 +1,19 @@
 class program {
+	void turnright(){
+		iterate(3){
+			turnleft()
+		}
+	}
+
 	program() {
 		move()
 		turnleft()
 		move()
 		move()
-		turnleft()
-		turnleft()
-		turnleft()
+		turnright()
 		move()
 		move()
-		turnleft()
-		turnleft()
-		turnleft()
+		turnright()
 		move()
 		pickbeeper()
 		turnoff()

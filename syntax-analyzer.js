@@ -1,3 +1,6 @@
+//Checar que la función no sea palabra reservada
+
+
 var _ = require('lodash');
 
 var helper = require('./analyzer-helpers');
@@ -68,7 +71,7 @@ var functionDeclaration = function() {
             if (helper.require('{')) {
                 body();
                 if (helper.require('}')) {
-                    interCode[interCodeIndex++] = 'RETURN';
+                    interCode[interCodeIndex++] = 'RET';
                 } else {
                     console.log('error on function declaration');
                     process.exit(0);

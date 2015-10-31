@@ -3,7 +3,8 @@ var fileReader = require('./file-reader');
 const NORTH = 0, EAST = 1, SOUTH = 2, WEST = 3;
 
 var counter = 0;
-var callstack = [];
+var callStack = [];
+var iterateCounters = [];
 
 exports.init = function(filename){
 	return JSON.parse( fileReader.readFile(filename) );
@@ -28,20 +29,36 @@ var printWorld = function(world){
 	}
 }
 
-exports.evaluate = function(intercode, world){
-	console.log(intercode);
+exports.evaluate = function(interCode, world){
+	console.log(interCode);
 
-	while(counter < intercode.length){
-		var op = intercode[counter];
+	while(counter < interCode.length){
+		var op = interCode[counter];
 		switch(op){
 			case 'JMP':
-				counter = intercode[counter+1];
+				counter = interCode[counter+1];
 				continue;
 			case 'CALL':
-				// Code...
-				break
+				callStack.push(counter+2);
+				counter = interCode[counter+1];
+				continue;
+			case 'RET':
+				counter = callStack.pop();
+				continue;
+			case 'ITE':
+				iterateCounters[interCode[counter+1]] = interCode[counter+2];
+				counter += 3;
+				continue;
+			case 'DJNZ':
+				iterateCounters[interCode[counter+1]]--;
+				if (iterateCounters[interCode[counter+1]] === 0) {
+					counter += 3;
+				}else{
+					counter = interCode[counter+2];
+				}
+				continue;
 			case 'move':
-				switch(world.karel.orientation){
+				switch (world.karel.orientation) {
 					case NORTH:
 						world.karel.y--;
 						break
@@ -55,7 +72,7 @@ exports.evaluate = function(intercode, world){
 						world.karel.x--;
 						break;
 				}
-				if (world.grid[world.karel.y][world.karel.x].w){
+				if (world.grid[world.karel.y][world.karel.x].w) {
 					console.log("WALL");
 				}
 				break;
@@ -63,10 +80,10 @@ exports.evaluate = function(intercode, world){
 				world.karel.orientation = (((world.karel.orientation-1) % 4) + 4) % 4;
 				break;
 			case 'pickbeeper':
-				if (world.grid[world.karel.y][world.karel.x].b === 0){
+				if (world.grid[world.karel.y][world.karel.x].b === 0) {
 					console.log("NO BEEPERS!");
 				}
-				else{
+				else {
 					world.grid[world.karel.y][world.karel.x].b--;
 					world.karel.beepers++;
 				}
