@@ -1,5 +1,3 @@
-//Checar que la función no sea palabra reservada
-
 
 var _ = require('lodash');
 
@@ -7,13 +5,64 @@ var helper = require('./analyzer-helpers');
 var interCodeIndex = 0;
 var interCode = [];
 
+var errors = { 
+    missing_right_brace: "Missing closing brace",
+    missing_left_brace: "Missing opening brace",
+    missing_left_parenthesis: "Missing opening parenthesis",
+    missing_right_parenthesis: "Missing closing parenthesis",
+    missing_turnoff: "Missing final turnoff() call",
+    missing_class_program: "Missing class program signature",
+    missing_program: "Missing program() call",
+    missing_if_expression: "Missing if expression",
+    missing_else_expression: "Missing else expression",
+    missing_while_expression: "Missing while expression",
+    missing_iterate_expression: "Missing iterate expression",
+    bad_function_declaration_parenthesis : "Bad function declaration, missing parenthesis",
+    bad_function_declaration_void : "Bad function declaration, missing void",
+    bad_function_declaration_reserved : "Bad function declaration, reserved keyword for: ",
+    bad_function_call_parenthesis: "Bad function call, missing parenthesis",
+    not_found_function: "Not found function: ",
+};
+
+var reservedKeywords = {
+    'if': true,
+    'else': true,
+    'iterate': true,
+    'while': true,
+    'class': true,
+    'program': true,
+    'void': true,
+    'frontIsClear': true,
+    'leftIsClear': true,
+    'leftIsBlocked': true,
+    'rightIsClear': true,
+    'rightIsBlocked': true,
+    'nextToABeeper': true,
+    'notNextToABeeper': true,
+    'anyBeepersInBeeperBag': true,
+    'noBeepersInBeeperBag': true,
+    'facingNorth': true,
+    'facingSouth': true,
+    'facingEast': true,
+    'facingWest': true,
+    'notFacingNorth': true,
+    'notFacingSouth': true,
+    'notFacingEast': true,
+    'notFacingWest': true,
+    'move': true,
+    'pickbeeper': true,
+    'turnleft': true,
+    'putbeeper': true,
+    'turnoff': true,
+};
+
 exports.parse = function(tokens) {
     helper.setTokens(tokens);
     interCode[interCodeIndex++] = 'JMP';
     interCodeIndex++;
     program();
     if (interCode[interCode.length - 1] != 'turnoff') {
-        console.log('missing turnoff');
+        console.log(errors.missing_turnoff);
         process.exit(0);
     }
     /*return _.map(interCode, function(d, i) {
@@ -29,30 +78,34 @@ var program = function() {
             functionsDeclarations();
             mainFunction();
             if (!helper.require('}')) {
-                console.log('error on function');
+                console.log(errors.missing_right_brace);
                 process.exit(0);
             } 
         } else {
-            console.log('error on function');
+            console.log(errors.missing_left_brace);
             process.exit(0);
         }
     } else {
-        console.log('error on function');
+        console.log(errors.missing_class_program);
         process.exit(0);
     }
 };
 
 var mainFunction = function() {
-    if (helper.require('program') && helper.require('(') &&
-        helper.require(')') && helper.require('{')) {
-        interCode[1] = interCodeIndex;
-        body();
-        if (!helper.require('}')) {
-                console.log('error on main function 1');
+    if (helper.require('program') && helper.require('(') && helper.require(')')) {
+        if (helper.require('{')) {
+            interCode[1] = interCodeIndex;
+            body();
+            if (!helper.require('}')) {
+                console.log(errors.missing_right_brace);
                 process.exit(0);
             }
+        } else {
+            console.log(errors.missing_left_brace);
+            process.exit(0);
+        }
     } else {
-        console.log('error on main function 2');
+        console.log(errors.missing_program);
         process.exit(0);
     }
 };
@@ -73,37 +126,42 @@ var functionDeclaration = function() {
                 if (helper.require('}')) {
                     interCode[interCodeIndex++] = 'RET';
                 } else {
-                    console.log('error on function declaration');
+                    console.log(errors.missing_right_brace);
                     process.exit(0);
                 }
             } else {
-                console.log('error on function declaration');
+                console.log(errors.missing_left_brace);
                 process.exit(0);
             }
         } else {
-            console.log('error on function declaration');
+            console.log(errors.bad_function_declaration_parenthesis);
             process.exit(0);
         }
     } else {
-        console.log('error on function declaration');
+        console.log(errors.bad_function_declaration_void);
         process.exit(0);
     }
 };
 
 var nameFunction = function() {
     var name = helper.fetchToken();
-    helper.addNewFunction(name, interCodeIndex);
+    if (reservedKeywords.hasOwnProperty(name)) {
+        console.log(errors.bad_function_declaration_reserved + name);
+        process.exit(0);
+    } else {
+        helper.addNewFunction(name, interCodeIndex);
+    }
 };
 
 var callFunction = function() {
     nameOfFunction();
     if (helper.require('(')) {
         if (!helper.require(')')) {
-            console.log('error on call function');
+            console.log(errors.bad_function_call_parenthesis);
             process.exit(0);
         }    
     } else {
-        console.log('error on call function');
+        console.log(errors.bad_function_call_parenthesis);
         process.exit(0);
     }  
 };
@@ -144,7 +202,7 @@ var customerFunction = function () {
         interCode[interCodeIndex++] = 'CALL';
         interCode[interCodeIndex++] = posFunctionInCodeInter;
     } else {
-        console.log('error on customer function');
+        console.log(errors.not_found_function + nameFunction);
         process.exit(0);
     }
 };
@@ -198,7 +256,7 @@ var ifExpression = function() {
                     body();
 
                     if (!helper.require('}')) {
-                        console.log('error on if (missing bracket)');
+                        console.log(errors.missing_right_brace);
                         process.exit(0);
                     }
 
@@ -216,22 +274,22 @@ var ifExpression = function() {
                     }
                 }
                 else {
-                    console.log('error on if (missing bracket)');
+                    console.log(errors.missing_left_brace);
                     process.exit(0);
                 }
             }
             else {
-                console.log('error on if');
+                console.log(errors.missing_right_parenthesis);
                 process.exit(0);
             }
         }
         else {
-            console.log('error on if');
+            console.log(errors.missing_left_parenthesis);
             process.exit(0);
         }
     }
     else {
-        console.log('error on if');
+        console.log(errors.missing_if_expression);
         process.exit(0);
     }
 };
@@ -244,10 +302,16 @@ var elseIf = function() {
             body();
             if (!helper.require('}'))
             {
-                console.log('error on elseif');
+                console.log(errors.missing_right_brace);
                 process.exit(0);
             }
+        } else {
+            console.log(errors.missing_left_brace);
+            process.exit(0);
         }
+    } else {
+        console.log(errors.missing_else_expression);
+        process.exit(0);
     }
 };
 
@@ -269,26 +333,25 @@ var whileExpression = function() {
                         interCode[interCodeIndex++] = "JMP"
                         interCode[interCodeIndex++] = start;
                         interCode[end_position] = interCodeIndex;
-                    }
-                    else {
-                        console.log('error on while (missing })');
+                    } else {
+                        console.log(errors.missing_right_brace);
                         process.exit(0);
                     }
-                }
-                else {
-                    console.log('error on while (missing {)');
+                } else {
+                    console.log(errors.missing_left_brace);
                     process.exit(0);
                 }
-            }
-            else {
-                console.log('error on while (missing ) )');
+            } else {
+                console.log(errors.missing_right_parenthesis);
                 process.exit(0);
             }
-        }
-        else {
-            console.log('error on while (missing ( ))');
+        } else {
+            console.log(errors.missing_left_parenthesis);
             process.exit(0);
         }
+    } else {
+        console.log(errors.missing_while_expression);
+        process.exit(0);
     }
 };
 
@@ -299,9 +362,9 @@ var iterateExpression = function() {
     if (helper.require('iterate')) {
         if (helper.require('(')) {
             
-            // **************
+            // *******************************************
             // WARNING: does not actually validate numbers
-            // **************
+            // *******************************************
 
             interCode[interCodeIndex++] = "ITE"
             interCode[interCodeIndex++] = iterateCounter;
@@ -317,26 +380,25 @@ var iterateExpression = function() {
                         interCode[interCodeIndex++] = "DJNZ"
                         interCode[interCodeIndex++] = iterateCounter;
                         interCode[interCodeIndex++] = start;
-                    }
-                    else {
-                        console.log('error on iterate (missing })');
+                    } else {
+                        console.log(errors.missing_right_brace);
                         process.exit(0);
                     }
-                }
-                else {
-                    console.log('error on iterate (missing {)');
+                } else {
+                    console.log(errors.missing_left_brace);
                     process.exit(0);
                 }
-            }
-            else {
-                console.log('error on iterate (missing ) )');
+            } else {
+                console.log(errors.missing_right_parenthesis);
                 process.exit(0);
             }
-        }
-        else {
-            console.log('error on iterate (missing ( ))');
+        } else {
+            console.log(errors.missing_left_parenthesis);
             process.exit(0);
         }
+    } else {
+        console.log(errors.missing_iterate_expression);
+        process.exit(0);
     }
 };
 
@@ -396,12 +458,9 @@ var conditional = function() {
     // FIXME: Will crash on EOF
     var ahead_token = helper.lookAhead(1).text;
 
-    if (ahead_token === '&&' || ahead_token === '||')
-    {
+    if (ahead_token === '&&' || ahead_token === '||') {
         composedConditional();
-    }
-    else
-    {
+    } else {
         simpleConditional();
     }
 };
@@ -415,8 +474,7 @@ var composedConditional = function() {
         simpleConditional();
         helper.require('||');
         simpleConditional();
-    }
-    else if (ahead_token === '&&') {
+    } else if (ahead_token === '&&') {
         interCode[interCodeIndex++] = 'AND';
         simpleConditional();
         helper.require('&&');
