@@ -1,0 +1,21 @@
+{
+  "name": "karel-compiler",
+  "version": "0.0.0",
+  "homepage": "https://github.com/erosespinola/karel-compiler",
+  "authors": [
+    "Mauricio Zaragoza <zaragoza.mauricio@outlook.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "lodash": "~3.10.1",
+    "angular": "angularjs#~1.4.7",
+    "bootstrap": "~3.3.5"
+  }
+}
