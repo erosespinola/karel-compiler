@@ -1,9 +1,13 @@
 angular.module('KarelApp.controllers', []).
-    controller('KarelControllers', ['$scope', function($scope) {
+    controller('KarelControllers', ['$scope', 'storage', function($scope, storage) {
+        if (!!storage.get('karelProgram')) {
+            $scope.program = storage.get('karelProgram');
+        }
 
         $scope.compile = function () {
-            var tokens = lexicographic.getTokens($scope.program);
+            storage.set('karelProgram', $scope.program);
 
+            var tokens = lexicographic.getTokens($scope.program);
             var intercode = syntax.parse(tokens);
 
             // console.log(intercode);

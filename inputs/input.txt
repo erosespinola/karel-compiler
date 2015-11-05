@@ -1,5 +1,5 @@
 class program {
-	void turnright(){
+	void move(){
 		iterate(3){
 			turnleft()
 		}

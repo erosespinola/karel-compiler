@@ -1,3 +1,4 @@
 angular.module('KarelApp', [
-	'KarelApp.controllers'
+	'KarelApp.controllers',
+    'angularLocalStorage'
 ]);

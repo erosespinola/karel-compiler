@@ -1,5 +1,3 @@
-//Checar que la función no sea palabra reservada
-
 syntax = {
     parse: function(tokens) {
         interCodeIndex = 0;
@@ -71,7 +69,7 @@ var reservedKeywords = {
     'pickbeeper': true,
     'turnleft': true,
     'putbeeper': true,
-    'turnoff': true,
+    'turnoff': true
 };
 
 /* Program */
@@ -82,15 +80,15 @@ var program = function() {
             mainFunction();
             if (!helper.require('}')) {
                 console.log(errors.missing_right_brace);
-                die();
+                process.exit(0);
             } 
         } else {
             console.log(errors.missing_left_brace);
-            die();
+            process.exit(0);
         }
     } else {
         console.log(errors.missing_class_program);
-        die();
+        process.exit(0);
     }
 };
 
@@ -101,15 +99,15 @@ var mainFunction = function() {
             body();
             if (!helper.require('}')) {
                 console.log(errors.missing_right_brace);
-                die();
+                process.exit(0);
             }
         } else {
             console.log(errors.missing_left_brace);
-            die();
+            process.exit(0);
         }
     } else {
         console.log(errors.missing_program);
-        die();
+        process.exit(0);
     }
 };
 
@@ -130,19 +128,19 @@ var functionDeclaration = function() {
                     interCode[interCodeIndex++] = 'RET';
                 } else {
                     console.log(errors.missing_right_brace);
-                    die();
+                    process.exit(0);
                 }
             } else {
                 console.log(errors.missing_left_brace);
-                die();
+                process.exit(0);
             }
         } else {
             console.log(errors.bad_function_declaration_parenthesis);
-            die();
+            process.exit(0);
         }
     } else {
         console.log(errors.bad_function_declaration_void);
-        die();
+        process.exit(0);
     }
 };
 
@@ -150,7 +148,7 @@ var nameFunction = function() {
     var name = helper.fetchToken();
     if (reservedKeywords.hasOwnProperty(name)) {
         console.log(errors.bad_function_declaration_reserved + name);
-        die();
+        process.exit(0);
     } else {
         helper.addNewFunction(name, interCodeIndex);
     }
@@ -161,11 +159,11 @@ var callFunction = function() {
     if (helper.require('(')) {
         if (!helper.require(')')) {
             console.log(errors.bad_function_call_parenthesis);
-            die();
+            process.exit(0);
         }    
     } else {
         console.log(errors.bad_function_call_parenthesis);
-        die();
+        process.exit(0);
     }  
 };
 
@@ -206,7 +204,7 @@ var customerFunction = function () {
         interCode[interCodeIndex++] = posFunctionInCodeInter;
     } else {
         console.log(errors.not_found_function + nameFunction);
-        die();
+        process.exit(0);
     }
 };
 
@@ -260,7 +258,7 @@ var ifExpression = function() {
 
                     if (!helper.require('}')) {
                         console.log(errors.missing_right_brace);
-                        die();
+                        process.exit(0);
                     }
 
                     if (helper.read('else')) {
@@ -278,22 +276,22 @@ var ifExpression = function() {
                 }
                 else {
                     console.log(errors.missing_left_brace);
-                    die();
+                    process.exit(0);
                 }
             }
             else {
                 console.log(errors.missing_right_parenthesis);
-                die();
+                process.exit(0);
             }
         }
         else {
             console.log(errors.missing_left_parenthesis);
-            die();
+            process.exit(0);
         }
     }
     else {
         console.log(errors.missing_if_expression);
-        die();
+        process.exit(0);
     }
 };
 
@@ -306,15 +304,15 @@ var elseIf = function() {
             if (!helper.require('}'))
             {
                 console.log(errors.missing_right_brace);
-                die();
+                process.exit(0);
             }
         } else {
             console.log(errors.missing_left_brace);
-            die();
+            process.exit(0);
         }
     } else {
         console.log(errors.missing_else_expression);
-        die();
+        process.exit(0);
     }
 };
 
@@ -338,23 +336,23 @@ var whileExpression = function() {
                         interCode[end_position] = interCodeIndex;
                     } else {
                         console.log(errors.missing_right_brace);
-                        die();
+                        process.exit(0);
                     }
                 } else {
                     console.log(errors.missing_left_brace);
-                    die();
+                    process.exit(0);
                 }
             } else {
                 console.log(errors.missing_right_parenthesis);
-                die();
+                process.exit(0);
             }
         } else {
             console.log(errors.missing_left_parenthesis);
-            die();
+            process.exit(0);
         }
     } else {
         console.log(errors.missing_while_expression);
-        die();
+        process.exit(0);
     }
 };
 
@@ -385,23 +383,23 @@ var iterateExpression = function() {
                         interCode[interCodeIndex++] = start;
                     } else {
                         console.log(errors.missing_right_brace);
-                        die();
+                        process.exit(0);
                     }
                 } else {
                     console.log(errors.missing_left_brace);
-                    die();
+                    process.exit(0);
                 }
             } else {
                 console.log(errors.missing_right_parenthesis);
-                die();
+                process.exit(0);
             }
         } else {
             console.log(errors.missing_left_parenthesis);
-            die();
+            process.exit(0);
         }
     } else {
         console.log(errors.missing_iterate_expression);
-        die();
+        process.exit(0);
     }
 };
 

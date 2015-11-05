@@ -16,6 +16,7 @@
   "dependencies": {
     "lodash": "~3.10.1",
     "angular": "angularjs#~1.4.7",
-    "bootstrap": "~3.3.5"
+    "bootstrap": "~3.3.5",
+    "angularLocalStorage": "ngStorage#~0.3.2"
   }
 }

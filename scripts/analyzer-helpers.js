@@ -1,11 +1,14 @@
 var tokens;
-var currentToken = 0;
-var symbolTable = {};
+var currentToken;
+var symbolTable;
 
 helper = {};
 
 helper.setTokens = function(tks) {
     tokens = tks;
+
+    currentToken = 0;
+    symbolTable = {};
 };
 
 helper.read = function(token) {
