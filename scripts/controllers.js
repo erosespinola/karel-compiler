@@ -42,10 +42,10 @@ angular.module('KarelApp.controllers', []).
         $scope.compile = function () {
             storage.set('karelIntercodeProgram', $scope.program);
 
-            console.log($scope.program);
-            var intercode; //scope.program
+            var intercode = JSON.parse($scope.program);
+            console.log(intercode);
 
-            /*evaluator.evaluate(
+            evaluator.evaluate(
                 intercode,
                 {
                     "rows": 6,
@@ -64,6 +64,6 @@ angular.module('KarelApp.controllers', []).
                         [{"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}],
                         [{"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}]
                     ]
-                });*/
+                });
         }
     }]);
