@@ -4,10 +4,10 @@ syntax = {
         interCode = [];
 
         helper.setTokens(tokens);
-        interCode[interCodeIndex++] = 'JMP';
+        interCode[interCodeIndex++] = INTERCODE_KEYS.JMP;
         interCodeIndex++;
         program();
-        if (interCode[interCode.length - 1] != 'turnoff') {
+        if (interCode[interCode.length - 1] != INTERCODE_KEYS.TURN_OFF) {
             console.log('missing turnoff');
             // die();
         }
@@ -125,7 +125,7 @@ var functionDeclaration = function() {
             if (helper.require('{')) {
                 body();
                 if (helper.require('}')) {
-                    interCode[interCodeIndex++] = 'RET';
+                    interCode[interCodeIndex++] = INTERCODE_KEYS.RET;
                 } else {
                     console.log(errors.missing_right_brace);
                     process.exit(0);
@@ -179,20 +179,19 @@ var nameOfFunction = function() {
 
 var officialFunction = function() {
     if (helper.ifRead('turnleft')) {
-        interCode[interCodeIndex++] = 'turnleft';
+        interCode[interCodeIndex++] = INTERCODE_KEYS.TURN_LEFT;
     }  
-
     else if (helper.ifRead('move')) {
-        interCode[interCodeIndex++] = 'move';
+        interCode[interCodeIndex++] = INTERCODE_KEYS.MOVE;
     }
     else if (helper.ifRead('pickbeeper')) {
-        interCode[interCodeIndex++] = 'pickbeeper';
+        interCode[interCodeIndex++] = INTERCODE_KEYS.PICK_BEEPER;
     }
     else if (helper.ifRead('putbeeper')) {
-        interCode[interCodeIndex++] = 'putbeeper';
+        interCode[interCodeIndex++] = INTERCODE_KEYS.PUT_BEEPER;
     }
     else if (helper.ifRead('turnoff')) {
-        interCode[interCodeIndex++] = 'turnoff';
+        interCode[interCodeIndex++] = INTERCODE_KEYS.TURN_OFF;
     }
 };
     
@@ -200,7 +199,7 @@ var customerFunction = function () {
     var nameFunction = helper.fetchToken();
     var posFunctionInCodeInter = helper.findStartPointOfFunction(nameFunction);
     if (posFunctionInCodeInter !== '0xFF') {
-        interCode[interCodeIndex++] = 'CALL';
+        interCode[interCodeIndex++] = INTERCODE_KEYS.CALL;
         interCode[interCodeIndex++] = posFunctionInCodeInter;
     } else {
         console.log(errors.not_found_function + nameFunction);
@@ -250,7 +249,7 @@ var ifExpression = function() {
             conditional();
             if (helper.require(')')) {
                 if (helper.require('{')) {
-                    interCode[interCodeIndex++] = 'JMP';
+                    interCode[interCodeIndex++] = INTERCODE_KEYS.JMP;
                     x_pos = interCodeIndex;
                     interCodeIndex++;
 
@@ -262,7 +261,7 @@ var ifExpression = function() {
                     }
 
                     if (helper.read('else')) {
-                        interCode[interCodeIndex++] = 'JMP';
+                        interCode[interCodeIndex++] = INTERCODE_KEYS.JMP;
                         y_pos = interCodeIndex++;
                         interCode[x_pos] = interCodeIndex;
 
@@ -324,14 +323,14 @@ var whileExpression = function() {
             conditional();
             if (helper.require(')')) {
 
-                interCode[interCodeIndex++] = "JMP"
+                interCode[interCodeIndex++] = INTERCODE_KEYS.JMP;
                 end_position = interCodeIndex++;
 
                 if (helper.require('{')) {
                     body();
 
                     if (helper.require('}')) {
-                        interCode[interCodeIndex++] = "JMP"
+                        interCode[interCodeIndex++] = INTERCODE_KEYS.JMP;
                         interCode[interCodeIndex++] = start;
                         interCode[end_position] = interCodeIndex;
                     } else {
@@ -367,7 +366,7 @@ var iterateExpression = function() {
             // WARNING: does not actually validate numbers
             // *******************************************
 
-            interCode[interCodeIndex++] = "ITE"
+            interCode[interCodeIndex++] = INTERCODE_KEYS.ITE;
             interCode[interCodeIndex++] = iterateCounter;
             interCode[interCodeIndex++] = helper.fetchToken();
 
@@ -378,7 +377,7 @@ var iterateExpression = function() {
                     body();
 
                     if (helper.require('}')) {
-                        interCode[interCodeIndex++] = "DJNZ"
+                        interCode[interCodeIndex++] = INTERCODE_KEYS.DECJMP;
                         interCode[interCodeIndex++] = iterateCounter;
                         interCode[interCodeIndex++] = start;
                     } else {
@@ -431,27 +430,27 @@ var number = function() {
 
 var simpleConditional = function() {
     if (helper.ifRead('!')) {
-        interCode[interCodeIndex++] = 'NOT';
+        interCode[interCodeIndex++] = INTERCODE_KEYS.NOT;
     }
 
-    if (helper.ifRead('frontIsClear')) interCode[interCodeIndex++] = 'frontIsClear';
-    else if (helper.ifRead('frontIsBlocked')) interCode[interCodeIndex++] = 'frontIsBlocked';
-    else if (helper.ifRead('leftIsClear')) interCode[interCodeIndex++] = 'leftIsClear';
-    else if (helper.ifRead('leftIsBlocked')) interCode[interCodeIndex++] = 'leftIsBlocked';
-    else if (helper.ifRead('rightIsClear')) interCode[interCodeIndex++] = 'rightIsClear';
-    else if (helper.ifRead('rightIsBlocked')) interCode[interCodeIndex++] = 'rightIsBlocked';
-    else if (helper.ifRead('nextToABeeper')) interCode[interCodeIndex++] = 'nextToABeeper';
-    else if (helper.ifRead('notNextToABeeper')) interCode[interCodeIndex++] = 'notNextToABeeper';
-    else if (helper.ifRead('anyBeepersInBeeperBag')) interCode[interCodeIndex++] = 'anyBeepersInBeeperBag';
-    else if (helper.ifRead('noBeepersInBeeperBag')) interCode[interCodeIndex++] = 'noBeepersInBeeperBag';
-    else if (helper.ifRead('facingNorth')) interCode[interCodeIndex++] = 'facingNorth';
-    else if (helper.ifRead('facingSouth')) interCode[interCodeIndex++] = 'facingSouth';
-    else if (helper.ifRead('facingEast')) interCode[interCodeIndex++] = 'facingEast';
-    else if (helper.ifRead('facingWest')) interCode[interCodeIndex++] = 'facingWest';
-    else if (helper.ifRead('notFacingNorth')) interCode[interCodeIndex++] = 'notFacingNorth';
-    else if (helper.ifRead('notFacingSouth')) interCode[interCodeIndex++] = 'notFacingSouth';
-    else if (helper.ifRead('notFacingEast')) interCode[interCodeIndex++] = 'notFacingEast';
-    else if (helper.ifRead('notFacingWest')) interCode[interCodeIndex++] = 'notFacingWest';
+    if (helper.ifRead('frontIsClear')) interCode[interCodeIndex++] = INTERCODE_KEYS.FRONT_IS_CLEAR;
+    else if (helper.ifRead('frontIsBlocked')) interCode[interCodeIndex++] = INTERCODE_KEYS.FRONT_IS_BLOCKED;
+    else if (helper.ifRead('leftIsClear')) interCode[interCodeIndex++] = INTERCODE_KEYS.leftIsClear;
+    else if (helper.ifRead('leftIsBlocked')) interCode[interCodeIndex++] = INTERCODE_KEYS.LEFT_IS_BLOCKED;
+    else if (helper.ifRead('rightIsClear')) interCode[interCodeIndex++] = INTERCODE_KEYS.RIGHT_IS_CLEAR;
+    else if (helper.ifRead('rightIsBlocked')) interCode[interCodeIndex++] = INTERCODE_KEYS.RIGHT_IS_BLOCKED;
+    else if (helper.ifRead('nextToABeeper')) interCode[interCodeIndex++] = INTERCODE_KEYS.NEXT_TO_A_BEEPER;
+    else if (helper.ifRead('notNextToABeeper')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_NEXT_TO_A_BEEPER;
+    else if (helper.ifRead('anyBeepersInBeeperBag')) interCode[interCodeIndex++] = INTERCODE_KEYS.ANY_BEEPERS_IN_BEEPER_BAG;
+    else if (helper.ifRead('noBeepersInBeeperBag')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_ANY_BEEPERS_IN_BEEPER_BAG;
+    else if (helper.ifRead('facingNorth')) interCode[interCodeIndex++] = INTERCODE_KEYS.FACING_NORTH;
+    else if (helper.ifRead('facingSouth')) interCode[interCodeIndex++] = INTERCODE_KEYS.FACING_SOUTH;
+    else if (helper.ifRead('facingEast')) interCode[interCodeIndex++] = INTERCODE_KEYS.FACING_EAST;
+    else if (helper.ifRead('facingWest')) interCode[interCodeIndex++] = INTERCODE_KEYS.FACING_WEST;
+    else if (helper.ifRead('notFacingNorth')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_FACING_NORTH;
+    else if (helper.ifRead('notFacingSouth')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_FACING_SOUTH;
+    else if (helper.ifRead('notFacingEast')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_FACING_EAST;
+    else if (helper.ifRead('notFacingWest')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_FACING_WEST;
     else console.log({ 'error': 'Not a valid simple conditional' });
 };
 
@@ -471,12 +470,12 @@ var composedConditional = function() {
     var ahead_token = helper.lookAhead(1).text;
 
     if (ahead_token === '||') {
-        interCode[interCodeIndex++] = 'OR';
+        interCode[interCodeIndex++] = INTERCODE_KEYS.OR;
         simpleConditional();
         helper.require('||');
         simpleConditional();
     } else if (ahead_token === '&&') {
-        interCode[interCodeIndex++] = 'AND';
+        interCode[interCodeIndex++] = INTERCODE_KEYS.AND;
         simpleConditional();
         helper.require('&&');
         simpleConditional();
