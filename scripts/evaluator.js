@@ -1,8 +1,12 @@
-const NORTH = 0, EAST = 1, SOUTH = 2, WEST = 3;
-
+const orientation = [
+        {x: 0, y: -1},
+        {x: -1, y: 0},
+        {x: 0, y: 1},
+        {x: 1, y: 0}
+    ];
 
 var printWorld = function(world){
-    console.log(world.karel.beepers, world.karel.orientation);
+    console.log(world.karel.beepers, world.karel.orientation.x, world.karel.orientation.y);
     for (var i = 0; i < world.rows; i++) {
         var line = '';
         for (var j = 0; j < world.cols; j++) {
@@ -21,6 +25,7 @@ var printWorld = function(world){
 }
 
 evaluator = {
+    world: null,
     evaluate: function(interCode, world) {
         console.log(interCode);
 
@@ -28,11 +33,13 @@ evaluator = {
         var callStack = [];
         var iterateCounters = [];
 
+        this.world = world;
+
         while (counter < interCode.length){
             printWorld(world);
 
             var op = interCode[counter];
-            switch(op){
+            switch (op) {
                 case 'JMP':
                     counter = interCode[counter+1];
                     continue;
@@ -58,22 +65,9 @@ evaluator = {
                         counter = interCode[counter+2];
                     }
                     continue;
-
                 case 'move':
-                    switch (world.karel.orientation) {
-                        case NORTH:
-                            world.karel.y--;
-                            break
-                        case EAST:
-                            world.karel.x++;
-                            break;
-                        case SOUTH:
-                            world.karel.y++;
-                            break;
-                        case WEST:
-                            world.karel.x--;
-                            break;
-                    }
+                    world.karel.x += world.karel.orientation.x;
+                    world.karel.y += world.karel.orientation.y;
 
                     if (world.grid[world.karel.y][world.karel.x].w) {
                         console.log("WALL");
@@ -81,24 +75,41 @@ evaluator = {
                     break;
 
                 case 'turnleft':
-                    world.karel.orientation = (((world.karel.orientation-1) % 4) + 4) % 4;
+                    console.log("TURN LEFT");
+                    world.karel.orientationIndex = (((world.karel.orientationIndex + 1) % 4) + 4) % 4;
+                    world.karel.orientation = orientation[world.karel.orientationIndex];
                     break;
-
                 case 'pickbeeper':
                     if (world.grid[world.karel.y][world.karel.x].b === 0) {
                         console.log("NO BEEPERS!");
-                    }
-                    else {
+                    } else {
                         world.grid[world.karel.y][world.karel.x].b--;
                         world.karel.beepers++;
                     }
                     break;
-
+                case 'putbeeper':
+                    if (world.karel.beepers > 0) {
+                        world.grid[world.karel.y][world.karel.x].b++;
+                    } else {
+                        console.log("NO BEEPERS!");
+                    }
+                    break;
                 case 'turnoff':
                     return;
             }
 
             counter++;
+        }
+    },
+    evaluateCondition: function(token){
+        switch (token) {
+            case 'frontIsClear':
+                if (world.grid[world.karel.y][world.karel.x].w) {
+                    return false;
+                } else {
+                    return true;
+                }
+                break;
         }
     }
 };
