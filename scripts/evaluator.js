@@ -40,32 +40,32 @@ evaluator = {
 
             var op = interCode[counter];
             switch (op) {
-                case 'JMP':
+                case INTERCODE_KEYS.JMP:
                     counter = interCode[counter+1];
                     continue;
 
-                case 'CALL':
+                case INTERCODE_KEYS.CALL:
                     callStack.push(counter+2);
                     counter = interCode[counter+1];
                     continue;
 
-                case 'RET':
+                case INTERCODE_KEYS.RET:
                     counter = callStack.pop();
                     continue;
 
-                case 'ITE':
+                case INTERCODE_KEYS.ITE:
                     iterateCounters[interCode[counter+1]] = interCode[counter+2];
                     counter += 3;
                     continue;
 
-                case 'DJNZ':
+                case INTERCODE_KEYS.DECJMP:
                     if (--iterateCounters[interCode[counter+1]] === 0) {
                         counter += 3;
                     } else {
                         counter = interCode[counter+2];
                     }
                     continue;
-                case 'move':
+                case INTERCODE_KEYS.MOVE:
                     world.karel.x += world.karel.orientation.x;
                     world.karel.y += world.karel.orientation.y;
 
@@ -74,12 +74,12 @@ evaluator = {
                     }
                     break;
 
-                case 'turnleft':
+                case INTERCODE_KEYS.TURN_LEFT:
                     console.log("TURN LEFT");
                     world.karel.orientationIndex = (((world.karel.orientationIndex + 1) % 4) + 4) % 4;
                     world.karel.orientation = orientation[world.karel.orientationIndex];
                     break;
-                case 'pickbeeper':
+                case INTERCODE_KEYS.PICK_BEEPER:
                     if (world.grid[world.karel.y][world.karel.x].b === 0) {
                         console.log("NO BEEPERS!");
                     } else {
@@ -87,14 +87,14 @@ evaluator = {
                         world.karel.beepers++;
                     }
                     break;
-                case 'putbeeper':
+                case INTERCODE_KEYS.PUT_BEEPER:
                     if (world.karel.beepers > 0) {
                         world.grid[world.karel.y][world.karel.x].b++;
                     } else {
                         console.log("NO BEEPERS!");
                     }
                     break;
-                case 'turnoff':
+                case INTERCODE_KEYS.TURN_OFF:
                     return;
             }
 
