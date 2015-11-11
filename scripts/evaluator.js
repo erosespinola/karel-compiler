@@ -1,8 +1,8 @@
 const orientation = [
         {x: 0, y: -1},
-        {x: -1, y: 0},
+        {x: 1, y: 0},
         {x: 0, y: 1},
-        {x: 1, y: 0}
+        {x: -1, y: 0}
     ];
 
 var printWorld = function(world){
@@ -36,7 +36,7 @@ evaluator = {
         this.world = world;
 
         while (counter < interCode.length){
-            printWorld(world);
+            printWorld(this.world);
 
             var op = interCode[counter];
             switch (op) {
@@ -66,34 +66,37 @@ evaluator = {
                     }
                     continue;
                 case INTERCODE_KEYS.MOVE:
-                    world.karel.x += world.karel.orientation.x;
-                    world.karel.y += world.karel.orientation.y;
+                    this.world.karel.x += this.world.karel.orientation.x;
+                    this.world.karel.y += this.world.karel.orientation.y;
 
-                    if (world.grid[world.karel.y][world.karel.x].w) {
+                    if (this.world.grid[this.world.karel.y][this.world.karel.x].w) {
                         console.log("WALL");
                     }
                     break;
 
                 case INTERCODE_KEYS.TURN_LEFT:
                     console.log("TURN LEFT");
-                    world.karel.orientationIndex = (((world.karel.orientationIndex + 1) % 4) + 4) % 4;
-                    world.karel.orientation = orientation[world.karel.orientationIndex];
+                    this.world.karel.orientationIndex = (((this.world.karel.orientationIndex - 1) % 4) + 4) % 4;
+                    this.world.karel.orientation = orientation[this.world.karel.orientationIndex];
                     break;
+
                 case INTERCODE_KEYS.PICK_BEEPER:
-                    if (world.grid[world.karel.y][world.karel.x].b === 0) {
+                    if (this.world.grid[this.world.karel.y][this.world.karel.x].b === 0) {
                         console.log("NO BEEPERS!");
                     } else {
-                        world.grid[world.karel.y][world.karel.x].b--;
-                        world.karel.beepers++;
+                        this.world.grid[this.world.karel.y][this.world.karel.x].b--;
+                        this.world.karel.beepers++;
                     }
                     break;
+
                 case INTERCODE_KEYS.PUT_BEEPER:
-                    if (world.karel.beepers > 0) {
-                        world.grid[world.karel.y][world.karel.x].b++;
+                    if (this.world.karel.beepers > 0) {
+                        this.world.grid[this.world.karel.y][this.world.karel.x].b++;
                     } else {
                         console.log("NO BEEPERS!");
                     }
                     break;
+
                 case INTERCODE_KEYS.TURN_OFF:
                     return;
             }
@@ -101,15 +104,73 @@ evaluator = {
             counter++;
         }
     },
-    evaluateCondition: function(token){
-        switch (token) {
-            case 'frontIsClear':
-                if (world.grid[world.karel.y][world.karel.x].w) {
-                    return false;
-                } else {
-                    return true;
+    evaluateCondition: function(conditional){
+        switch (conditional) {
+            case INTERCODE_KEYS.FRONT_IS_CLEAR:
+                var frontX = this.world.karel.x + this.world.karel.orientation.x;
+                var frontY = this.world.karel.y + this.world.karel.orientation.y;
+                return !this.world.grid[frontY][frontY].w;
+
+            case INTERCODE_KEYS.LEFT_IS_CLEAR:
+                var orientationIndex = (((this.world.karel.orientationIndex - 1) % 4) + 4) % 4;
+                var frontX = this.world.karel.x + orientation[orientationIndex].x;
+                var frontY = this.world.karel.y + orientation[orientationIndex].y;
+                return !this.world.grid[frontY][frontY].w;
+
+            case INTERCODE_KEYS.LEFT_IS_BLOCKED:
+                return !this.evaluateCondition(INTERCODE_KEYS.LEFT_IS_CLEAR);
+
+            case INTERCODE_KEYS.RIGHT_IS_CLEAR:
+                var orientationIndex = (((this.world.karel.orientationIndex + 1) % 4) + 4) % 4;
+                var frontX = this.world.karel.x + orientation[orientationIndex].x;
+                var frontY = this.world.karel.y + orientation[orientationIndex].y;
+                return !this.world.grid[frontY][frontY].w;
+
+            case INTERCODE_KEYS.RIGHT_IS_BLOCKED:
+                return !this.evaluateCondition(INTERCODE_KEYS.RIGHT_IS_CLEAR);
+
+            case INTERCODE_KEYS.NEXT_TO_A_BEEPER:
+                for (var i = this.world.karel.y - 1; i <= this.world.karel.y + 1 ) {
+                    for (var j = this.world.karel.x; j <= this.world.karel.x; j++) {
+                        if (this.world.grid[i].b > 0 && i !== this.world.karel.y && j !== this.world.karel.x) {
+                            return true;
+                        }
+                    }
                 }
-                break;
+                return false;
+
+            case INTERCODE_KEYS.NOT_NEXT_TO_A_BEEPER:
+                return !this.evaluateCondition(INTERCODE_KEYS.NEXT_TO_A_BEEPER);
+
+            case INTERCODE_KEYS.ANY_BEEPERS_IN_BEEPERS_BAG:
+                return (this.world.karel.beepers > 0);
+
+            case INTERCODE_KEYS.NOT_ANY_BEEPERS_IN_BEEPERS_BAG:
+                return (this.world.karel.beepers === 0);
+
+            case INTERCODE_KEYS.FACING_NORTH:
+                return (this.world.karel.orientationIndex === 0);
+
+            case INTERCODE_KEYS.FACING_EAST:
+                return (this.world.karel.orientationIndex === 1);
+
+            case INTERCODE_KEYS.FACING_SOUTH:
+                return (this.world.karel.orientationIndex === 2);
+
+            case INTERCODE_KEYS.FACING_WEST:
+                return (this.world.karel.orientationIndex === 3);
+
+            case INTERCODE_KEYS.NOT_FACING_NORTH:
+                return !this,evaluateCondition(INTERCODE_KEYS.FACING_NORTH);
+
+            case INTERCODE_KEYS.NOT_FACING_EAST:
+                return !this,evaluateCondition(INTERCODE_KEYS.FACING_EAST);
+
+            case INTERCODE_KEYS.NOT_FACING_SOUTH:
+                return !this,evaluateCondition(INTERCODE_KEYS.FACING_SOUTH);
+
+            case INTERCODE_KEYS.NOT_FACING_WEST:
+                return !this,evaluateCondition(INTERCODE_KEYS.FACING_WEST);
         }
     }
 };

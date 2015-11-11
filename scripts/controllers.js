@@ -21,7 +21,7 @@ angular.module('KarelApp.controllers', []).
                         "x": 1,
                         "y": 2,
                         "beepers": 0,
-                        "orientationIndex": 3,
+                        "orientationIndex": 1,
                         "orientation": {
                             x: 1,
                             y: 0
