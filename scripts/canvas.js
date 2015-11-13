@@ -17,6 +17,9 @@ canvas = {
 
         var texture = PIXI.Texture.fromImage('img/link.gif');
 
+        window.addEventListener('resize', this.onResize);
+        this.onResize();
+
         for (var i = 0; i < 10; i++) {
             this.karelSprites[i] = new PIXI.Sprite(texture);
             this.stage.addChild(this.karelSprites[i]);
@@ -57,5 +60,9 @@ canvas = {
 
         // render the container
         canvas.renderer.render(canvas.stage);
+    },
+
+    onResize: function () {
+        canvas.renderer.resize($('#canvas-container').width(), 500);
     }
 }
