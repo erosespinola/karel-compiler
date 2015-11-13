@@ -17,6 +17,8 @@
     "lodash": "~3.10.1",
     "angular": "angularjs#~1.4.7",
     "bootstrap": "~3.3.5",
-    "angularLocalStorage": "ngStorage#~0.3.2"
+    "angularLocalStorage": "ngStorage#~0.3.2",
+    "pixi.js": "~3.0.8",
+    "tween.js": "tweenjs#~16.3.1"
   }
 }

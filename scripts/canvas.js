@@ -1,31 +1,59 @@
-var renderer = new PIXI.WebGLRenderer(800, 600, { backgroundColor : 0x1099bb });
-document.body.appendChild(renderer.view);
+canvas = {
+    stage: null,
+    renderer: null,
+    currentKarels: null,
+    karelSprites: [],
 
-var stage = new PIXI.Container();
+    init: function (world, karel) {
+        this.renderer = new PIXI.WebGLRenderer(
+            800, 
+            600, 
+            { 
+                backgroundColor : 0x1099bb 
+            });
 
-// create a texture from an image path
-var texture = PIXI.Texture.fromImage('img/link.gif');
+        document.body.appendChild(this.renderer.view);
 
-// create a new Sprite using the texture
-var bunny = new PIXI.Sprite(texture);
+        this.stage = new PIXI.Container();
 
-// center the sprite's anchor point
-bunny.anchor.x = 0.5;
-bunny.anchor.y = 0.5;
+        var texture = PIXI.Texture.fromImage('img/link.gif');
 
-// move the sprite to the center of the screen
-bunny.position.x = 200;
-bunny.position.y = 150;
+        for (var i = 0; i < 10; i++) {
+            karelSprites[i] = new PIXI.Sprite(texture);
+            stage.addChild(karelSprites[i]);
+        }
 
-stage.addChild(bunny);
+        currentKarels = [karel];
 
-animate();
+        requestAnimationFrame(animate);
+    },
 
-function animate() {
-    requestAnimationFrame(animate);
+    step: function (karels, speed) {
+        if (karels.constructor !== Array) {
+            karels = [karels];
+        }
 
-    bunny.rotation += 0.1;
+        karels = _.deepCopy(karels);
 
-    // render the container
-    renderer.render(stage);
+        // _.each(karels, function (karel, i) {
+        //     new TWEEN.tween()
+        // });
+
+        currentKarels = karels;
+    },
+
+    draw: function () {
+        _.each(karels, function (karel, i) {
+            karel.position
+        });
+    },
+
+    animate: function (time) {
+        requestAnimationFrame(animate);
+
+        TWEEN.update(time);
+
+        // render the container
+        this.renderer.render(stage);
+    }
 }

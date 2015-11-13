@@ -15,7 +15,10 @@ A Karel compiler based on the following grammar rules:
 <expression> ::= <call function> |
   <if expression> |
   <while expression> |
-  <iterate expression>
+  <iterate expression> |
+  <clone expression>
+
+<clone expression> ::= "clone" "(" <customer function> ")"
 
 <call function> ::= <name of function>()
 
@@ -26,7 +29,8 @@ A Karel compiler based on the following grammar rules:
     "turnoff" |
     "pickbeeper" |
     "turnleft" |
-    "putbeeper"
+    "putbeeper" | 
+    "giveBeeper"
 
 <customer function> ::= <string without spaces>
 
@@ -58,6 +62,7 @@ A Karel compiler based on the following grammar rules:
   | "notFacingSouth"
   | "notFacingEast"
   | "notFacingWest"
+  | "karelInCell"
 
 <composed condition> ::=   <simple condition> [ <or condition> ]
 
