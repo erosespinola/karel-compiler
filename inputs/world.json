@@ -5,7 +5,10 @@
 		"x": 1,
 		"y": 2,
 		"beepers": 0,
-		"orientation": 1
+		"orientation": {
+			x: 0,
+			y: -1
+		}
 	},
 	"grid": [
 		[{"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}],

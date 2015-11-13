@@ -1,8 +1,8 @@
 class program {
-	void move(){
-		iterate(3){
-			turnleft()
-		}
+	void turnright() {
+		turnleft()
+		turnleft()
+		turnleft()
 	}
 
 	program() {
