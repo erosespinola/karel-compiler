@@ -97,10 +97,94 @@ evaluator = {
                     }
                     break;
 
+                case INTERCODE_KEYS.IF:
+                    if (interCode[counter + 1] === "NOT") {
+                        if (!this.evaluateCondition(interCode[counter + 2])){
+                            counter += 5;
+                        } else {
+                            counter += 3;
+                        }
+                    } else if (interCode[counter + 1] === "AND" || interCode[counter + 1] === "OR") {
+                        counter++;
+                    } else {
+                        if (this.evaluateCondition(interCode[counter + 1])) {
+                            counter += 4;
+                        } else {
+                            counter += 2;
+                        }
+                    }
+                    break;
+
+                case INTERCODE_KEYS.AND:
+                    // result = this.evaluateCondition(interCode[counter + 1]) && this.evaluateCondition(interCode[counter + 2]);
+                    var result = false;
+                    if (interCode[counter + 1] === "NOT") {
+                        result = !this.evaluateCondition(interCode[counter + 2]);
+
+                        if (interCode[counter + 3] === "NOT") {
+                            result = result && !this.evaluateCondition(interCode[counter + 4]);
+                            counter = (result) ? counter + 7 : counter + 5;
+
+                        } else {
+                            result = result && this.evaluateCondition(interCode[counter + 3]);
+                            counter = (result) ? counter + 6 : counter + 4;
+                        }
+                    } else {
+                        result = this.evaluateCondition(interCode[counter + 1]);
+
+                        if (interCode[counter + 2] === "NOT") {
+                            result = result && !this.evaluateCondition(interCode[counter + 3]);
+                            counter = (result) ? counter + 6 : counter + 4;
+
+                        } else {
+                            result = result && this.evaluateCondition(interCode[counter + 2]);
+                            counter = (result) ? counter + 5 : counter + 3;
+                        }
+                    }
+                    break;
+
+                case INTERCODE_KEYS.OR:
+                    var conditionals = 0;
+                    var conditionalStack = [];
+
+                    while (conditionals < 2) {
+
+                        if (interCode[++counter] !== "NOT") {
+                            conditionals++;
+                            conditionalStack.push(this.evaluateCondition(interCode[counter]));
+
+                        } else {
+                            conditionalStack.push(interCode[counter]);
+                        }
+                    }
+                    
+                    var tmpStack = [];
+                    var currentElement = null;
+                    
+                    while (conditionalStack > 0) {
+                        currentElement = conditionalStack.pop();
+
+                        if (currentElement === "NOT") {
+                            tmpStack.push(!tmpStack.pop());
+
+                        } else if (currentElement === "OR") {
+                            tmpStack.push(tmpStack.pop() || tmpStack.pop());
+
+                        } else {
+                            tmpStack.push(currentElement);
+                        }
+                    }
+
+                    if (tmpStack.pop()) {
+                        counter += 3;
+                    } else {
+                        counter++;
+                    }
+                    break;
+
                 case INTERCODE_KEYS.TURN_OFF:
                     return;
             }
-
             counter++;
         }
     },
@@ -110,6 +194,9 @@ evaluator = {
                 var frontX = this.world.karel.x + this.world.karel.orientation.x;
                 var frontY = this.world.karel.y + this.world.karel.orientation.y;
                 return !this.world.grid[frontY][frontY].w;
+
+            case INTERCODE_KEYS.FRONT_IS_BLOCKED:
+                return !this.evaluateCondition(INTERCODE_KEYS.FRONT_IS_BLOCKED);
 
             case INTERCODE_KEYS.LEFT_IS_CLEAR:
                 var orientationIndex = (((this.world.karel.orientationIndex - 1) % 4) + 4) % 4;
@@ -130,8 +217,8 @@ evaluator = {
                 return !this.evaluateCondition(INTERCODE_KEYS.RIGHT_IS_CLEAR);
 
             case INTERCODE_KEYS.NEXT_TO_A_BEEPER:
-                for (var i = this.world.karel.y - 1; i <= this.world.karel.y + 1 ) {
-                    for (var j = this.world.karel.x; j <= this.world.karel.x; j++) {
+                for (var i = (this.world.karel.y - 1); i <= (this.world.karel.y + 1); i++ ) {
+                    for (var j = (this.world.karel.x - 1); j <= (this.world.karel.x + 1); j++) {
                         if (this.world.grid[i].b > 0 && i !== this.world.karel.y && j !== this.world.karel.x) {
                             return true;
                         }
