@@ -58,12 +58,16 @@ angular.module('KarelApp.controllers', []).
                         "x": 1,
                         "y": 2,
                         "beepers": 0,
-                        "orientation": 1
+                        "orientationIndex": 3,
+                        "orientation": {
+                            x: 1,
+                            y: 0
+                        }
                     },
                     "grid": [
                         [{"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}],
                         [{"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}, {"w": false, "b": 1}, {"w": false, "b": 0}],
-                        [{"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": false, "b": 0}],
+                        [{"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 1}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": false, "b": 0}],
                         [{"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}],
                         [{"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}],
                         [{"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}]
