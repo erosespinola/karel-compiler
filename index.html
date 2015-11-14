@@ -15,13 +15,14 @@
   <script src="bower_components/tween.js/src/Tween.js"></script>
   <script src="bower_components/ace-builds/src-noconflict/ace.js"></script>
 
+  <script src="scripts/canvas.js"></script>
+
   <script src="scripts/intercode-keys.js"></script>
   <script src="scripts/lexicography.js"></script>
   <script src="scripts/analyzer-helpers.js"></script>
   <script src="scripts/syntax-analyzer.js"></script>
   <script src="scripts/evaluator.js"></script>
   <script src="scripts/mode-karel.js"></script>
-  <script src="scripts/compile.js"></script>
 
   <title>Karel Compiler</title>
   <meta charset="utf-8">
@@ -63,8 +64,8 @@
     </div>
   </div>
 
-  <script src="scripts/canvas.js"></script>
-
+  <script src="scripts/compile.js"></script>
+  
   <script>
     var editor = ace.edit('editor');
     editor.setTheme('ace/theme/monokai');
@@ -75,8 +76,6 @@
     if (previousProgram) {
       editor.getSession().setValue(previousProgram, -1);
     }
-
-    canvas.init();
   </script>
 </body>
 </html>
