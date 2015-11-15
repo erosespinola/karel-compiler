@@ -6,7 +6,10 @@ canvas = {
     tileSize: 32,
     beeperSprites: [],
 
-    linkTexture: PIXI.Texture.fromImage('img/link.gif'),
+    linkNorthTexture: PIXI.Texture.fromImage('img/link_north.png'),
+    linkSouthTexture: PIXI.Texture.fromImage('img/link_south.png'),
+    linkEastTexture: PIXI.Texture.fromImage('img/link_east.png'),
+    linkWestTexture: PIXI.Texture.fromImage('img/link_west.png'),
     grassTexture: PIXI.Texture.fromImage('img/grass.png'),
     beeperTexture: PIXI.Texture.fromImage('img/beeper.png'),
     wallTexture: PIXI.Texture.fromImage('img/wall.png'),
@@ -37,17 +40,17 @@ canvas = {
         requestAnimationFrame(this.animate);
     },
 
-    step: function (karels) {
-        karels = _.deepCopy(karels);
+    // step: function (karels) {
+    //     karels = _.deepCopy(karels);
 
-        _.each(karels, function (karel, i) {
-            this.karelSprites[i].position.x = karels[i].x * this.tileSize;
-            this.karelSprites[i].position.y = karels[i].y * this.tileSize;
-            //new TWEEN.tween()
-        });
+    //     _.each(karels, function (karel, i) {
+    //         canvas.karelSprites[i].position.x = karels[i].x * canvas.tileSize;
+    //         canvas.karelSprites[i].position.y = karels[i].y * canvas.tileSize;
+    //         //new TWEEN.tween()
+    //     });
 
-        this.currentKarels = karels;
-    },
+    //     this.currentKarels = karels;
+    // },
 
     draw: function () {
         _.each(karels, function (karel, i) {
@@ -75,7 +78,7 @@ canvas = {
     drawBeepers: function(world) {
         // REVISIT: Clean draw of all the beepers, optimize?
         _.each(this.beeperSprites, function(sprite) {
-            this.stage.removeChild(sprite);
+            canvas.stage.removeChild(sprite);
         });
 
         for (var i = 0; i < world.rows; i++) {
@@ -112,14 +115,23 @@ canvas = {
     drawKarel: function(karel) {
         // REVISIT: Clean draw of all the karels, optimize?
         _.each(this.karelSprites, function(sprite) {
-            this.stage.removeChild(sprite);
+            canvas.stage.removeChild(sprite);
         });
 
         _.each(karel, function(k) {
-            var sprite = new PIXI.Sprite(canvas.linkTexture);
+            var sprite;
 
-            sprite.position.x = k.x;
-            sprite.position.y = k.y;
+            if (_.isMatch(k.orientation, {x: 0, y: -1}))
+                sprite = new PIXI.Sprite(canvas.linkNorthTexture);
+            else if (_.isMatch(k.orientation, {x: 1, y: 0}))
+                sprite = new PIXI.Sprite(canvas.linkEastTexture);
+            else if (_.isMatch(k.orientation, {x: 0, y: 1}))
+                sprite = new PIXI.Sprite(canvas.linkSouthTexture);
+            else if (_.isMatch(k.orientation, {x: -1, y: 0}))
+                sprite = new PIXI.Sprite(canvas.linkWestTexture);
+
+            sprite.position.x = k.x * canvas.tileSize;
+            sprite.position.y = k.y * canvas.tileSize;
 
             canvas.karelSprites.push(sprite);
             canvas.stage.addChild(sprite);

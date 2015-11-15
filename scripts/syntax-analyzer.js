@@ -230,8 +230,10 @@ var ifExpression = function() {
     var x_pos, y_pos;
 
     if (helper.require('if')) {
+        interCode[interCodeIndex++] = INTERCODE_KEYS.IF;
         if (helper.require('(')) {
             conditional();
+
             if (helper.require(')')) {
                 if (helper.require('{')) {
                     interCode[interCodeIndex++] = INTERCODE_KEYS.JMP;
@@ -402,7 +404,7 @@ var simpleConditional = function() {
 
     if (helper.ifRead('frontIsClear')) interCode[interCodeIndex++] = INTERCODE_KEYS.FRONT_IS_CLEAR;
     else if (helper.ifRead('frontIsBlocked')) interCode[interCodeIndex++] = INTERCODE_KEYS.FRONT_IS_BLOCKED;
-    else if (helper.ifRead('leftIsClear')) interCode[interCodeIndex++] = INTERCODE_KEYS.leftIsClear;
+    else if (helper.ifRead('leftIsClear')) interCode[interCodeIndex++] = INTERCODE_KEYS.LEFT_IS_CLEAR;
     else if (helper.ifRead('leftIsBlocked')) interCode[interCodeIndex++] = INTERCODE_KEYS.LEFT_IS_BLOCKED;
     else if (helper.ifRead('rightIsClear')) interCode[interCodeIndex++] = INTERCODE_KEYS.RIGHT_IS_CLEAR;
     else if (helper.ifRead('rightIsBlocked')) interCode[interCodeIndex++] = INTERCODE_KEYS.RIGHT_IS_BLOCKED;
