@@ -148,6 +148,6 @@ canvas = {
     },
 
     onResize: function () {
-        canvas.renderer.resize($('#canvas-container').width(), 500);
+        canvas.renderer.resize($('#canvas-container').width(), 450);
     }
 }

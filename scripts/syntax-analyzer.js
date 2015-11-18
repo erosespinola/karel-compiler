@@ -8,7 +8,7 @@ syntax = {
         interCodeIndex++;
         program();
         if (interCode[interCode.length - 1] != INTERCODE_KEYS.TURN_OFF) {
-            throw new Error(errors.missing_turnoff);    
+            throwError(errors.missing_turnoff);    
         }
         /*return _.map(interCode, function(d, i) {
             return [i, d];
@@ -78,13 +78,13 @@ var program = function() {
             functionsDeclarations();
             mainFunction();
             if (!helper.require('}')) {
-                throw new Error(errors.missing_right_brace);        
+                throwError(errors.missing_right_brace);        
             } 
         } else {
-            throw new Error(errors.missing_left_brace);    
+            throwError(errors.missing_left_brace);    
         }
     } else {
-        throw new Error(errors.missing_class_program);
+        throwError(errors.missing_class_program);
     }
 };
 
@@ -94,13 +94,13 @@ var mainFunction = function() {
             interCode[1] = interCodeIndex;
             body();
             if (!helper.require('}')) {
-                throw new Error(errors.missing_right_brace);        
+                throwError(errors.missing_right_brace);        
             }
         } else {
-            throw new Error(errors.missing_left_brace);    
+            throwError(errors.missing_left_brace);    
         }
     } else {
-        throw new Error(errors.missing_program);
+        throwError(errors.missing_program);
     }
 };
 
@@ -120,23 +120,23 @@ var functionDeclaration = function() {
                 if (helper.require('}')) {
                     interCode[interCodeIndex++] = INTERCODE_KEYS.RET;
                 } else {
-                    throw new Error(errors.missing_right_brace);            
+                    throwError(errors.missing_right_brace);            
                 }
             } else {
-                throw new Error(errors.missing_left_brace);        
+                throwError(errors.missing_left_brace);        
             }
         } else {
-            throw new Error(errors.bad_function_declaration_parenthesis);    
+            throwError(errors.bad_function_declaration_parenthesis);    
         }
     } else {
-        throw new Error(errors.bad_function_declaration_void);
+        throwError(errors.bad_function_declaration_void);
     }
 };
 
 var nameFunction = function() {
     var name = helper.fetchToken();
     if (reservedKeywords.hasOwnProperty(name)) {
-        throw new Error(errors.bad_function_declaration_reserved + name);
+        throwError(errors.bad_function_declaration_reserved + name);
     } else {
         helper.addNewFunction(name, interCodeIndex);
     }
@@ -146,10 +146,10 @@ var callFunction = function() {
     nameOfFunction();
     if (helper.require('(')) {
         if (!helper.require(')')) {
-            throw new Error(errors.bad_function_call_parenthesis);    
+            throwError(errors.bad_function_call_parenthesis);    
         }    
     } else {
-        throw new Error(errors.bad_function_call_parenthesis);
+        throwError(errors.bad_function_call_parenthesis);
     }  
 };
 
@@ -188,7 +188,7 @@ var customerFunction = function () {
         interCode[interCodeIndex++] = INTERCODE_KEYS.CALL;
         interCode[interCodeIndex++] = posFunctionInCodeInter;
     } else {
-        throw new Error(errors.not_found_function + nameFunction);
+        throwError(errors.not_found_function + nameFunction);
     }
 };
 
@@ -243,7 +243,7 @@ var ifExpression = function() {
                     body();
 
                     if (!helper.require('}')) {
-                        throw new Error(errors.missing_right_brace);                
+                        throwError(errors.missing_right_brace);                
                     }
 
                     if (helper.read('else')) {
@@ -260,19 +260,19 @@ var ifExpression = function() {
                     }
                 }
                 else {
-                    throw new Error(errors.missing_left_brace);            
+                    throwError(errors.missing_left_brace);            
                 }
             }
             else {
-                throw new Error(errors.missing_right_parenthesis);        
+                throwError(errors.missing_right_parenthesis);        
             }
         }
         else {
-            throw new Error(errors.missing_left_parenthesis);    
+            throwError(errors.missing_left_parenthesis);    
         }
     }
     else {
-        throw new Error(errors.missing_if_expression);
+        throwError(errors.missing_if_expression);
     }
 };
 
@@ -284,13 +284,13 @@ var elseIf = function() {
             body();
             if (!helper.require('}'))
             {
-                throw new Error(errors.missing_right_brace);        
+                throwError(errors.missing_right_brace);        
             }
         } else {
-            throw new Error(errors.missing_left_brace);    
+            throwError(errors.missing_left_brace);    
         }
     } else {
-        throw new Error(errors.missing_else_expression);
+        throwError(errors.missing_else_expression);
     }
 };
 
@@ -313,19 +313,19 @@ var whileExpression = function() {
                         interCode[interCodeIndex++] = start;
                         interCode[end_position] = interCodeIndex;
                     } else {
-                        throw new Error(errors.missing_right_brace);                
+                        throwError(errors.missing_right_brace);                
                     }
                 } else {
-                    throw new Error(errors.missing_left_brace);            
+                    throwError(errors.missing_left_brace);            
                 }
             } else {
-                throw new Error(errors.missing_right_parenthesis);        
+                throwError(errors.missing_right_parenthesis);        
             }
         } else {
-            throw new Error(errors.missing_left_parenthesis);    
+            throwError(errors.missing_left_parenthesis);    
         }
     } else {
-        throw new Error(errors.missing_while_expression);
+        throwError(errors.missing_while_expression);
     }
 };
 
@@ -355,25 +355,30 @@ var iterateExpression = function() {
                         interCode[interCodeIndex++] = iterateCounter;
                         interCode[interCodeIndex++] = start;
                     } else {
-                        throw new Error(errors.missing_right_brace);                
+                        throwError(errors.missing_right_brace);                
                     }
                 } else {
-                    throw new Error(errors.missing_left_brace);            
+                    throwError(errors.missing_left_brace);            
                 }
             } else {
-                throw new Error(errors.missing_right_parenthesis);        
+                throwError(errors.missing_right_parenthesis);        
             }
         } else {
-            throw new Error(errors.missing_left_parenthesis);    
+            throwError(errors.missing_left_parenthesis);    
         }
     } else {
-        throw new Error(errors.missing_iterate_expression);
+        throwError(errors.missing_iterate_expression);
     }
 };
 
 var number = function() {
 
-}
+};
+
+var throwError = function(error) {
+    $("#errors").text("Error: " + error + " at line " + 0);
+    throw new Error(error);
+};
 
 /* Conditionals */
 // var isSimpleConditional = function() {

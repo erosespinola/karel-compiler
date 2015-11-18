@@ -15,7 +15,7 @@
     right: 0;
     bottom: 0;
     left: 0;
-    height: 500px;
+    height: 450px;
 }
 
 #canvas-container {
@@ -24,11 +24,18 @@
 }
 
 .beeper {
-    -webkit-text-stroke-width: 1px;
-    -webkit-text-stroke-color: black;
     color: rgb(166, 250, 57);
 }
 
 .beeper-badge {
     margin-bottom: 8px;
+}
+
+.main-logo {
+    font-size: 1.4rem !important;
+}
+
+#errors {
+    background-color: #dedede;
+    padding: 3px 3px 3px 10px;
 }
