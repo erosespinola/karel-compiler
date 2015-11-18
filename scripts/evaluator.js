@@ -271,7 +271,7 @@ evaluator = {
         if (execution.counter < interCode.length) {
             setTimeout(function() {
                 evaluator.evaluateStep(execution, world, karel);
-            }, 1000);
+            }, 100);
         }
     }
 };

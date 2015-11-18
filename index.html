@@ -53,7 +53,7 @@
           <input type="button" value="Compile &amp; Run" class="btn btn-success btn-compile" onclick="compile(editor)">
         </div>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-5">
         <div class="form-group">
           <h4><i class="fa fa-terminal"></i> Output</h4>
           <div id="canvas-container">
@@ -61,10 +61,14 @@
           </div>
         </div>
       </div>
+      <div class="col-md-1">
+        <div class="form-group" id="beepers-column"></div>     
+      </div>
     </div>
   </div>
 
   <script src="scripts/compile.js"></script>
+  <script src="scripts/beepers.js"></script>
   
   <script>
     var editor = ace.edit('editor');
@@ -76,6 +80,8 @@
     if (previousProgram) {
       editor.getSession().setValue(previousProgram, -1);
     }
+
+    drawBeepers(4);
   </script>
 </body>
 </html>
