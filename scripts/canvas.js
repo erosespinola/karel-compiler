@@ -24,6 +24,10 @@ canvas = {
             });
 
         this.stage = new PIXI.Container();
+        // this.stage.setInteractive(true);
+        // this.stage.on('click', function(a) {
+        //     console.log('asadas', a);
+        // });
 
         window.addEventListener('resize', this.onResize);
         this.onResize();
@@ -51,12 +55,6 @@ canvas = {
 
     //     this.currentKarels = karels;
     // },
-
-    draw: function () {
-        _.each(karels, function (karel, i) {
-            // karel.position
-        });
-    },
 
     drawWorld: function(world, karel) {
         for (var i = 0; i < world.rows; i++) {

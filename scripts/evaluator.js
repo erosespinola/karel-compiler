@@ -26,6 +26,7 @@ var printWorld = function(world, karel){
 }
 
 evaluator = {
+    speed: 500,
     evaluate: function(interCode, world) {
         console.log(interCode);
 
@@ -37,7 +38,14 @@ evaluator = {
             counters: []
         };
 
-        this.evaluateStep(execution, world, world.karel[0]);
+        karelExecutions = [execution];
+
+        this.evaluateStep(execution, world, world.karel[0], function () {
+
+            _.each(karelExecutions, function (ex) {
+
+            });
+        });
     },
     evaluateCondition: function(execution, conditional, world, karel){
         switch (conditional) {
@@ -47,7 +55,7 @@ evaluator = {
                 return !world.grid[frontY][frontY].w;
 
             case INTERCODE_KEYS.FRONT_IS_BLOCKED:
-                return !this.evaluateCondition(execution.counter, INTERCODE_KEYS.FRONT_IS_BLOCKED, world, karel);
+                return !this.evaluateCondition(execution, INTERCODE_KEYS.FRONT_IS_BLOCKED, world, karel);
 
             case INTERCODE_KEYS.LEFT_IS_CLEAR:
                 var orientationIndex = (((karel.orientationIndex - 1) % 4) + 4) % 4;
@@ -56,7 +64,7 @@ evaluator = {
                 return !world.grid[frontY][frontY].w;
 
             case INTERCODE_KEYS.LEFT_IS_BLOCKED:
-                return !this.evaluateCondition(execution.counter, INTERCODE_KEYS.LEFT_IS_CLEAR, world, karel);
+                return !this.evaluateCondition(execution, INTERCODE_KEYS.LEFT_IS_CLEAR, world, karel);
 
             case INTERCODE_KEYS.RIGHT_IS_CLEAR:
                 var orientationIndex = (((karel.orientationIndex + 1) % 4) + 4) % 4;
@@ -65,7 +73,7 @@ evaluator = {
                 return !world.grid[frontY][frontY].w;
 
             case INTERCODE_KEYS.RIGHT_IS_BLOCKED:
-                return !this.evaluateCondition(execution.counter, INTERCODE_KEYS.RIGHT_IS_CLEAR, world, karel);
+                return !this.evaluateCondition(execution, INTERCODE_KEYS.RIGHT_IS_CLEAR, world, karel);
 
             case INTERCODE_KEYS.NEXT_TO_A_BEEPER:
                 for (var i = (karel.y - 1); i <= (karel.y + 1); i++ ) {
@@ -78,7 +86,7 @@ evaluator = {
                 return false;
 
             case INTERCODE_KEYS.NOT_NEXT_TO_A_BEEPER:
-                return !this.evaluateCondition(execution.counter, INTERCODE_KEYS.NEXT_TO_A_BEEPER, world, karel);
+                return !this.evaluateCondition(execution, INTERCODE_KEYS.NEXT_TO_A_BEEPER, world, karel);
 
             case INTERCODE_KEYS.ANY_BEEPERS_IN_BEEPERS_BAG:
                 return (karel.beepers > 0);
@@ -99,16 +107,16 @@ evaluator = {
                 return (karel.orientationIndex === 3);
 
             case INTERCODE_KEYS.NOT_FACING_NORTH:
-                return !this,evaluateCondition(execution.counter, INTERCODE_KEYS.FACING_NORTH, world, karel);
+                return !this,evaluateCondition(execution, INTERCODE_KEYS.FACING_NORTH, world, karel);
 
             case INTERCODE_KEYS.NOT_FACING_EAST:
-                return !this,evaluateCondition(execution.counter, INTERCODE_KEYS.FACING_EAST, world, karel);
+                return !this,evaluateCondition(execution, INTERCODE_KEYS.FACING_EAST, world, karel);
 
             case INTERCODE_KEYS.NOT_FACING_SOUTH:
-                return !this,evaluateCondition(execution.counter, INTERCODE_KEYS.FACING_SOUTH, world, karel);
+                return !this,evaluateCondition(execution, INTERCODE_KEYS.FACING_SOUTH, world, karel);
 
             case INTERCODE_KEYS.NOT_FACING_WEST:
-                return !this,evaluateCondition(execution.counter, INTERCODE_KEYS.FACING_WEST, world, karel);
+                return !this,evaluateCondition(execution, INTERCODE_KEYS.FACING_WEST, world, karel);
         }
     },
     evaluateStep: function(execution, world, karel) {
@@ -181,7 +189,7 @@ evaluator = {
 
                 case INTERCODE_KEYS.IF:
                     if (interCode[execution.counter + 1] === 'NOT') {
-                        if (!this.evaluateCondition(execution.counter, interCode[execution.counter + 2], world, karel)){
+                        if (!this.evaluateCondition(execution, interCode[execution.counter + 2], world, karel)){
                             execution.counter += 5;
                         } else {
                             execution.counter += 3;
@@ -189,7 +197,7 @@ evaluator = {
                     } else if (interCode[execution.counter + 1] === 'AND' || interCode[execution.counter + 1] === 'OR') {
                         execution.counter++;
                     } else {
-                        if (this.evaluateCondition(execution.counter, interCode[execution.counter + 1], world, karel)) {
+                        if (this.evaluateCondition(execution, interCode[execution.counter + 1], world, karel)) {
                             execution.counter += 4;
                         } else {
                             execution.counter += 2;
@@ -198,28 +206,28 @@ evaluator = {
                     break;
 
                 case INTERCODE_KEYS.AND:
-                    // result = this.evaluateCondition(execution.counter, interCode[execution.counter + 1]) && this.evaluateCondition(execution.counter, interCode[execution.counter + 2]);
+                    // result = this.evaluateCondition(execution, interCode[execution.counter + 1]) && this.evaluateCondition(execution, interCode[execution.counter + 2]);
                     var result = false;
                     if (interCode[execution.counter + 1] === 'NOT') {
-                        result = !this.evaluateCondition(execution.counter, interCode[execution.counter + 2], world, karel);
+                        result = !this.evaluateCondition(execution, interCode[execution.counter + 2], world, karel);
 
                         if (interCode[execution.counter + 3] === 'NOT') {
-                            result = result && !this.evaluateCondition(execution.counter, interCode[execution.counter + 4], world, karel);
+                            result = result && !this.evaluateCondition(execution, interCode[execution.counter + 4], world, karel);
                             execution.counter = (result) ? execution.counter + 7 : execution.counter + 5;
 
                         } else {
-                            result = result && this.evaluateCondition(execution.counter, interCode[execution.counter + 3], world, karel);
+                            result = result && this.evaluateCondition(execution, interCode[execution.counter + 3], world, karel);
                             execution.counter = (result) ? execution.counter + 6 : execution.counter + 4;
                         }
                     } else {
-                        result = this.evaluateCondition(execution.counter, interCode[execution.counter + 1], world, karel);
+                        result = this.evaluateCondition(execution, interCode[execution.counter + 1], world, karel);
 
                         if (interCode[execution.counter + 2] === 'NOT') {
-                            result = result && !this.evaluateCondition(execution.counter, interCode[execution.counter + 3], world, karel);
+                            result = result && !this.evaluateCondition(execution, interCode[execution.counter + 3], world, karel);
                             execution.counter = (result) ? execution.counter + 6 : execution.counter + 4;
 
                         } else {
-                            result = result && this.evaluateCondition(execution.counter, interCode[execution.counter + 2], world, karel);
+                            result = result && this.evaluateCondition(execution, interCode[execution.counter + 2], world, karel);
                             execution.counter = (result) ? execution.counter + 5 : execution.counter + 3;
                         }
                     }
@@ -233,7 +241,7 @@ evaluator = {
 
                         if (interCode[++execution.counter] !== 'NOT') {
                             conditionals++;
-                            conditionalStack.push(this.evaluateCondition(execution.counter, interCode[execution.counter], world, karel));
+                            conditionalStack.push(this.evaluateCondition(execution, interCode[execution.counter], world, karel));
 
                         } else {
                             conditionalStack.push(interCode[execution.counter]);
@@ -278,7 +286,7 @@ evaluator = {
         if (execution.counter < interCode.length) {
             setTimeout(function() {
                 evaluator.evaluateStep(execution, world, karel);
-            }, 1000);
+            }, this.speed);
         }
     }
 };
