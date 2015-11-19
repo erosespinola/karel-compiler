@@ -5,6 +5,12 @@ const orientation = [
     {x: -1, y: 0}
 ];
 
+var speed = 500;
+
+var changeSpeed = function(range) {
+    speed = 1100 - range * 200;
+}
+
 var printWorld = function(world, karel){
     console.log(karel.beepers, karel.orientation.x, karel.orientation.y);
 
@@ -279,7 +285,11 @@ evaluator = {
         if (execution.counter < interCode.length) {
             setTimeout(function() {
                 evaluator.evaluateStep(execution, world, karel);
+<<<<<<< HEAD
             }, this.speed);
+=======
+            }, speed);
+>>>>>>> 4d958b340a687248fa51ca6dfa8c1bddb47fbb1c
         }
     }
 };

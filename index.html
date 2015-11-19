@@ -5,12 +5,11 @@
 
   <link href="style/style.css" rel="stylesheet" type="text/css">
   
-  <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+  <link href="bower_components/materialize/bin/materialize.css" rel="stylesheet" type="text/css">
   <link href="bower_components/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css">
 
   <script src="bower_components/lodash/lodash.min.js"></script>
   <script src="bower_components/jquery/dist/jquery.min.js"></script>
-  <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
   <script src="bower_components/pixi.js/bin/pixi.min.js"></script>
   <script src="bower_components/tween.js/src/Tween.js"></script>
   <script src="bower_components/ace-builds/src-noconflict/ace.js"></script>
@@ -29,41 +28,52 @@
 </head>
 <!-- <body ng-controller="KarelControllers"> -->
 <body>
-  <div class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
-      <div class="navbar-header">
+  <nav class="teal lighten-1">
+    <div class="nav-wrapper">
+      <div class="row">
+        <div class="col s12 l12 m12">
+          <a href="#" class="brand-logo main-logo">Karel Compiler</a>
+        </div>
       </div>
-      <div class="collapse navbar-collapse">
-        <ul class="nav navbar-nav">
-          <li class="active"><a href="#"><i class="fa fa-code"></i> Karel Compiler</a></li>
-        </ul>
-      </div><!--/.nav-collapse -->
     </div>
-  </div>
+  </nav>
 
   <div class="container page-wrapper">
     <div class="row">
-      <div class="col-md-6">
+
+      <div class="col s12 l6">
         <div class="form-group">
-          <h4><i class="fa fa-code"></i> Editor</h4>
-          <!-- <textarea id="textarea" class="form-control" rows="5" ng-model="program"></textarea> -->
+          <h5><i class="fa fa-code"></i> Editor</h5>
           <div id="editor"></div>
+<<<<<<< HEAD
           <br/>
           <!-- <input type="button" value="Compile &amp; Run" class="btn btn-success btn-compile" ng-click="compile()"> -->
           <a class="btn btn-success btn-compile" onclick="compile(editor)">Compile &amp; Run</a>
+=======
+          <pre id="errors">Ready</pre>
+          <input type="button" value="Run" class="btn btn-success btn-compile" onclick="compile(editor)">
+>>>>>>> 4d958b340a687248fa51ca6dfa8c1bddb47fbb1c
         </div>
       </div>
-      <div class="col-md-5">
+
+      <div class="col s11 l5">
         <div class="form-group">
-          <h4><i class="fa fa-terminal"></i> Output</h4>
+          <h5><i class="fa fa-terminal"></i> Output</h5>
           <div id="canvas-container">
             <canvas id="canvas"></canvas>
           </div>
         </div>
+        <form action="#">
+          <p class="range-field"> Animation speed: 
+            <input type="range" id="speed" min="1" max="5" onchange="changeSpeed(this.value)" />
+          </p>
+        </form>
       </div>
-      <div class="col-md-1">
+
+      <div class="col s1 l1">
         <div class="form-group" id="beepers-column"></div>     
       </div>
+
     </div>
   </div>
 
@@ -81,7 +91,7 @@
       editor.getSession().setValue(previousProgram, -1);
     }
 
-    drawBeepers(4);
+    drawBeepers(1);
   </script>
 </body>
 </html>
