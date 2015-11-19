@@ -26,7 +26,7 @@ var printWorld = function(world, karel){
 }
 
 evaluator = {
-    speed: 500,
+    speed: 250,
     evaluate: function(interCode, world) {
         console.log(interCode);
 
@@ -47,21 +47,21 @@ evaluator = {
             });
         });
     },
-    evaluateCondition: function(execution, conditional, world, karel){
+        evaluateCondition: function(execution, conditional, world, karel){
         switch (conditional) {
             case INTERCODE_KEYS.FRONT_IS_CLEAR:
                 var frontX = karel.x + karel.orientation.x;
                 var frontY = karel.y + karel.orientation.y;
-                return !world.grid[frontY][frontY].w;
+                return !world.grid[frontY][frontX].w;
 
             case INTERCODE_KEYS.FRONT_IS_BLOCKED:
-                return !this.evaluateCondition(execution, INTERCODE_KEYS.FRONT_IS_BLOCKED, world, karel);
+                return !this.evaluateCondition(execution, INTERCODE_KEYS.FRONT_IS_CLEAR, world, karel);
 
             case INTERCODE_KEYS.LEFT_IS_CLEAR:
                 var orientationIndex = (((karel.orientationIndex - 1) % 4) + 4) % 4;
                 var frontX = karel.x + orientation[orientationIndex].x;
                 var frontY = karel.y + orientation[orientationIndex].y;
-                return !world.grid[frontY][frontY].w;
+                return !world.grid[frontY][frontX].w;
 
             case INTERCODE_KEYS.LEFT_IS_BLOCKED:
                 return !this.evaluateCondition(execution, INTERCODE_KEYS.LEFT_IS_CLEAR, world, karel);
@@ -70,28 +70,21 @@ evaluator = {
                 var orientationIndex = (((karel.orientationIndex + 1) % 4) + 4) % 4;
                 var frontX = karel.x + orientation[orientationIndex].x;
                 var frontY = karel.y + orientation[orientationIndex].y;
-                return !world.grid[frontY][frontY].w;
+                return !world.grid[frontY][frontX].w;
 
             case INTERCODE_KEYS.RIGHT_IS_BLOCKED:
                 return !this.evaluateCondition(execution, INTERCODE_KEYS.RIGHT_IS_CLEAR, world, karel);
 
             case INTERCODE_KEYS.NEXT_TO_A_BEEPER:
-                for (var i = (karel.y - 1); i <= (karel.y + 1); i++ ) {
-                    for (var j = (karel.x - 1); j <= (karel.x + 1); j++) {
-                        if (world.grid[i].b > 0 && i !== karel.y && j !== karel.x) {
-                            return true;
-                        }
-                    }
-                }
-                return false;
+                return (world.grid[karel.y][karel.x].b > 0);
 
             case INTERCODE_KEYS.NOT_NEXT_TO_A_BEEPER:
                 return !this.evaluateCondition(execution, INTERCODE_KEYS.NEXT_TO_A_BEEPER, world, karel);
 
-            case INTERCODE_KEYS.ANY_BEEPERS_IN_BEEPERS_BAG:
+            case INTERCODE_KEYS.ANY_BEEPERS_IN_BEEPER_BAG:
                 return (karel.beepers > 0);
 
-            case INTERCODE_KEYS.NOT_ANY_BEEPERS_IN_BEEPERS_BAG:
+            case INTERCODE_KEYS.NOT_ANY_BEEPERS_IN_BEEPER_BAG:
                 return (karel.beepers === 0);
 
             case INTERCODE_KEYS.FACING_NORTH:
@@ -190,23 +183,23 @@ evaluator = {
                 case INTERCODE_KEYS.IF:
                     if (interCode[execution.counter + 1] === 'NOT') {
                         if (!this.evaluateCondition(execution, interCode[execution.counter + 2], world, karel)){
-                            execution.counter += 5;
+                            execution.counter += 4;
                         } else {
-                            execution.counter += 3;
+                            execution.counter += 2;
                         }
                     } else if (interCode[execution.counter + 1] === 'AND' || interCode[execution.counter + 1] === 'OR') {
                         execution.counter++;
                     } else {
                         if (this.evaluateCondition(execution, interCode[execution.counter + 1], world, karel)) {
-                            execution.counter += 4;
+                            execution.counter += 3;
                         } else {
-                            execution.counter += 2;
+                            execution.counter += 1;
                         }
                     }
                     break;
 
                 case INTERCODE_KEYS.AND:
-                    // result = this.evaluateCondition(execution, interCode[execution.counter + 1]) && this.evaluateCondition(execution, interCode[execution.counter + 2]);
+                    // result = this.evaluateCondition(execution.counter, interCode[execution.counter + 1]) && this.evaluateCondition(execution.counter, interCode[execution.counter + 2]);
                     var result = false;
                     if (interCode[execution.counter + 1] === 'NOT') {
                         result = !this.evaluateCondition(execution, interCode[execution.counter + 2], world, karel);
