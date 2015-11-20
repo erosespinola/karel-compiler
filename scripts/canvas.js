@@ -303,10 +303,10 @@ canvas = {
     },
 
     turnoffKarel: function (id) {
-        // if (this.karelSprites[id]) {
-        //     this.stage.removeChild(this.karelSprites[id]);
-        //     delete this.karelSprites[id];
-        // }
+        if (id !== 0 && this.karelSprites[id]) {
+            this.stage.removeChild(this.karelSprites[id]);
+            delete this.karelSprites[id];
+        }
     },
 
     animate: function (time) {
