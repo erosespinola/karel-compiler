@@ -62,7 +62,7 @@ var karelHighlightRules = function(options) {
         "keyword": "class",
         "storage.type": "",
         "constant.language": "void",
-        "support.function": "program|if|else|iterate|while|move|pickbeeper|turnleft|putbeeper|turnoff",
+        "support.function": "program|if|else|clone|iterate|while|move|pickbeeper|turnleft|putbeeper|turnoff",
         "constant.language.boolean": "frontIsBlocked|frontIsClear|leftIsClear|leftIsBlocked|rightIsClear|rightIsBlocked|nextToABeeper|notNextToABeeper|anyBeepersInBeeperBag|noBeepersInBeeperBag|facingNorth|facingSouth|facingEast|facingWest|notFacingNorth|notFacingSouth|notFacingEast|notFacingWest"
     }, "identifier");
     
