@@ -40,7 +40,9 @@ var printWorld = function(world, karel){
 
 evaluator = {
     executions: null,
+    idCount: 0,
     evaluate: function(interCode, world) {
+        this.idCount = 0;
         console.log(interCode);
 
         world = _.cloneDeep(world);
@@ -282,6 +284,25 @@ evaluator = {
                         execution.counter += 2;
                     }
                     
+                    break;
+                case INTERCODE_KEYS.CLONE:
+                    this.executions.push({
+                        counter: interCode[execution.counter + 1],
+                        callStack: [INTERCODE_KEYS.length - 1],
+                        counters: [],
+                        karel: {
+                            "x": karel.x,
+                            "y": karel.y,
+                            "id": ++this.idCount,
+                            "beepers": karel.beepers,
+                            "orientationIndex": karel.orientationIndex,
+                            "orientation": {
+                                x: karel.orientation.x,
+                                y: karel.orientation.y
+                            }
+                        }
+                    });
+                    execution.counter++;
                     break;
 
                 case INTERCODE_KEYS.TURN_OFF:
