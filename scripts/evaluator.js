@@ -67,6 +67,7 @@ evaluator = {
             if (!karelRunning) {
                 _.each(execution.karel.children, function (child) {
                     child.counter = intercode.length;
+                    canvas.turnoffKarel(child.karel.id);
                 });
             }
         }, this);
@@ -312,7 +313,9 @@ evaluator = {
                     karel.children.push(tmpKarel);
 
                     execution.counter++;
-                    drawBeepers(this.executions.length);
+                    drawBeepers(_.map(this.executions, function(obj) {
+                        return obj.karel;
+                    }));
                     break;
 
                 case INTERCODE_KEYS.TURN_OFF:

@@ -1,9 +1,9 @@
 canvas = {
     stage: null,
     renderer: null,
-    karelSprites: [],
+    karelSprites: {},
     tileSize: 32,
-    karelColors: 6,
+    karelColors: 8,
     currentBeepers: {},
 
     worldContainer: null,
@@ -12,8 +12,6 @@ canvas = {
     karelFrames: [],
 
     grassTexture: null,
-    miscTexture1: null,
-    miscTexture2: null,
     beeperTexture: null,
     wallTexture: null,
 
@@ -51,15 +49,13 @@ canvas = {
             .add('player4', 'img/player4.png')
             .add('player5', 'img/player5.png')
             .add('player6', 'img/player6.png')
+            .add('player7', 'img/player7.png')
+            .add('player8', 'img/player8.png')
             .add('grass', 'img/grass.png')
-            .add('misc1', 'img/misc1.png')
-            .add('misc2', 'img/misc2.png')
             .add('beeper', 'img/beeper.png')
             .add('wall', 'img/wall.png')
             .load(function (loader, resources) {
                 canvas.grassTexture = resources['grass'].texture;
-                canvas.miscTexture1 = resources['misc1'].texture;
-                canvas.miscTexture2 = resources['misc2'].texture;
                 canvas.beeperTexture = resources['beeper'].texture;
                 canvas.wallTexture = resources['wall'].texture;
 
@@ -69,6 +65,8 @@ canvas = {
                 canvas.karelFrames.push(getFramesFromSpriteSheet(resources['player4'].texture, 32, 32));
                 canvas.karelFrames.push(getFramesFromSpriteSheet(resources['player5'].texture, 32, 32));
                 canvas.karelFrames.push(getFramesFromSpriteSheet(resources['player6'].texture, 32, 32));
+                canvas.karelFrames.push(getFramesFromSpriteSheet(resources['player7'].texture, 32, 32));
+                canvas.karelFrames.push(getFramesFromSpriteSheet(resources['player8'].texture, 32, 32));
 
                 requestAnimationFrame(canvas.animate);
 
@@ -219,19 +217,24 @@ canvas = {
     },
 
     drawKarel: function(karel, skipAnimation) {
-        _.each(karel, function(k, i) {
+        _.each(karel, function(k) {
+            var id = k.id;
+
             var new_x = k.x * this.tileSize,
                 new_y = k.y * this.tileSize;
 
             if (!k.added) {
-                this.karelSprites[i] = new PlayerSprite(this.karelFrames[i % this.karelColors]);
-                this.karelSprites[i].position.x = new_x;
-                this.karelSprites[i].position.y = new_y;
-                this.stage.addChild(this.karelSprites[i]);
+                this.karelSprites[id] = new PlayerSprite(this.karelFrames[id % this.karelColors]);
+                this.karelSprites[id].position.x = new_x;
+                this.karelSprites[id].position.y = new_y;
+                this.stage.addChild(this.karelSprites[id]);
                 k.added = true;
             }
 
-            var sprite = this.karelSprites[i];
+            var sprite = this.karelSprites[id];
+
+            // Sprite has been destroyed already
+            if (!sprite) return;
 
             sprite.animationSpeed = 1.0 / speed * 100;
 
@@ -252,7 +255,7 @@ canvas = {
                         sprite.gotoAndStop(0);
                     else if (_.isMatch(k.orientation, {x: -1, y: 0}))
                         sprite.gotoAndStop(16);
-                    
+
                     sprite.onComplete = null;
                 };
             }
@@ -297,6 +300,13 @@ canvas = {
                     sprite.gotoAndStop(16);
             }
         }, this);
+    },
+
+    turnoffKarel: function (id) {
+        if (id !== 0 && this.karelSprites[id]) {
+            this.stage.removeChild(this.karelSprites[id]);
+            delete this.karelSprites[id];
+        }
     },
 
     animate: function (time) {

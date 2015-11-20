@@ -68,7 +68,7 @@ canvas.init(function () {
     canvas.drawWorld(world, world.karel);
 });
 
-drawBeepers(1);
+drawBeepers(world.karel);
 
 var reset = function() {
     canvas.reset(world, world.karel);
