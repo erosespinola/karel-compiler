@@ -303,6 +303,7 @@ evaluator = {
                         }
                     });
                     execution.counter++;
+                    drawBeepers(this.executions.length);
                     break;
 
                 case INTERCODE_KEYS.TURN_OFF:

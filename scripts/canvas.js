@@ -220,8 +220,13 @@ canvas = {
 
     drawKarel: function(karel, skipAnimation) {
         _.each(karel, function(k, i) {
+            var new_x = k.x * this.tileSize,
+                new_y = k.y * this.tileSize;
+
             if (!k.added) {
                 this.karelSprites[i] = new PlayerSprite(this.karelFrames[i % this.karelColors]);
+                this.karelSprites[i].position.x = new_x;
+                this.karelSprites[i].position.y = new_y;
                 this.stage.addChild(this.karelSprites[i]);
                 k.added = true;
             }
@@ -229,9 +234,6 @@ canvas = {
             var sprite = this.karelSprites[i];
 
             sprite.animationSpeed = 1.0 / speed * 100;
-
-            var new_x = k.x * this.tileSize,
-                new_y = k.y * this.tileSize;
 
             if (k.interactedWithBeeper) {
                 k.interactedWithBeeper = false;
