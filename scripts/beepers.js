@@ -1,4 +1,4 @@
-var colors = ['#84FD45'];
+var colors = ['#84FD45', '#00FFED', '#00A6FB', '#FF0026', '#FF9120', '#FFEA35', '#fff', '#000'];
 
 var openModal = function() {
 	 $('#modal1').openModal();

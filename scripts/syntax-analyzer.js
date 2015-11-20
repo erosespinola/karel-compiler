@@ -32,6 +32,7 @@ var errors = {
     missing_else_expression: "Missing else expression",
     missing_while_expression: "Missing while expression",
     missing_iterate_expression: "Missing iterate expression",
+    missing_clone_expression: "Missing clone expression",
     bad_function_declaration_parenthesis : "Bad function declaration, missing parenthesis",
     bad_function_declaration_void : "Bad function declaration, missing void",
     bad_function_declaration_reserved : "Bad function declaration, reserved keyword for: ",
@@ -44,6 +45,7 @@ var reservedKeywords = {
     'else': true,
     'iterate': true,
     'while': true,
+    'clone': true,
     'class': true,
     'program': true,
     'void': true,
@@ -220,6 +222,9 @@ var expression = function() {
         } 
         else if (helper.read('iterate')) {
             iterateExpression();
+        } 
+        else if (helper.read('clone')) {
+            cloneExpression();
         } else {
             callFunction();  
         }
@@ -331,6 +336,28 @@ var whileExpression = function() {
     }
 };
 
+var cloneExpression = function() {
+    if (helper.require('clone')) {
+        if (helper.require('(')) {
+            var nameFunction = helper.fetchToken();
+            var posFunctionInCodeInter = helper.findStartPointOfFunction(nameFunction);
+            if (posFunctionInCodeInter !== '0xFF') {
+                interCode[interCodeIndex++] = INTERCODE_KEYS.CLONE;
+                interCode[interCodeIndex++] = posFunctionInCodeInter;
+            } else {
+                throwError(errors.not_found_function + nameFunction);
+            }
+            if (!helper.require(')')) {
+                throwError(errors.missing_right_parenthesis);  
+            }
+        } else {
+            throwError(errors.missing_left_parenthesis);  
+        }
+    } else {
+        throwError(errors.missing_clone_expression);  
+    }
+};
+
 var iterateExpression = function() {
     var start;
 
@@ -370,9 +397,7 @@ var iterateExpression = function() {
     }
 };
 
-var number = function() {
 
-};
 
 var throwError = function(error) {
     if (helper.getCurrentToken()) { 
