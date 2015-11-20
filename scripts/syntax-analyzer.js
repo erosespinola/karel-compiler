@@ -298,6 +298,8 @@ var whileExpression = function() {
     var end_position, start = interCodeIndex;
 
     if (helper.require('while')) {
+        interCode[interCodeIndex++] = INTERCODE_KEYS.WHILE;
+
         if (helper.require('(')) {
             conditional();
             if (helper.require(')')) {
@@ -329,9 +331,8 @@ var whileExpression = function() {
     }
 };
 
-iterateCounters = 0;
 var iterateExpression = function() {
-    var start, iterateCounter = iterateCounters++;
+    var start;
 
     if (helper.require('iterate')) {
         if (helper.require('(')) {
@@ -341,7 +342,6 @@ var iterateExpression = function() {
             // *******************************************
 
             interCode[interCodeIndex++] = INTERCODE_KEYS.ITE;
-            interCode[interCodeIndex++] = iterateCounter;
             interCode[interCodeIndex++] = helper.fetchToken();
 
             if (helper.require(')')) {
@@ -352,7 +352,6 @@ var iterateExpression = function() {
 
                     if (helper.require('}')) {
                         interCode[interCodeIndex++] = INTERCODE_KEYS.DECJMP;
-                        interCode[interCodeIndex++] = iterateCounter;
                         interCode[interCodeIndex++] = start;
                     } else {
                         throwError(errors.missing_right_brace);                

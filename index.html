@@ -49,6 +49,7 @@
           <div id="editor"></div>
           <pre id="errors">Ready</pre>
           <a class="btn btn-success btn-compile" onclick="compile(editor)">Compile &amp; Run</a>
+          <a class="btn btn-success btn-compile" onclick="reset()">Reset</a>
         </div>
       </div>
 
@@ -61,7 +62,7 @@
         </div>
         <form action="#">
           <p class="range-field"> Animation speed: 
-            <input type="range" id="speed" min="1" max="5" onchange="changeSpeed(this.value)">
+            <input type="range" id="speed" min="1" max="10" onchange="changeSpeed(this.value)">
           </p>
         </form>
       </div>

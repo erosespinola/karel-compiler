@@ -5,10 +5,17 @@ const orientation = [
     {x: -1, y: 0}
 ];
 
+var RuntimeErrors = {
+    wall_at_position: "Karel can't pass through a wall",
+    no_beeper_at_position: "There are no beepers at this position",
+    no_remaining_beepers: "Karel has no beepers to drop"
+
+};
+
 var speed = 500;
 
 var changeSpeed = function(range) {
-    speed = 1100 - range * 200;
+    speed = 1001 - range * 100;
 }
 
 var printWorld = function(world, karel){
@@ -45,14 +52,15 @@ evaluator = {
 
         karelExecutions = [execution];
 
-        this.evaluateStep(execution, world, world.karel[0], function () {
+        canvas.reset(world, world.karel[0]);
 
+        this.evaluateStep(execution, world, world.karel[0], function () {
             _.each(karelExecutions, function (ex) {
 
             });
         });
     },
-        evaluateCondition: function(execution, conditional, world, karel){
+    evaluateCondition: function(execution, conditional, world, karel){
         switch (conditional) {
             case INTERCODE_KEYS.FRONT_IS_CLEAR:
                 var frontX = karel.x + karel.orientation.x;
@@ -142,15 +150,16 @@ evaluator = {
                     continue;
 
                 case INTERCODE_KEYS.ITE:
-                    execution.counters[interCode[execution.counter+1]] = interCode[execution.counter+2];
-                    execution.counter += 3;
+                    execution.counters.push(interCode[execution.counter+1]);
+                    execution.counter += 2;
                     continue;
 
                 case INTERCODE_KEYS.DECJMP:
-                    if (--execution.counters[interCode[execution.counter+1]] === 0) {
-                        execution.counter += 3;
+                    if (--execution.counters[execution.counters.length - 1] === 0) {
+                        execution.counter += 2;
+                        execution.counters.pop();
                     } else {
-                        execution.counter = interCode[execution.counter+2];
+                        execution.counter = interCode[execution.counter+1];
                     }
                     continue;
                 case INTERCODE_KEYS.MOVE:
@@ -158,7 +167,7 @@ evaluator = {
                     karel.y += karel.orientation.y;
 
                     if (world.grid[karel.y][karel.x].w) {
-                        console.log('WALL');
+                        this.throwRuntimeError(RuntimeErrors.wall_at_position);
                     }
                     break;
 
@@ -170,19 +179,23 @@ evaluator = {
 
                 case INTERCODE_KEYS.PICK_BEEPER:
                     if (world.grid[karel.y][karel.x].b === 0) {
-                        console.log('NO BEEPERS!');
+                        this.throwRuntimeError(RuntimeErrors.no_beeper_at_position);
                     } else {
                         world.grid[karel.y][karel.x].b--;
                         karel.beepers++;
                     }
+                    
+                    canvas.setBeepers(karel.x, karel.y, world.grid[karel.y][karel.x].b);
                     break;
 
                 case INTERCODE_KEYS.PUT_BEEPER:
                     if (karel.beepers > 0) {
                         world.grid[karel.y][karel.x].b++;
                     } else {
-                        console.log('NO BEEPERS!');
+                        this.throwRuntimeError(RuntimeErrors.no_remaining_beepers);
                     }
+
+                    canvas.setBeepers(karel.x, karel.y, world.grid[karel.y][karel.x].b);
                     break;
 
                 case INTERCODE_KEYS.IF:
@@ -270,6 +283,39 @@ evaluator = {
                     }
                     break;
 
+                case INTERCODE_KEYS.WHILE:
+                    var operatorStack = [];
+                    var conditionalStack = [];
+                    var element = null;
+                    var operator = null;
+
+                    do {
+                        element = interCode[++execution.counter];
+                        if (element === INTERCODE_KEYS.AND || element === INTERCODE_KEYS.OR || element === INTERCODE_KEYS.NOT) {
+                            operatorStack.push(element);
+                        } else {
+                            conditionalStack.push(this.evaluateCondition(execution, element, world, karel));
+                        }
+                    } while (interCode[execution.counter + 1] !== 'JMP');
+
+                    while (operatorStack.length > 0) {
+                        operator = operatorStack.pop();
+                        if (operator === 'NOT') {
+                            conditionalStack.push(!conditionalStack.pop());
+                        } else if (operator === 'AND') {
+                            conditionalStack.push(conditionalStack.pop() && conditionalStack.pop());
+                        } else if (operator === 'OR') {
+                            conditionalStack.push(conditionalStack.pop() || conditionalStack.pop());
+                        }
+                    }
+                    
+                    console.log(conditionalStack[0]);
+                    if (conditionalStack.pop()) {
+                        execution.counter += 2;
+                    }
+                    
+                    break;
+
                 case INTERCODE_KEYS.TURN_OFF:
                     execution.counter = interCode.length;
                     break;
@@ -279,7 +325,6 @@ evaluator = {
             finished_step = true;
         }
 
-        canvas.drawBeepers(world);
         canvas.drawKarel([karel]);
 
         if (execution.counter < interCode.length) {
@@ -287,5 +332,10 @@ evaluator = {
                 evaluator.evaluateStep(execution, world, karel);
             }, speed);
         }
+    },
+    throwRuntimeError: function(error) {
+        $("#errors").text("Runtime Error: " + error);
+        console.log(error);
+        throw new Error(error);
     }
 };
