@@ -64,6 +64,7 @@ evaluator = {
 
             if (!karelRunning) {
                 // Kill i's children
+                canvas.turnoffKarel(execution.karel.id);
             }
         }, this);
 
