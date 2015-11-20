@@ -304,7 +304,9 @@ evaluator = {
                         }
                     });
                     execution.counter++;
-                    drawBeepers(this.executions.length);
+                    drawBeepers(_.map(this.executions, function(obj) {
+                        return obj.karel;
+                    }));
                     break;
 
                 case INTERCODE_KEYS.TURN_OFF:

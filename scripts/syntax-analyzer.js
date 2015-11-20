@@ -38,6 +38,8 @@ var errors = {
     bad_function_declaration_reserved : "Bad function declaration, reserved keyword for: ",
     bad_function_call_parenthesis: "Bad function call, missing parenthesis",
     not_found_function: "Not found function: ",
+    not_valid_condition: 'Not a valid simple condition',
+    invalid_iterate_argument: 'Invalid iterate argument',
 };
 
 var reservedKeywords = {
@@ -364,30 +366,31 @@ var iterateExpression = function() {
     if (helper.require('iterate')) {
         if (helper.require('(')) {
             
-            // *******************************************
-            // WARNING: does not actually validate numbers
-            // *******************************************
-
             interCode[interCodeIndex++] = INTERCODE_KEYS.ITE;
-            interCode[interCodeIndex++] = helper.fetchToken();
 
-            if (helper.require(')')) {
-                if (helper.require('{')) {
-                    start = interCodeIndex;
+            var value = helper.fetchToken();
+            if (Number.isInteger(parseInt(value))) {
+                interCode[interCodeIndex++] = value;
+                if (helper.require(')')) {
+                    if (helper.require('{')) {
+                        start = interCodeIndex;
 
-                    body();
+                        body();
 
-                    if (helper.require('}')) {
-                        interCode[interCodeIndex++] = INTERCODE_KEYS.DECJMP;
-                        interCode[interCodeIndex++] = start;
+                        if (helper.require('}')) {
+                            interCode[interCodeIndex++] = INTERCODE_KEYS.DECJMP;
+                            interCode[interCodeIndex++] = start;
+                        } else {
+                            throwError(errors.missing_right_brace);                
+                        }
                     } else {
-                        throwError(errors.missing_right_brace);                
+                        throwError(errors.missing_left_brace);            
                     }
                 } else {
-                    throwError(errors.missing_left_brace);            
+                    throwError(errors.missing_right_parenthesis);        
                 }
             } else {
-                throwError(errors.missing_right_parenthesis);        
+                throwError(errors.invalid_iterate_argument); 
             }
         } else {
             throwError(errors.missing_left_parenthesis);    
@@ -455,13 +458,12 @@ var simpleConditional = function() {
     else if (helper.ifRead('notFacingSouth')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_FACING_SOUTH;
     else if (helper.ifRead('notFacingEast')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_FACING_EAST;
     else if (helper.ifRead('notFacingWest')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_FACING_WEST;
-    else console.log({ 'error': 'Not a valid simple conditional' });
+    else throwError(errors.not_valid_condition);
 };
 
 var conditional = function() {
     // FIXME: Will crash on EOF
     var ahead_token = helper.lookAhead(1).text;
-
     if (ahead_token === '&&' || ahead_token === '||') {
         composedConditional();
     } else {

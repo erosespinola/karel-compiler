@@ -9,22 +9,25 @@ var saveBeepers = function() {
 	drawBeepers(1, world.karel[0])
 };
 
-var drawBeepers = function(n) {
+var drawBeepers = function(karels) {
 	var beepersCode = '<br><br>';
 
-	beepersCode += '<div class="chip beeper-badge"> \
+	_.each(karels, function(k, i) {
+		if (i == 0) {
+			beepersCode += '<div class="chip beeper-badge"> \
 						<a href="#" onclick="openModal()" class="waves-effect waves-light modal-trigger"><i class="fa fa-pencil" style="margin-right: 3px;"> </a></i> \
 						<i class="fa fa-circle" style="color: ' + colors[0] +'"></i> \
-						<pre class="beeper" id="karel_0">' + world.karel[0].beepers + '</pre> \
+						<pre class="beeper" id="karel_0">' + k.beepers + '</pre> \
 					</div>';
+			return;
+		} 
 
-	for (var i = 1; i < n; i++) {
 		beepersCode += '<div class="chip beeper-badge"> \
 							<i class="fa fa-circle" style="color: ' + colors[i % 8] +'"></i> \
-							<pre class="beeper" id="karel_' + i + '">' + world.karel[0].beepers + '</pre> \
+							<pre class="beeper" id="karel_' + k.id + '">' + k.beepers + '</pre> \
 						</div>';
-	};
+	})
+
 
 	$('#beepers-column').html(beepersCode);
-	// $('.modal-trigger').leanModal();
 };
