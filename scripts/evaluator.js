@@ -32,7 +32,6 @@ var printWorld = function(world, karel){
 }
 
 evaluator = {
-    speed: 250,
     evaluate: function(interCode, world) {
         console.log(interCode);
 
@@ -125,7 +124,7 @@ evaluator = {
         while (!finished_step){
             var op = interCode[execution.counter];
 
-            printWorld(world, karel);
+            // printWorld(world, karel);
             console.log(op);
 
             switch (op) {
@@ -272,7 +271,8 @@ evaluator = {
                     break;
 
                 case INTERCODE_KEYS.TURN_OFF:
-                    return;
+                    execution.counter = interCode.length;
+                    break;
             }
 
             execution.counter++;
@@ -285,11 +285,7 @@ evaluator = {
         if (execution.counter < interCode.length) {
             setTimeout(function() {
                 evaluator.evaluateStep(execution, world, karel);
-<<<<<<< HEAD
-            }, this.speed);
-=======
             }, speed);
->>>>>>> 4d958b340a687248fa51ca6dfa8c1bddb47fbb1c
         }
     }
 };

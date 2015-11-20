@@ -43,8 +43,9 @@ var world = {
     ]
 };
 
-canvas.init();
-canvas.drawWorld(world, world.karel);
+canvas.init(function () {
+    canvas.drawWorld(world, world.karel);
+});
 
 var compile = function(editor) {
     var program = editor.getSession().getValue();

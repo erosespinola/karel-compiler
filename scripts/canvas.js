@@ -6,15 +6,31 @@ canvas = {
     tileSize: 32,
     beeperSprites: [],
 
-    linkNorthTexture: PIXI.Texture.fromImage('img/link_north.png'),
-    linkSouthTexture: PIXI.Texture.fromImage('img/link_south.png'),
-    linkEastTexture: PIXI.Texture.fromImage('img/link_east.png'),
-    linkWestTexture: PIXI.Texture.fromImage('img/link_west.png'),
-    grassTexture: PIXI.Texture.fromImage('img/grass.png'),
-    beeperTexture: PIXI.Texture.fromImage('img/beeper.png'),
-    wallTexture: PIXI.Texture.fromImage('img/wall.png'),
+    assets: [
+        'img/player1.png', 
+        'img/grass.png', 
+        'img/misc1.png', 
+        'img/misc2.png', 
+        'img/beeper.png', 
+        'img/wall.png'
+    ],
 
-    init: function () {
+    // linkNorthTexture: PIXI.Texture.fromImage('img/link_north.png'),
+    // linkSouthTexture: PIXI.Texture.fromImage('img/link_south.png'),
+    // linkEastTexture: PIXI.Texture.fromImage('img/link_east.png'),
+    // linkWestTexture: PIXI.Texture.fromImage('img/link_west.png'),
+    grassTexture: null,
+    miscTexture1: null,
+    miscTexture2: null,
+    beeperTexture: null,
+    wallTexture: null,
+    playerTexture: null,
+
+    playerSprite: null,
+
+    karelAdded: false,
+
+    init: function (loadedCallback) {
         this.renderer = new PIXI.autoDetectRenderer(
             555, 
             500, 
@@ -24,6 +40,7 @@ canvas = {
             });
 
         this.stage = new PIXI.Container();
+
         // this.stage.setInteractive(true);
         // this.stage.on('click', function(a) {
         //     console.log('asadas', a);
@@ -41,7 +58,31 @@ canvas = {
             }
         }];
 
-        requestAnimationFrame(this.animate);
+        var loader = PIXI.loader
+            .add('player1', 'img/player1.png')
+            .add('grass', 'img/grass.png')
+            .add('misc1', 'img/misc1.png')
+            .add('misc2', 'img/misc2.png')
+            .add('beeper', 'img/beeper.png')
+            .add('wall', 'img/wall.png')
+            .load(function (loader, resources) {
+                canvas.grassTexture = resources['grass'].texture;
+                canvas.miscTexture1 = resources['misc1'].texture;
+                canvas.miscTexture2 = resources['misc2'].texture;
+                canvas.beeperTexture = resources['beeper'].texture;
+                canvas.wallTexture = resources['wall'].texture;
+                canvas.playerTexture = resources['player1'].texture;
+
+                var frames = getFramesFromSpriteSheet(canvas.playerTexture, 32, 32);
+
+                canvas.playerSprite = new PlayerSprite(frames);
+
+                requestAnimationFrame(canvas.animate);
+
+                if (loadedCallback) {
+                    loadedCallback();
+                }
+            })
     },
 
     // step: function (karels) {
@@ -68,8 +109,27 @@ canvas = {
             }
         }
 
+        for (var i = 0; i < world.rows; i++) {
+            for (var j = 0; j < world.cols; j++) {
+                if (chance.bool({likelihood: 4})) {
+                    var sprite = new PIXI.Sprite(chance.pick([
+                        this.miscTexture1, 
+                        this.miscTexture2
+                    ]));
+
+                    sprite.position.y = i * this.tileSize;
+                    sprite.position.x = j * this.tileSize;
+                    
+                    this.stage.addChild(sprite);
+                }
+            }
+        }
+
         this.drawWalls(world);
         this.drawBeepers(world);
+
+        this.stage.addChild(this.playerSprite);
+
         this.drawKarel(karel);
     },
 
@@ -112,27 +172,46 @@ canvas = {
 
     drawKarel: function(karel) {
         // REVISIT: Clean draw of all the karels, optimize?
-        _.each(this.karelSprites, function(sprite) {
-            canvas.stage.removeChild(sprite);
-        });
+        // _.each(this.karelSprites, function(sprite) {
+        //     canvas.stage.removeChild(sprite);
+        // });
 
         _.each(karel, function(k) {
-            var sprite;
+            // var sprite;
 
-            if (_.isMatch(k.orientation, {x: 0, y: -1}))
-                sprite = new PIXI.Sprite(canvas.linkNorthTexture);
-            else if (_.isMatch(k.orientation, {x: 1, y: 0}))
-                sprite = new PIXI.Sprite(canvas.linkEastTexture);
-            else if (_.isMatch(k.orientation, {x: 0, y: 1}))
-                sprite = new PIXI.Sprite(canvas.linkSouthTexture);
-            else if (_.isMatch(k.orientation, {x: -1, y: 0}))
-                sprite = new PIXI.Sprite(canvas.linkWestTexture);
+            canvas.playerSprite.animationSpeed = 1.0 / speed * 100;
 
-            sprite.position.x = k.x * canvas.tileSize;
-            sprite.position.y = k.y * canvas.tileSize;
+            var new_x = k.x * canvas.tileSize,
+                new_y = k.y * canvas.tileSize;
 
-            canvas.karelSprites.push(sprite);
-            canvas.stage.addChild(sprite);
+            if (Math.abs(new_x - canvas.playerSprite.position.x) > canvas.tileSize / 2.0 || 
+                Math.abs(new_y - canvas.playerSprite.position.y) > canvas.tileSize / 2.0) {
+                new TWEEN.Tween(canvas.playerSprite.position)
+                    .to({ x: new_x, y: new_y }, speed)
+                    .start();
+
+                if (_.isMatch(k.orientation, {x: 0, y: -1}))
+                    canvas.playerSprite.playRange(9, 15);
+                else if (_.isMatch(k.orientation, {x: 1, y: 0}))
+                    canvas.playerSprite.playRange(25, 31);
+                else if (_.isMatch(k.orientation, {x: 0, y: 1}))
+                    canvas.playerSprite.playRange(1, 7);
+                else if (_.isMatch(k.orientation, {x: -1, y: 0}))
+                    canvas.playerSprite.playRange(17, 23);
+            }
+            else {
+                if (_.isMatch(k.orientation, {x: 0, y: -1}))
+                    canvas.playerSprite.gotoAndStop(8);
+                else if (_.isMatch(k.orientation, {x: 1, y: 0}))
+                    canvas.playerSprite.gotoAndStop(24);
+                else if (_.isMatch(k.orientation, {x: 0, y: 1}))
+                    canvas.playerSprite.gotoAndStop(0);
+                else if (_.isMatch(k.orientation, {x: -1, y: 0}))
+                    canvas.playerSprite.gotoAndStop(16);
+            }
+
+            // canvas.karelSprites.push(sprite);
+            // canvas.stage.addChild(sprite);
         });
     },
 
@@ -148,4 +227,16 @@ canvas = {
     onResize: function () {
         canvas.renderer.resize($('#canvas-container').width(), 450);
     }
+};
+ 
+function getFramesFromSpriteSheet(texture, frameWidth, frameHeight) {
+    var frames = [];
+ 
+    for (var j = 0; j < texture.height; j += frameHeight) {
+        for (var i = 0; i < texture.width; i += frameWidth) {
+            frames.push(new PIXI.Texture(texture.baseTexture, new PIXI.Rectangle(i, j, frameWidth, frameHeight)));
+        }
+    }
+ 
+    return frames;
 }
