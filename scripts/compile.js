@@ -1,10 +1,11 @@
 var world = {
     "rows": 14,
-    "cols": 16,
+    "cols": 17,
     "karel": [{
         "x": 1,
         "y": 1,
-        "beepers": 1000000,
+        "id": 0,
+        "beepers": 0,
         "orientationIndex": 1,
         "orientation": {
             x: 1,
@@ -66,8 +67,13 @@ canvas.init(function () {
     canvas.drawWorld(world, world.karel);
 });
 
+drawBeepers(1);
+
 var reset = function() {
     canvas.reset(world, world.karel[0]);
+    $('#errors').text('Ready');
+    $('#karel_0').val(world.karel[0].beepers);
+    drawBeepers(1);
 };
 
 var compile = function(editor) {

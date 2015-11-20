@@ -183,19 +183,20 @@ evaluator = {
                     } else {
                         world.grid[karel.y][karel.x].b--;
                         karel.beepers++;
+                        canvas.setBeepers(karel.x, karel.y, world.grid[karel.y][karel.x].b);
+                        $("#karel_" + karel.id).text(karel.beepers);
                     }
-                    
-                    canvas.setBeepers(karel.x, karel.y, world.grid[karel.y][karel.x].b);
                     break;
 
                 case INTERCODE_KEYS.PUT_BEEPER:
                     if (karel.beepers > 0) {
                         world.grid[karel.y][karel.x].b++;
+                        karel.beepers--;
+                        canvas.setBeepers(karel.x, karel.y, world.grid[karel.y][karel.x].b);
+                        $("#karel_" + karel.id).text(karel.beepers);
                     } else {
                         this.throwRuntimeError(RuntimeErrors.no_remaining_beepers);
                     }
-
-                    canvas.setBeepers(karel.x, karel.y, world.grid[karel.y][karel.x].b);
                     break;
 
                 case INTERCODE_KEYS.IF:
@@ -253,7 +254,6 @@ evaluator = {
                         if (interCode[++execution.counter] !== 'NOT') {
                             conditionals++;
                             conditionalStack.push(this.evaluateCondition(execution, interCode[execution.counter], world, karel));
-
                         } else {
                             conditionalStack.push(interCode[execution.counter]);
                         }
