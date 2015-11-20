@@ -65,12 +65,21 @@ evaluator = {
             running |= karelRunning;
 
             if (!karelRunning) {
+
                 _.each(execution.karel.children, function (child) {
-                    child.counter = intercode.length;
-                    canvas.turnoffKarel(child.karel.id);
+                    execution.counter = intercode.length;
+                    canvas.turnoffKarel(child.id);
                 });
+                canvas.turnoffKarel(execution.karel.id);
+                this.executions.splice(i);
+
             }
+
         }, this);
+
+        drawBeepers(_.map(this.executions, function(obj) {
+            return obj.karel;
+        }));
 
         canvas.drawKarel(_.map(this.executions, function (d) { return d.karel; }));
 
@@ -294,7 +303,7 @@ evaluator = {
                 case INTERCODE_KEYS.CLONE:
                     var tmpKarel = {
                         counter: interCode[execution.counter + 1],
-                        callStack: [INTERCODE_KEYS.length - 1],
+                        callStack: [interCode.length - 1],
                         counters: [],
                         karel: {
                             "x": karel.x,
