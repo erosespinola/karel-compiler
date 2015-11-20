@@ -40,7 +40,9 @@ var printWorld = function(world, karel){
 
 evaluator = {
     executions: null,
+    idCount: 0,
     evaluate: function(interCode, world) {
+        this.idCount = 0;
         console.log(interCode);
 
         world = _.cloneDeep(world);
@@ -201,104 +203,55 @@ evaluator = {
                         karel.beepers++;
                         karel.interactedWithBeeper = true;
                         canvas.setBeepers(karel.x, karel.y, world.grid[karel.y][karel.x].b);
+                        $("#karel_" + karel.id).text(karel.beepers);
                     }
-                    
+    
                     break;
 
                 case INTERCODE_KEYS.PUT_BEEPER:
                     if (karel.beepers > 0) {
                         world.grid[karel.y][karel.x].b++;
-                        karel.interactedWithBeeper = true;
+                        karel.beepers--;
                         canvas.setBeepers(karel.x, karel.y, world.grid[karel.y][karel.x].b);
+                        karel.interactedWithBeeper = true;
+                        $("#karel_" + karel.id).text(karel.beepers);
                     } else {
                         this.throwRuntimeError(RuntimeErrors.no_remaining_beepers);
                     }
-
+                    
                     break;
 
                 case INTERCODE_KEYS.IF:
-                    if (interCode[execution.counter + 1] === 'NOT') {
-                        if (!this.evaluateCondition(execution, interCode[execution.counter + 2], world, karel)){
-                            execution.counter += 4;
-                        } else {
-                            execution.counter += 2;
-                        }
-                    } else if (interCode[execution.counter + 1] === 'AND' || interCode[execution.counter + 1] === 'OR') {
-                        execution.counter++;
-                    } else {
-                        if (this.evaluateCondition(execution, interCode[execution.counter + 1], world, karel)) {
-                            execution.counter += 3;
-                        } else {
-                            execution.counter += 1;
-                        }
-                    }
-                    break;
-
-                case INTERCODE_KEYS.AND:
-                    // result = this.evaluateCondition(execution.counter, interCode[execution.counter + 1]) && this.evaluateCondition(execution.counter, interCode[execution.counter + 2]);
-                    var result = false;
-                    if (interCode[execution.counter + 1] === 'NOT') {
-                        result = !this.evaluateCondition(execution, interCode[execution.counter + 2], world, karel);
-
-                        if (interCode[execution.counter + 3] === 'NOT') {
-                            result = result && !this.evaluateCondition(execution, interCode[execution.counter + 4], world, karel);
-                            execution.counter = (result) ? execution.counter + 7 : execution.counter + 5;
-
-                        } else {
-                            result = result && this.evaluateCondition(execution, interCode[execution.counter + 3], world, karel);
-                            execution.counter = (result) ? execution.counter + 6 : execution.counter + 4;
-                        }
-                    } else {
-                        result = this.evaluateCondition(execution, interCode[execution.counter + 1], world, karel);
-
-                        if (interCode[execution.counter + 2] === 'NOT') {
-                            result = result && !this.evaluateCondition(execution, interCode[execution.counter + 3], world, karel);
-                            execution.counter = (result) ? execution.counter + 6 : execution.counter + 4;
-
-                        } else {
-                            result = result && this.evaluateCondition(execution, interCode[execution.counter + 2], world, karel);
-                            execution.counter = (result) ? execution.counter + 5 : execution.counter + 3;
-                        }
-                    }
-                    break;
-
-                case INTERCODE_KEYS.OR:
-                    var conditionals = 0;
+                    var operatorStack = [];
                     var conditionalStack = [];
+                    var element = null;
+                    var operator = null;
 
-                    while (conditionals < 2) {
-
-                        if (interCode[++execution.counter] !== 'NOT') {
-                            conditionals++;
-                            conditionalStack.push(this.evaluateCondition(execution, interCode[execution.counter], world, karel));
-
+                    do {
+                        element = interCode[++execution.counter];
+                        if (element === INTERCODE_KEYS.AND || element === INTERCODE_KEYS.OR || element === INTERCODE_KEYS.NOT) {
+                            operatorStack.push(element);
                         } else {
-                            conditionalStack.push(interCode[execution.counter]);
+                            conditionalStack.push(this.evaluateCondition(execution, element, world, karel));
+                        }
+                    } while (interCode[execution.counter + 1] !== 'JMP');
+
+                    while (operatorStack.length > 0) {
+                        operator = operatorStack.pop();
+                        if (operator === 'NOT') {
+                            conditionalStack.push(!conditionalStack.pop());
+                        } else if (operator === 'AND') {
+                            conditionalStack.push(conditionalStack.pop() && conditionalStack.pop());
+                        } else if (operator === 'OR') {
+                            conditionalStack.push(conditionalStack.pop() || conditionalStack.pop());
                         }
                     }
                     
-                    var tmpStack = [];
-                    var currentElement = null;
+                    console.log(conditionalStack[0]);
+                    if (conditionalStack.pop()) {
+                        execution.counter += 2;
+                    }
                     
-                    while (conditionalStack > 0) {
-                        currentElement = conditionalStack.pop();
-
-                        if (currentElement === 'NOT') {
-                            tmpStack.push(!tmpStack.pop());
-
-                        } else if (currentElement === 'OR') {
-                            tmpStack.push(tmpStack.pop() || tmpStack.pop());
-
-                        } else {
-                            tmpStack.push(currentElement);
-                        }
-                    }
-
-                    if (tmpStack.pop()) {
-                        execution.counter += 3;
-                    } else {
-                        execution.counter++;
-                    }
                     break;
 
                 case INTERCODE_KEYS.WHILE:
@@ -332,6 +285,26 @@ evaluator = {
                         execution.counter += 2;
                     }
                     
+                    break;
+                case INTERCODE_KEYS.CLONE:
+                    this.executions.push({
+                        counter: interCode[execution.counter + 1],
+                        callStack: [INTERCODE_KEYS.length - 1],
+                        counters: [],
+                        karel: {
+                            "x": karel.x,
+                            "y": karel.y,
+                            "id": ++this.idCount,
+                            "beepers": karel.beepers,
+                            "orientationIndex": karel.orientationIndex,
+                            "orientation": {
+                                x: karel.orientation.x,
+                                y: karel.orientation.y
+                            }
+                        }
+                    });
+                    execution.counter++;
+                    drawBeepers(this.executions.length);
                     break;
 
                 case INTERCODE_KEYS.TURN_OFF:

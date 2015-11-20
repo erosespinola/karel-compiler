@@ -56,16 +56,18 @@ lexicographic = {
         var currentState = 0;
         var tokens = [];
         var tokenIndex = 0;
+        var line = 1;
 
         for (var i = 0; i < program.length; i++) {
             var nextState = STATES[currentState][map(program[i])];
 
+            if (program[i] === '\n') line++;
             switch(TRANSITIONS[currentState][nextState]) {
                 case NEXT:
                     break;
                 case TNEW:
                     var currentToken = program.substring(tokenIndex, i);
-                    tokens.push({ text: currentToken, type: type(currentToken, currentState) });
+                    tokens.push({ text: currentToken, type: type(currentToken, currentState), line: line });
                     tokenIndex = i;
                     break;
                 case SKIP:

@@ -14,6 +14,7 @@
   <script src="bower_components/tween.js/src/Tween.js"></script>
   <script src="bower_components/ace-builds/src-noconflict/ace.js"></script>
   <script src="bower_components/chance/dist/chance.min.js"></script>
+  <script src="bower_components/materialize/bin/materialize.js"></script>
 
   <script src="scripts/PlayerSprite.js"></script>
   <script src="scripts/canvas.js"></script>
@@ -24,6 +25,7 @@
   <script src="scripts/syntax-analyzer.js"></script>
   <script src="scripts/evaluator.js"></script>
   <script src="scripts/mode-karel.js"></script>
+
 
   <title>Karel Compiler</title>
   <meta charset="utf-8">
@@ -43,17 +45,17 @@
   <div class="container page-wrapper">
     <div class="row">
 
-      <div class="col s12 l6">
+      <div class="col s12 m12 l5">
         <div class="form-group">
           <h5><i class="fa fa-code"></i> Editor</h5>
           <div id="editor"></div>
-          <pre id="errors">Ready</pre>
-          <a class="btn btn-success btn-compile" onclick="compile(editor)">Compile &amp; Run</a>
-          <a class="btn btn-success btn-compile" onclick="reset()">Reset</a>
+          <br/>
+          <a class="btn btn-success" onclick="reset()">Reset</a>
+          <a class="btn btn-success" onclick="compile(editor)">Compile &amp; Run</a>
         </div>
       </div>
 
-      <div class="col s11 l5">
+      <div class="col s12 m12 l6">
         <div class="form-group">
           <h5><i class="fa fa-terminal"></i> Output</h5>
           <div id="canvas-container">
@@ -64,18 +66,34 @@
           <p class="range-field"> Animation speed: 
             <input type="range" id="speed" min="1" max="10" onchange="changeSpeed(this.value)">
           </p>
+          <pre id="errors">Ready</pre>
         </form>
       </div>
 
-      <div class="col s1 l1">
+      <div class="col s12 m12 l1">
         <div class="form-group" id="beepers-column"></div>     
       </div>
 
     </div>
   </div>
 
-  <script src="scripts/compile.js"></script>
+  <div id="modal1" class="modal">
+    <div class="modal-content">
+      <h5>Set beepers</h5>
+      <div class="row">
+        <div class="input-field col s12">
+          <input id="beepers_amount" type="number" class="validate">
+          <label for="beepers_amount">Beepers</label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" onclick="saveBeepers()" class=" modal-action modal-close waves-effect waves-green btn-flat">Save</a>
+    </div>
+  </div>
+
   <script src="scripts/beepers.js"></script>
+  <script src="scripts/compile.js"></script>
   
   <script>
     var editor = ace.edit('editor');
@@ -88,7 +106,6 @@
       editor.getSession().setValue(previousProgram, -1);
     }
 
-    drawBeepers(1);
   </script>
 </body>
 </html>

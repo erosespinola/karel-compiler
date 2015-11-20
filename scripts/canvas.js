@@ -12,8 +12,6 @@ canvas = {
     karelFrames: [],
 
     grassTexture: null,
-    miscTexture1: null,
-    miscTexture2: null,
     beeperTexture: null,
     wallTexture: null,
 
@@ -54,14 +52,10 @@ canvas = {
             .add('player7', 'img/player7.png')
             .add('player8', 'img/player8.png')
             .add('grass', 'img/grass.png')
-            .add('misc1', 'img/misc1.png')
-            .add('misc2', 'img/misc2.png')
             .add('beeper', 'img/beeper.png')
             .add('wall', 'img/wall.png')
             .load(function (loader, resources) {
                 canvas.grassTexture = resources['grass'].texture;
-                canvas.miscTexture1 = resources['misc1'].texture;
-                canvas.miscTexture2 = resources['misc2'].texture;
                 canvas.beeperTexture = resources['beeper'].texture;
                 canvas.wallTexture = resources['wall'].texture;
 
@@ -226,8 +220,13 @@ canvas = {
         _.each(karel, function(k) {
             var id = k.id;
 
+            var new_x = k.x * this.tileSize,
+                new_y = k.y * this.tileSize;
+
             if (!k.added) {
                 this.karelSprites[id] = new PlayerSprite(this.karelFrames[id % this.karelColors]);
+                this.karelSprites[id].position.x = new_x;
+                this.karelSprites[id].position.y = new_y;
                 this.stage.addChild(this.karelSprites[id]);
                 k.added = true;
             }
@@ -238,9 +237,6 @@ canvas = {
             if (!sprite) return;
 
             sprite.animationSpeed = 1.0 / speed * 100;
-
-            var new_x = k.x * this.tileSize,
-                new_y = k.y * this.tileSize;
 
             if (k.interactedWithBeeper) {
                 k.interactedWithBeeper = false;
