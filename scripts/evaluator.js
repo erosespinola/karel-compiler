@@ -44,7 +44,7 @@ evaluator = {
         console.log(interCode);
 
         world = _.cloneDeep(world);
-        canvas.reset(world, world.karel[0]);
+        canvas.reset(world, world.karel);
 
         this.executions = [{
             counter: 0,
@@ -198,19 +198,21 @@ evaluator = {
                     } else {
                         world.grid[karel.y][karel.x].b--;
                         karel.beepers++;
+                        karel.interactedWithBeeper = true;
+                        canvas.setBeepers(karel.x, karel.y, world.grid[karel.y][karel.x].b);
                     }
                     
-                    canvas.setBeepers(karel.x, karel.y, world.grid[karel.y][karel.x].b);
                     break;
 
                 case INTERCODE_KEYS.PUT_BEEPER:
                     if (karel.beepers > 0) {
                         world.grid[karel.y][karel.x].b++;
+                        karel.interactedWithBeeper = true;
+                        canvas.setBeepers(karel.x, karel.y, world.grid[karel.y][karel.x].b);
                     } else {
                         this.throwRuntimeError(RuntimeErrors.no_remaining_beepers);
                     }
 
-                    canvas.setBeepers(karel.x, karel.y, world.grid[karel.y][karel.x].b);
                     break;
 
                 case INTERCODE_KEYS.IF:

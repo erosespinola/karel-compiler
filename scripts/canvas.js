@@ -6,6 +6,9 @@ canvas = {
     karelColors: 6,
     currentBeepers: {},
 
+    worldContainer: null,
+    beeperContainer: null,
+
     karelFrames: [],
 
     grassTexture: null,
@@ -26,6 +29,12 @@ canvas = {
             });
 
         this.stage = new PIXI.Container();
+
+        this.beeperContainer = new PIXI.Container();
+        this.worldContainer = new PIXI.Container();
+
+        this.stage.addChild(this.worldContainer);
+        this.stage.addChild(this.beeperContainer);
 
         // this.stage.setInteractive(true);
         // this.stage.on('click', function(a) {
@@ -54,7 +63,7 @@ canvas = {
                 canvas.beeperTexture = resources['beeper'].texture;
                 canvas.wallTexture = resources['wall'].texture;
 
-                canvas.karelFrames.push(getFramesFromSpriteSheet(resources['player2'].texture, 32, 32));
+                canvas.karelFrames.push(getFramesFromSpriteSheet(resources['player1'].texture, 32, 32));
                 canvas.karelFrames.push(getFramesFromSpriteSheet(resources['player2'].texture, 32, 32));
                 canvas.karelFrames.push(getFramesFromSpriteSheet(resources['player3'].texture, 32, 32));
                 canvas.karelFrames.push(getFramesFromSpriteSheet(resources['player4'].texture, 32, 32));
@@ -71,7 +80,7 @@ canvas = {
 
     reset: function(world, karel) {
         canvas.drawBeepers(world);
-        canvas.drawKarel([karel], true);
+        canvas.drawKarel(karel, true);
     },
 
     drawWorld: function(world, karel) {
@@ -87,25 +96,25 @@ canvas = {
                 sprite.position.y = i * this.tileSize;
                 sprite.position.x = j * this.tileSize;
                 
-                this.stage.addChild(sprite);
+                this.worldContainer.addChild(sprite);
             }
         }
 
-        for (var i = 0; i < world.rows; i++) {
-            for (var j = 0; j < world.cols; j++) {
-                if (chance.bool({likelihood: 4})) {
-                    var sprite = new PIXI.Sprite(chance.pick([
-                        this.miscTexture1, 
-                        this.miscTexture2
-                    ]));
+        // for (var i = 0; i < world.rows; i++) {
+        //     for (var j = 0; j < world.cols; j++) {
+        //         if (chance.bool({likelihood: 4})) {
+        //             var sprite = new PIXI.Sprite(chance.pick([
+        //                 this.miscTexture1, 
+        //                 this.miscTexture2
+        //             ]));
 
-                    sprite.position.y = i * this.tileSize;
-                    sprite.position.x = j * this.tileSize;
+        //             sprite.position.y = i * this.tileSize;
+        //             sprite.position.x = j * this.tileSize;
                     
-                    this.stage.addChild(sprite);
-                }
-            }
-        }
+        //             this.stage.addChild(sprite);
+        //         }
+        //     }
+        // }
 
         // Draw grid
         for (var i = 0; i < world.rows; i++) {
@@ -121,7 +130,7 @@ canvas = {
         this.drawWalls(world);
         this.drawBeepers(world);
 
-        this.stage.addChild(graphics);
+        this.worldContainer.addChild(graphics);
 
         this.drawKarel(karel, true);
     },
@@ -139,17 +148,17 @@ canvas = {
 
         if (beeperObject.count <= 0) {
             if (beeperObject.text) {
-                this.stage.removeChild(beeperObject.text);
+                this.beeperContainer.removeChild(beeperObject.text);
                 beeperObject.text = null;
             }
             if (beeperObject.sprite) {
-                this.stage.removeChild(beeperObject.sprite);
+                this.beeperContainer.removeChild(beeperObject.sprite);
                 beeperObject.sprite = null;
             }
         }
         else if (beeperObject.count === 1) {
             if (beeperObject.text) {
-                this.stage.removeChild(beeperObject.text);
+                this.beeperContainer.removeChild(beeperObject.text);
                 beeperObject.text = null;
             }
 
@@ -159,7 +168,7 @@ canvas = {
                 beeperObject.sprite.position.y = y * this.tileSize;
                 beeperObject.sprite.position.x = x * this.tileSize;
 
-                this.stage.addChild(beeperObject.sprite);
+                this.beeperContainer.addChild(beeperObject.sprite);
             }
         }
         else if (beeperObject.count > 1) {
@@ -169,7 +178,7 @@ canvas = {
                 beeperObject.sprite.position.y = y * this.tileSize;
                 beeperObject.sprite.position.x = x * this.tileSize;
 
-                this.stage.addChild(beeperObject.sprite);
+                this.beeperContainer.addChild(beeperObject.sprite);
             }
 
             if (beeperObject.text) {
@@ -181,7 +190,7 @@ canvas = {
                 beeperObject.text.position.x = beeperObject.sprite.position.x + this.tileSize / 2.0 - beeperObject.text.width / 2.0;
                 beeperObject.text.position.y = beeperObject.sprite.position.y + this.tileSize / 2.0 - beeperObject.text.height / 2.0;
 
-                this.stage.addChild(beeperObject.text);
+                this.beeperContainer.addChild(beeperObject.text);
             }
         }
     },
@@ -224,7 +233,28 @@ canvas = {
             var new_x = k.x * this.tileSize,
                 new_y = k.y * this.tileSize;
 
-            if (skipAnimation) {
+            if (k.interactedWithBeeper) {
+                k.interactedWithBeeper = false;
+
+                if (_.isMatch(k.orientation, {x: 0, y: -1}) || _.isMatch(k.orientation, {x: 1, y: 0}))
+                    sprite.playRange(40, 47);
+                else
+                    sprite.playRange(32, 39);
+                
+                sprite.onComplete = function() {
+                    if (_.isMatch(k.orientation, {x: 0, y: -1}))
+                    sprite.gotoAndStop(8);
+                    else if (_.isMatch(k.orientation, {x: 1, y: 0}))
+                        sprite.gotoAndStop(24);
+                    else if (_.isMatch(k.orientation, {x: 0, y: 1}))
+                        sprite.gotoAndStop(0);
+                    else if (_.isMatch(k.orientation, {x: -1, y: 0}))
+                        sprite.gotoAndStop(16);
+                    
+                    sprite.onComplete = null;
+                };
+            }
+            else if (skipAnimation) {
                 sprite.position.x = new_x;
                 sprite.position.y = new_y;
 
