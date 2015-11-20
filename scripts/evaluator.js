@@ -5,6 +5,13 @@ const orientation = [
     {x: -1, y: 0}
 ];
 
+var RuntimeErrors = {
+    wall_at_position: "Karel can't pass through a wall",
+    no_beeper_at_position: "There are no beepers at this position",
+    no_remaining_beepers: "Karel has no beepers to drop"
+
+};
+
 var speed = 500;
 
 var changeSpeed = function(range) {
@@ -160,7 +167,7 @@ evaluator = {
                     karel.y += karel.orientation.y;
 
                     if (world.grid[karel.y][karel.x].w) {
-                        console.log('WALL');
+                        this.throwRuntimeError(RuntimeErrors.wall_at_position);
                     }
                     break;
 
@@ -172,7 +179,7 @@ evaluator = {
 
                 case INTERCODE_KEYS.PICK_BEEPER:
                     if (world.grid[karel.y][karel.x].b === 0) {
-                        console.log('NO BEEPERS!');
+                        this.throwRuntimeError(RuntimeErrors.no_beeper_at_position);
                     } else {
                         world.grid[karel.y][karel.x].b--;
                         karel.beepers++;
@@ -185,7 +192,7 @@ evaluator = {
                     if (karel.beepers > 0) {
                         world.grid[karel.y][karel.x].b++;
                     } else {
-                        console.log('NO BEEPERS!');
+                        this.throwRuntimeError(RuntimeErrors.no_remaining_beepers);
                     }
 
                     canvas.setBeepers(karel.x, karel.y, world.grid[karel.y][karel.x].b);
@@ -325,5 +332,10 @@ evaluator = {
                 evaluator.evaluateStep(execution, world, karel);
             }, speed);
         }
+    },
+    throwRuntimeError: function(error) {
+        $("#errors").text("Runtime Error: " + error);
+        console.log(error);
+        throw new Error(error);
     }
 };
