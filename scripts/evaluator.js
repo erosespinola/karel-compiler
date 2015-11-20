@@ -45,8 +45,9 @@ evaluator = {
 
         karelExecutions = [execution];
 
-        this.evaluateStep(execution, world, world.karel[0], function () {
+        canvas.reset(world, world.karel[0]);
 
+        this.evaluateStep(execution, world, world.karel[0], function () {
             _.each(karelExecutions, function (ex) {
 
             });

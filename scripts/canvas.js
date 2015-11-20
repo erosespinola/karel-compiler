@@ -15,10 +15,6 @@ canvas = {
         'img/wall.png'
     ],
 
-    // linkNorthTexture: PIXI.Texture.fromImage('img/link_north.png'),
-    // linkSouthTexture: PIXI.Texture.fromImage('img/link_south.png'),
-    // linkEastTexture: PIXI.Texture.fromImage('img/link_east.png'),
-    // linkWestTexture: PIXI.Texture.fromImage('img/link_west.png'),
     grassTexture: null,
     miscTexture1: null,
     miscTexture2: null,
@@ -85,19 +81,17 @@ canvas = {
             })
     },
 
-    // step: function (karels) {
-    //     karels = _.deepCopy(karels);
-
-    //     _.each(karels, function (karel, i) {
-    //         canvas.karelSprites[i].position.x = karels[i].x * canvas.tileSize;
-    //         canvas.karelSprites[i].position.y = karels[i].y * canvas.tileSize;
-    //         //new TWEEN.tween()
-    //     });
-
-    //     this.currentKarels = karels;
-    // },
+    reset: function(world, karel) {
+        canvas.drawBeepers(world);
+        canvas.drawKarel([karel], true);
+    },
 
     drawWorld: function(world, karel) {
+        var graphics = new PIXI.Graphics();
+
+        graphics.beginFill(0x88ffbb);
+        graphics.lineStyle(1, 0x88ffbb);
+
         for (var i = 0; i < world.rows; i++) {
             for (var j = 0; j < world.cols; j++) {
                 var sprite = new PIXI.Sprite(this.grassTexture);
@@ -125,12 +119,24 @@ canvas = {
             }
         }
 
+        // Draw grid
+        for (var i = 0; i < world.rows; i++) {
+            graphics.moveTo(0, i * this.tileSize);
+            graphics.lineTo(world.cols * this.tileSize, i * this.tileSize);
+        }
+
+        for (var i = 0; i < world.cols; i++) {
+            graphics.moveTo(i * this.tileSize, 0);
+            graphics.lineTo(i * this.tileSize, world.rows * this.tileSize);
+        }
+
         this.drawWalls(world);
         this.drawBeepers(world);
 
+        this.stage.addChild(graphics);
         this.stage.addChild(this.playerSprite);
 
-        this.drawKarel(karel);
+        this.drawKarel(karel, true);
     },
 
     drawBeepers: function(world) {
@@ -170,7 +176,7 @@ canvas = {
         }
     },
 
-    drawKarel: function(karel) {
+    drawKarel: function(karel, skipAnimation) {
         // REVISIT: Clean draw of all the karels, optimize?
         // _.each(this.karelSprites, function(sprite) {
         //     canvas.stage.removeChild(sprite);
@@ -184,8 +190,23 @@ canvas = {
             var new_x = k.x * canvas.tileSize,
                 new_y = k.y * canvas.tileSize;
 
-            if (Math.abs(new_x - canvas.playerSprite.position.x) > canvas.tileSize / 2.0 || 
+            if (skipAnimation) {
+                canvas.playerSprite.position.x = new_x;
+                canvas.playerSprite.position.y = new_y;
+
+                if (_.isMatch(k.orientation, {x: 0, y: -1}))
+                    canvas.playerSprite.gotoAndStop(8);
+                else if (_.isMatch(k.orientation, {x: 1, y: 0}))
+                    canvas.playerSprite.gotoAndStop(24);
+                else if (_.isMatch(k.orientation, {x: 0, y: 1}))
+                    canvas.playerSprite.gotoAndStop(0);
+                else if (_.isMatch(k.orientation, {x: -1, y: 0}))
+                    canvas.playerSprite.gotoAndStop(16);
+            }
+            else if (
+                Math.abs(new_x - canvas.playerSprite.position.x) > canvas.tileSize / 2.0 || 
                 Math.abs(new_y - canvas.playerSprite.position.y) > canvas.tileSize / 2.0) {
+
                 new TWEEN.Tween(canvas.playerSprite.position)
                     .to({ x: new_x, y: new_y }, speed)
                     .start();
