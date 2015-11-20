@@ -53,7 +53,7 @@ evaluator = {
             });
         });
     },
-        evaluateCondition: function(execution, conditional, world, karel){
+    evaluateCondition: function(execution, conditional, world, karel){
         switch (conditional) {
             case INTERCODE_KEYS.FRONT_IS_CLEAR:
                 var frontX = karel.x + karel.orientation.x;
@@ -274,6 +274,39 @@ evaluator = {
                     } else {
                         execution.counter++;
                     }
+                    break;
+
+                case INTERCODE_KEYS.WHILE:
+                    var operatorStack = [];
+                    var conditionalStack = [];
+                    var element = null;
+                    var operator = null;
+
+                    do {
+                        element = interCode[++execution.counter];
+                        if (element === INTERCODE_KEYS.AND || element === INTERCODE_KEYS.OR || element === INTERCODE_KEYS.NOT) {
+                            operatorStack.push(element);
+                        } else {
+                            conditionalStack.push(this.evaluateCondition(execution, element, world, karel));
+                        }
+                    } while (interCode[execution.counter + 1] !== 'JMP');
+
+                    while (operatorStack.length > 0) {
+                        operator = operatorStack.pop();
+                        if (operator === 'NOT') {
+                            conditionalStack.push(!conditionalStack.pop());
+                        } else if (operator === 'AND') {
+                            conditionalStack.push(conditionalStack.pop() && conditionalStack.pop());
+                        } else if (operator === 'OR') {
+                            conditionalStack.push(conditionalStack.pop() || conditionalStack.pop());
+                        }
+                    }
+                    
+                    console.log(conditionalStack[0]);
+                    if (conditionalStack.pop()) {
+                        execution.counter += 2;
+                    }
+                    
                     break;
 
                 case INTERCODE_KEYS.TURN_OFF:

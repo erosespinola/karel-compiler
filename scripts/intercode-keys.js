@@ -31,5 +31,6 @@ const INTERCODE_KEYS = {
     AND: 'AND',
     NOT: 'NOT',
     ITE: 'ITE',
+    WHILE: 'WHILE',
     CLONE: 'CLONE'
 };

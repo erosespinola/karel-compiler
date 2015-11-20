@@ -298,6 +298,8 @@ var whileExpression = function() {
     var end_position, start = interCodeIndex;
 
     if (helper.require('while')) {
+        interCode[interCodeIndex++] = INTERCODE_KEYS.WHILE;
+
         if (helper.require('(')) {
             conditional();
             if (helper.require(')')) {
