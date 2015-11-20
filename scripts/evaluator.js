@@ -8,7 +8,7 @@ const orientation = [
 var speed = 500;
 
 var changeSpeed = function(range) {
-    speed = 1100 - range * 200;
+    speed = 1001 - range * 100;
 }
 
 var printWorld = function(world, karel){
@@ -143,15 +143,16 @@ evaluator = {
                     continue;
 
                 case INTERCODE_KEYS.ITE:
-                    execution.counters[interCode[execution.counter+1]] = interCode[execution.counter+2];
-                    execution.counter += 3;
+                    execution.counters.push(interCode[execution.counter+1]);
+                    execution.counter += 2;
                     continue;
 
                 case INTERCODE_KEYS.DECJMP:
-                    if (--execution.counters[interCode[execution.counter+1]] === 0) {
-                        execution.counter += 3;
+                    if (--execution.counters[execution.counters.length - 1] === 0) {
+                        execution.counter += 2;
+                        execution.counters.pop();
                     } else {
-                        execution.counter = interCode[execution.counter+2];
+                        execution.counter = interCode[execution.counter+1];
                     }
                     continue;
                 case INTERCODE_KEYS.MOVE:
@@ -176,6 +177,8 @@ evaluator = {
                         world.grid[karel.y][karel.x].b--;
                         karel.beepers++;
                     }
+                    
+                    canvas.setBeepers(karel.x, karel.y, world.grid[karel.y][karel.x].b);
                     break;
 
                 case INTERCODE_KEYS.PUT_BEEPER:
@@ -184,6 +187,8 @@ evaluator = {
                     } else {
                         console.log('NO BEEPERS!');
                     }
+
+                    canvas.setBeepers(karel.x, karel.y, world.grid[karel.y][karel.x].b);
                     break;
 
                 case INTERCODE_KEYS.IF:
@@ -280,7 +285,6 @@ evaluator = {
             finished_step = true;
         }
 
-        canvas.drawBeepers(world);
         canvas.drawKarel([karel]);
 
         if (execution.counter < interCode.length) {

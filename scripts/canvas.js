@@ -5,6 +5,8 @@ canvas = {
     karelSprites: [],
     tileSize: 32,
     beeperSprites: [],
+    textSprites: [],
+    currentBeepers: {},
 
     assets: [
         'img/player1.png', 
@@ -139,24 +141,70 @@ canvas = {
         this.drawKarel(karel, true);
     },
 
-    drawBeepers: function(world) {
-        // REVISIT: Clean draw of all the beepers, optimize?
-        _.each(this.beeperSprites, function(sprite) {
-            canvas.stage.removeChild(sprite);
-        });
+    setBeepers: function(x, y, newBeepers) {
+        var key = x + ' ' + y,
+            beeperObject = this.currentBeepers[key],
+            newBeepers = newBeepers || 0;
 
+        if (!beeperObject) {
+            this.currentBeepers[key] = beeperObject = { sprite: null, text: null, count: 0 };
+        }
+
+        beeperObject.count = newBeepers;
+
+        if (beeperObject.count <= 0) {
+            if (beeperObject.text) {
+                this.stage.removeChild(beeperObject.text);
+                beeperObject.text = null;
+            }
+            if (beeperObject.sprite) {
+                this.stage.removeChild(beeperObject.sprite);
+                beeperObject.sprite = null;
+            }
+        }
+        else if (beeperObject.count === 1) {
+            if (beeperObject.text) {
+                this.stage.removeChild(beeperObject.text);
+                beeperObject.text = null;
+            }
+
+            if (!beeperObject.sprite) {
+                beeperObject.sprite = new PIXI.Sprite(this.beeperTexture);
+
+                beeperObject.sprite.position.y = y * this.tileSize;
+                beeperObject.sprite.position.x = x * this.tileSize;
+
+                this.stage.addChild(beeperObject.sprite);
+            }
+        }
+        else if (beeperObject.count > 1) {
+            if (!beeperObject.sprite) {
+                beeperObject.sprite = new PIXI.Sprite(this.beeperTexture);
+
+                beeperObject.sprite.position.y = y * this.tileSize;
+                beeperObject.sprite.position.x = x * this.tileSize;
+
+                this.stage.addChild(beeperObject.sprite);
+            }
+
+            if (beeperObject.text) {
+                beeperObject.text = beeperObject.count;
+            }
+            else {
+                beeperObject.text = new PIXI.Text(beeperObject.count, { font: 'bold ' + this.tileSize / 2.0 + 'px Arial', fill: 'red' });
+
+                beeperObject.text.position.x = beeperObject.sprite.position.x + this.tileSize / 2.0 - beeperObject.text.width / 2.0;
+                beeperObject.text.position.y = beeperObject.sprite.position.y + this.tileSize / 2.0 - beeperObject.text.height / 2.0;
+
+                this.stage.addChild(beeperObject.text);
+            }
+        }
+    },
+
+    drawBeepers: function(world) {
         for (var i = 0; i < world.rows; i++) {
             for (var j = 0; j < world.cols; j++) {
-                if (world.grid[i][j].b > 0) {
-                    var beeper = new PIXI.Sprite(this.beeperTexture);
-
-                    beeper.position.y = i * this.tileSize;
-                    beeper.position.x = j * this.tileSize;
-
-                    this.beeperSprites.push(beeper);
-
-                    this.stage.addChild(beeper);
-                }
+                this.setBeepers(j, i, world.grid[i][j].b);
             }
         }
     },
