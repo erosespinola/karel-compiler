@@ -39,26 +39,41 @@ var printWorld = function(world, karel){
 }
 
 evaluator = {
+    executions: null,
     evaluate: function(interCode, world) {
         console.log(interCode);
 
         world = _.cloneDeep(world);
-
-        execution = {
-            counter: 0,
-            callStack: [],
-            counters: []
-        };
-
-        karelExecutions = [execution];
-
         canvas.reset(world, world.karel[0]);
 
-        this.evaluateStep(execution, world, world.karel[0], function () {
-            _.each(karelExecutions, function (ex) {
+        this.executions = [{
+            counter: 0,
+            callStack: [],
+            counters: [],
+            karel: world.karel[0]
+        }];
 
-            });
-        });
+        this.run(interCode, world);
+    },
+    run: function(intercode, world) {
+        var running = false;
+        _.each(this.executions, function (execution, i) {
+            var karelRunning = this.evaluateStep(execution, world, execution.karel);
+
+            running |= karelRunning;
+
+            if (!karelRunning) {
+                // Kill i's children
+            }
+        }, this);
+
+        canvas.drawKarel(_.map(this.executions, function (d) { return d.karel; }));
+
+        if (running) {
+            setTimeout(function() {
+                evaluator.run(interCode, world);
+            }, speed);
+        }
     },
     evaluateCondition: function(execution, conditional, world, karel){
         switch (conditional) {
@@ -325,13 +340,7 @@ evaluator = {
             finished_step = true;
         }
 
-        canvas.drawKarel([karel]);
-
-        if (execution.counter < interCode.length) {
-            setTimeout(function() {
-                evaluator.evaluateStep(execution, world, karel);
-            }, speed);
-        }
+        return execution.counter < interCode.length;
     },
     throwRuntimeError: function(error) {
         $("#errors").text("Runtime Error: " + error);
