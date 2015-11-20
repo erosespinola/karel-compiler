@@ -65,7 +65,9 @@ evaluator = {
             running |= karelRunning;
 
             if (!karelRunning) {
-                // Kill i's children
+                _.each(execution.karel.children, function (child) {
+                    child.counter = intercode.length;
+                });
             }
         }, this);
 
@@ -143,6 +145,9 @@ evaluator = {
         }
     },
     evaluateStep: function(execution, world, karel) {
+        if (execution.counter >= interCode.length) {
+            return false;
+        }
         var op = interCode[execution.counter],
             finished_step = false;
         
@@ -286,7 +291,7 @@ evaluator = {
                     
                     break;
                 case INTERCODE_KEYS.CLONE:
-                    this.executions.push({
+                    var tmpKarel = {
                         counter: interCode[execution.counter + 1],
                         callStack: [INTERCODE_KEYS.length - 1],
                         counters: [],
@@ -299,9 +304,13 @@ evaluator = {
                             "orientation": {
                                 x: karel.orientation.x,
                                 y: karel.orientation.y
-                            }
+                            },
+                            "children": []
                         }
-                    });
+                    };
+                    this.executions.push(tmpKarel);
+                    karel.children.push(tmpKarel);
+
                     execution.counter++;
                     drawBeepers(this.executions.length);
                     break;
@@ -314,7 +323,7 @@ evaluator = {
             execution.counter++;
             finished_step = true;
         }
-
+        
         return execution.counter < interCode.length;
     },
     throwRuntimeError: function(error) {

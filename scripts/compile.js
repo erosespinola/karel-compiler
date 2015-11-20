@@ -10,7 +10,8 @@ var world = {
         "orientation": {
             x: 1,
             y: 0
-        }
+        },
+        "children": []
     }],
     // "grid": [
     //     [{"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}],
