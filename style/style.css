@@ -6,10 +6,6 @@
 	resize: none;
 }
 
-.btn-compile {
-	float: right;
-}
-
 #editor { 
     top: 0;
     right: 0;
@@ -23,12 +19,17 @@
     height: 100%;
 }
 
-.beeper {
-    color: rgb(166, 250, 57);
-}
-
 .beeper-badge {
     margin-bottom: 8px;
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+.beeper {
+    margin: 0px;
+    padding: 0px;
+    margin-left: 3px;
+    float: right;
 }
 
 .main-logo {

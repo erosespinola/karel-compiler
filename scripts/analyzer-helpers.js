@@ -45,12 +45,15 @@ helper.findStartPointOfFunction = function(name) {
 
 helper.peekCurrentToken = function() {
     if (currentToken >= tokens.length) return false;
-
     return tokens[currentToken];
 };
 
 helper.lookAhead = function(n) {
     if (currentToken + n >= tokens.length) return {text: null};
-
     return tokens[currentToken + n];
+}
+
+helper.getCurrentToken = function () {
+    if (currentToken >= tokens.length) return tokens[tokens.length - 1];
+    return tokens[currentToken];
 }

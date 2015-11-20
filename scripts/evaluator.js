@@ -39,26 +39,41 @@ var printWorld = function(world, karel){
 }
 
 evaluator = {
+    executions: null,
     evaluate: function(interCode, world) {
         console.log(interCode);
 
         world = _.cloneDeep(world);
+        canvas.reset(world, world.karel);
 
-        execution = {
+        this.executions = [{
             counter: 0,
             callStack: [],
-            counters: []
-        };
+            counters: [],
+            karel: world.karel[0]
+        }];
 
-        karelExecutions = [execution];
+        this.run(interCode, world);
+    },
+    run: function(intercode, world) {
+        var running = false;
+        _.each(this.executions, function (execution, i) {
+            var karelRunning = this.evaluateStep(execution, world, execution.karel);
 
-        canvas.reset(world, world.karel[0]);
+            running |= karelRunning;
 
-        this.evaluateStep(execution, world, world.karel[0], function () {
-            _.each(karelExecutions, function (ex) {
+            if (!karelRunning) {
+                // Kill i's children
+            }
+        }, this);
 
-            });
-        });
+        canvas.drawKarel(_.map(this.executions, function (d) { return d.karel; }));
+
+        if (running) {
+            setTimeout(function() {
+                evaluator.run(interCode, world);
+            }, speed);
+        }
     },
     evaluateCondition: function(execution, conditional, world, karel){
         switch (conditional) {
@@ -183,19 +198,24 @@ evaluator = {
                     } else {
                         world.grid[karel.y][karel.x].b--;
                         karel.beepers++;
+                        karel.interactedWithBeeper = true;
+                        canvas.setBeepers(karel.x, karel.y, world.grid[karel.y][karel.x].b);
+                        $("#karel_" + karel.id).text(karel.beepers);
                     }
-                    
-                    canvas.setBeepers(karel.x, karel.y, world.grid[karel.y][karel.x].b);
+    
                     break;
 
                 case INTERCODE_KEYS.PUT_BEEPER:
                     if (karel.beepers > 0) {
                         world.grid[karel.y][karel.x].b++;
+                        karel.beepers--;
+                        canvas.setBeepers(karel.x, karel.y, world.grid[karel.y][karel.x].b);
+                        karel.interactedWithBeeper = true;
+                        $("#karel_" + karel.id).text(karel.beepers);
                     } else {
                         this.throwRuntimeError(RuntimeErrors.no_remaining_beepers);
                     }
-
-                    canvas.setBeepers(karel.x, karel.y, world.grid[karel.y][karel.x].b);
+                    
                     break;
 
                 case INTERCODE_KEYS.IF:
@@ -273,13 +293,7 @@ evaluator = {
             finished_step = true;
         }
 
-        canvas.drawKarel([karel]);
-
-        if (execution.counter < interCode.length) {
-            setTimeout(function() {
-                evaluator.evaluateStep(execution, world, karel);
-            }, speed);
-        }
+        return execution.counter < interCode.length;
     },
     throwRuntimeError: function(error) {
         $("#errors").text("Runtime Error: " + error);

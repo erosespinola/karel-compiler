@@ -375,8 +375,14 @@ var number = function() {
 };
 
 var throwError = function(error) {
-    $("#errors").text("Error: " + error + " at line " + 0);
-    throw new Error(error);
+    if (helper.getCurrentToken()) { 
+        $("#errors").text("Syntax Error: " + error + " at line " + helper.getCurrentToken().line);
+        throw new Error(error);
+    } else {
+        $("#errors").text("Syntax Error: " + errors.missing_class_program + " at line 1");
+        throw new Error(error);
+    }
+    
 };
 
 /* Conditionals */
