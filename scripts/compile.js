@@ -11,6 +11,66 @@ var world = {
             x: 1,
             y: 0
         }
+    },
+    {
+        "x": 1,
+        "y": 5,
+        "beepers": 2,
+        "orientationIndex": 1,
+        "orientation": {
+            x: 1,
+            y: 0
+        }
+    },
+    {
+        "x": 2,
+        "y": 5,
+        "beepers": 2,
+        "orientationIndex": 1,
+        "orientation": {
+            x: 1,
+            y: 0
+        }
+    },
+    {
+        "x": 1,
+        "y": 6,
+        "beepers": 2,
+        "orientationIndex": 1,
+        "orientation": {
+            x: 1,
+            y: 0
+        }
+    },
+    {
+        "x": 4,
+        "y": 6,
+        "beepers": 2,
+        "orientationIndex": 1,
+        "orientation": {
+            x: 1,
+            y: 0
+        }
+    },
+    {
+        "x": 7,
+        "y": 7,
+        "beepers": 2,
+        "orientationIndex": 1,
+        "orientation": {
+            x: 1,
+            y: 0
+        }
+    },
+    {
+        "x": 8,
+        "y": 7,
+        "beepers": 2,
+        "orientationIndex": 1,
+        "orientation": {
+            x: 1,
+            y: 0
+        }
     }],
     // "grid": [
     //     [{"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}],
@@ -70,7 +130,7 @@ canvas.init(function () {
 drawBeepers(1);
 
 var reset = function() {
-    canvas.reset(world, world.karel[0]);
+    canvas.reset(world, world.karel);
     $('#errors').text('Ready');
     $('#karel_0').val(world.karel[0].beepers);
     drawBeepers(1);
