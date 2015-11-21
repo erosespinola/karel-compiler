@@ -93,9 +93,15 @@ evaluator = {
         canvas.drawKarel(_.map(this.executions, function (d) { return d.karel; }));
 
         if (running) {
+            $('#reset-btn').addClass('disabled');
+            $('#compile-btn').addClass('disabled');
+            $('#errors').text('Running...');
             setTimeout(function() {
                 evaluator.run(interCode, world);
             }, speed);
+        } else {
+            $('#reset-btn').removeClass('disabled');
+            $('#errors').text('Finished');
         }
     },
     evaluateCondition: function(execution, conditional, world, karel){

@@ -73,14 +73,15 @@ drawBeepers(world.karel);
 var reset = function() {
     canvas.reset(world, world.karel);
     $('#errors').text('Ready');
-    $('#karel_0').val(world.karel[0].beepers);
-    drawBeepers(1);
+    drawBeepers(world.karel);
+    $('#compile-btn').removeClass('disabled');
 };
 
 var compile = function(editor) {
     var program = editor.getSession().getValue();
     var tokens = lexicographic.getTokens(program);
     var intercode = syntax.parse(tokens);
+    drawBeepers(world.karel);
 
     localStorage.setItem('karelProgram', program);
 

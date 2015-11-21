@@ -1,25 +1,24 @@
+/* Syntax object calls parse to create intercode list */
 syntax = {
     parse: function(tokens) {
         interCodeIndex = 0;
         interCode = [];
 
-        helper.setTokens(tokens);
+        helper.init(tokens);
         interCode[interCodeIndex++] = INTERCODE_KEYS.JMP;
         interCodeIndex++;
         program();
         if (interCode[interCode.length - 1] != INTERCODE_KEYS.TURN_OFF) {
             throwError(errors.missing_turnoff);    
         }
-        /*return _.map(interCode, function(d, i) {
-            return [i, d];
-        });*/
         return interCode;
     }
 };
 
-var interCodeIndex;
-var interCode;
+var interCodeIndex; // intercode current index
+var interCode;      // intercode list
 
+/* Syntax errors */
 var errors = { 
     missing_right_brace: "Missing closing brace",
     missing_left_brace: "Missing opening brace",
@@ -42,6 +41,7 @@ var errors = {
     invalid_iterate_argument: 'Invalid iterate argument',
 };
 
+/* Reserved keywords for karel language */
 var reservedKeywords = {
     'if': true,
     'else': true,
@@ -75,7 +75,8 @@ var reservedKeywords = {
     'turnoff': true
 };
 
-/* Program */
+/* program asks for the main signature of the program,
+    function declarations and main function */
 var program = function() {
     if (helper.require('class') && helper.require('program')) {
         if (helper.require('{')) {
@@ -92,6 +93,7 @@ var program = function() {
     }
 };
 
+/* mainFunction asks for a main function and a body */
 var mainFunction = function() {
     if (helper.require('program') && helper.require('(') && helper.require(')')) {
         if (helper.require('{')) {
@@ -108,13 +110,15 @@ var mainFunction = function() {
     }
 };
 
-/* Functions */
+/* functionsDeclarations reads all function declarations */
 var functionsDeclarations = function() {
     while (helper.read('void')) {
         functionDeclaration();
     }
 };
 
+/* functionDeclaration read a function declaration by adding it to the
+    symbol table and asking for a body */
 var functionDeclaration = function() {
     if (helper.require('void')) {
         nameFunction();
@@ -413,28 +417,6 @@ var throwError = function(error) {
     
 };
 
-/* Conditionals */
-// var isSimpleConditional = function() {
-//     return 
-//      helper.read('frontIsClear') ||
-//      helper.read('leftIsClear') ||
-//      helper.read('leftIsBlocked') ||
-//      helper.read('rightIsClear') ||
-//      helper.read('rightIsBlocked') ||
-//      helper.read('nextToABeeper') ||
-//      helper.read('notNextToABeeper') ||
-//      helper.read('anyBeepersInBeeperBag') ||
-//      helper.read('noBeepersInBeeperBag') ||
-//      helper.read('facingNorth') ||
-//      helper.read('facingSouth') ||
-//      helper.read('facingEast') ||
-//      helper.read('facingWest') ||
-//      helper.read('notFacingNorth') ||
-//      helper.read('notFacingSouth') ||
-//      helper.read('notFacingEast') ||
-//      helper.read('notFacingWest');
-// };
-
 var simpleConditional = function() {
     if (helper.ifRead('!')) {
         interCode[interCodeIndex++] = INTERCODE_KEYS.NOT;
@@ -462,7 +444,6 @@ var simpleConditional = function() {
 };
 
 var conditional = function() {
-    // FIXME: Will crash on EOF
     var ahead_token = helper.lookAhead(1).text;
     if (ahead_token === '&&' || ahead_token === '||') {
         composedConditional();
@@ -472,7 +453,6 @@ var conditional = function() {
 };
 
 var composedConditional = function() {
-    // FIXME: Will crash on EOF
     var ahead_token = helper.lookAhead(1).text;
 
     if (ahead_token === '||') {

@@ -6,7 +6,7 @@ var openModal = function() {
 
 var saveBeepers = function() {
 	world.karel[0].beepers = $('#beepers_amount').val();
-	drawBeepers(1, world.karel[0])
+	drawBeepers(world.karel);
 };
 
 var drawBeepers = function(karels) {
