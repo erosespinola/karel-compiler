@@ -1,3 +1,5 @@
+// Self-contained object to render canvas
+
 canvas = {
     stage: null,
     renderer: null,
@@ -15,8 +17,7 @@ canvas = {
     beeperTexture: null,
     wallTexture: null,
 
-    // playerSprite: null,
-
+    // 
     init: function (loadedCallback) {
         this.renderer = new PIXI.autoDetectRenderer(
             555, 
@@ -33,11 +34,6 @@ canvas = {
 
         this.stage.addChild(this.worldContainer);
         this.stage.addChild(this.beeperContainer);
-
-        // this.stage.setInteractive(true);
-        // this.stage.on('click', function(a) {
-        //     console.log('asadas', a);
-        // });
 
         window.addEventListener('resize', this.onResize);
         this.onResize();
@@ -77,6 +73,12 @@ canvas = {
     },
 
     reset: function(world, karel) {
+        _.each(this.karelSprites, function(k, i) {
+            if (i != 0) {
+                this.stage.removeChild(k);
+            }
+        }, this);
+
         canvas.drawBeepers(world);
         canvas.drawKarel(karel, true);
     },
@@ -87,6 +89,7 @@ canvas = {
         graphics.beginFill(0x88ffbb);
         graphics.lineStyle(1, 0x88ffbb);
 
+        // Draw the grass tiles
         for (var i = 0; i < world.rows; i++) {
             for (var j = 0; j < world.cols; j++) {
                 var sprite = new PIXI.Sprite(this.grassTexture);
@@ -97,22 +100,6 @@ canvas = {
                 this.worldContainer.addChild(sprite);
             }
         }
-
-        // for (var i = 0; i < world.rows; i++) {
-        //     for (var j = 0; j < world.cols; j++) {
-        //         if (chance.bool({likelihood: 4})) {
-        //             var sprite = new PIXI.Sprite(chance.pick([
-        //                 this.miscTexture1, 
-        //                 this.miscTexture2
-        //             ]));
-
-        //             sprite.position.y = i * this.tileSize;
-        //             sprite.position.x = j * this.tileSize;
-                    
-        //             this.stage.addChild(sprite);
-        //         }
-        //     }
-        // }
 
         // Draw grid
         for (var i = 0; i < world.rows; i++) {
@@ -144,6 +131,7 @@ canvas = {
 
         beeperObject.count = newBeepers;
 
+        // Beepers were removed
         if (beeperObject.count <= 0) {
             if (beeperObject.text) {
                 this.beeperContainer.removeChild(beeperObject.text);
@@ -154,6 +142,7 @@ canvas = {
                 beeperObject.sprite = null;
             }
         }
+        // One beeper was added, no text required
         else if (beeperObject.count === 1) {
             if (beeperObject.text) {
                 this.beeperContainer.removeChild(beeperObject.text);
@@ -169,6 +158,7 @@ canvas = {
                 this.beeperContainer.addChild(beeperObject.sprite);
             }
         }
+        // More than one beeper added, requires text
         else if (beeperObject.count > 1) {
             if (!beeperObject.sprite) {
                 beeperObject.sprite = new PIXI.Sprite(this.beeperTexture);
@@ -193,6 +183,7 @@ canvas = {
         }
     },
 
+    // Redraw all the beepers in the map
     drawBeepers: function(world) {
         for (var i = 0; i < world.rows; i++) {
             for (var j = 0; j < world.cols; j++) {
@@ -201,6 +192,7 @@ canvas = {
         }
     },
 
+    // Draw all the walls 
     drawWalls: function(world) {
         for (var i = 0; i < world.rows; i++) {
             for (var j = 0; j < world.cols; j++) {
@@ -216,6 +208,7 @@ canvas = {
         }
     },
 
+    // Draw an array of Karels, animate the movements 
     drawKarel: function(karel, skipAnimation) {
         _.each(karel, function(k) {
             var id = k.id;
@@ -223,6 +216,7 @@ canvas = {
             var new_x = k.x * this.tileSize,
                 new_y = k.y * this.tileSize;
 
+            // Sprite hasn't been added yet, add it to the world
             if (!k.added) {
                 this.karelSprites[id] = new PlayerSprite(this.karelFrames[id % this.karelColors]);
                 this.karelSprites[id].position.x = new_x;
@@ -236,8 +230,10 @@ canvas = {
             // Sprite has been destroyed already
             if (!sprite) return;
 
+            // Animation speed varies according to the speed slider
             sprite.animationSpeed = 1.0 / speed * 100;
 
+            // Play pick beeper animation if required
             if (k.interactedWithBeeper) {
                 k.interactedWithBeeper = false;
 
@@ -259,6 +255,7 @@ canvas = {
                     sprite.onComplete = null;
                 };
             }
+            // Skip animation for insta-teleportation
             else if (skipAnimation) {
                 sprite.position.x = new_x;
                 sprite.position.y = new_y;
@@ -272,6 +269,7 @@ canvas = {
                 else if (_.isMatch(k.orientation, {x: -1, y: 0}))
                     sprite.gotoAndStop(16);
             }
+            // Amnimate a movement and rotate sprite to the correct position
             else if (
                 Math.abs(new_x - sprite.position.x) > this.tileSize / 2.0 || 
                 Math.abs(new_y - sprite.position.y) > this.tileSize / 2.0) {
@@ -302,6 +300,7 @@ canvas = {
         }, this);
     },
 
+    // Remove a karel sprite
     turnoffKarel: function (id) {
         if (id !== 0 && this.karelSprites[id]) {
             this.stage.removeChild(this.karelSprites[id]);
@@ -309,6 +308,7 @@ canvas = {
         }
     },
 
+    // Play the animation loop
     animate: function (time) {
         requestAnimationFrame(canvas.animate);
 
@@ -318,11 +318,13 @@ canvas = {
         canvas.renderer.render(canvas.stage);
     },
 
+    // Resize the canvas in case the container size changed
     onResize: function () {
         canvas.renderer.resize($('#canvas-container').width(), 450);
     }
 };
  
+// Read the individual sprites off a spritesheet
 function getFramesFromSpriteSheet(texture, frameWidth, frameHeight) {
     var frames = [];
  

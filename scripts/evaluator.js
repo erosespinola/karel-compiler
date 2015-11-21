@@ -19,7 +19,7 @@ var changeSpeed = function(range) {
 }
 
 var printWorld = function(world, karel){
-    console.log(karel.beepers, karel.orientation.x, karel.orientation.y);
+    // console.log(karel.beepers, karel.orientation.x, karel.orientation.y);
 
     for (var i = 0; i < world.rows; i++) {
         var line = '';
@@ -34,7 +34,7 @@ var printWorld = function(world, karel){
                 line += '.';
             }
         }
-        console.log(line);
+        // console.log(line);
     }
 }
 
@@ -43,7 +43,7 @@ evaluator = {
     idCount: 0,
     evaluate: function(interCode, world) {
         this.idCount = 0;
-        console.log(interCode);
+        // console.log(interCode);
 
         world = _.cloneDeep(world);
         canvas.reset(world, world.karel);
@@ -57,22 +57,31 @@ evaluator = {
 
         this.run(interCode, world);
     },
+    destroyChildren: function(execution) {
+        _.each(execution.karel.children, function (child) {
+            this.destroyChildren(child);
+            execution.counter = interCode.length;
+            canvas.turnoffKarel(child.karel.id);
+        }, this);
+
+        canvas.turnoffKarel(execution.karel.id);
+        var index = _.findIndex(this.executions, execution);
+
+        if (index !== -1) {
+            this.executions.splice(index);
+        }
+    },
     run: function(intercode, world) {
         var running = false;
         _.each(this.executions, function (execution, i) {
+            if (!execution) return;
+
             var karelRunning = this.evaluateStep(execution, world, execution.karel);
 
             running |= karelRunning;
 
             if (!karelRunning) {
-
-                _.each(execution.karel.children, function (child) {
-                    execution.counter = intercode.length;
-                    canvas.turnoffKarel(child.id);
-                });
-                canvas.turnoffKarel(execution.karel.id);
-                this.executions.splice(i);
-
+                this.destroyChildren(execution);
             }
 
         }, this);
@@ -165,7 +174,7 @@ evaluator = {
             var op = interCode[execution.counter];
 
             // printWorld(world, karel);
-            console.log(op);
+            // console.log(op);
 
             switch (op) {
                 case INTERCODE_KEYS.JMP:
@@ -204,7 +213,7 @@ evaluator = {
                     break;
 
                 case INTERCODE_KEYS.TURN_LEFT:
-                    console.log('TURN LEFT');
+                    // console.log('TURN LEFT');
                     karel.orientationIndex = (((karel.orientationIndex - 1) % 4) + 4) % 4;
                     karel.orientation = orientation[karel.orientationIndex];
                     break;
@@ -261,7 +270,7 @@ evaluator = {
                         }
                     }
                     
-                    console.log(conditionalStack[0]);
+                    // console.log(conditionalStack[0]);
                     if (conditionalStack.pop()) {
                         execution.counter += 2;
                     }
@@ -294,7 +303,7 @@ evaluator = {
                         }
                     }
                     
-                    console.log(conditionalStack[0]);
+                    // console.log(conditionalStack[0]);
                     if (conditionalStack.pop()) {
                         execution.counter += 2;
                     }
@@ -340,7 +349,7 @@ evaluator = {
     },
     throwRuntimeError: function(error) {
         $("#errors").text("Runtime Error: " + error);
-        console.log(error);
+        // console.log(error);
         throw new Error(error);
     }
 };
