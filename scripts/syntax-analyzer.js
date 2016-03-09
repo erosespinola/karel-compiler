@@ -152,13 +152,13 @@ var nameFunction = function() {
 
 var callFunction = function() {
     nameOfFunction();
-    if (helper.require('(')) {
+    /*if (helper.require('(')) {
         if (!helper.require(')')) {
             throwError(errors.bad_function_call_parenthesis);
         }
     } else {
         throwError(errors.bad_function_call_parenthesis);
-    }
+    }*/
 };
 
 var nameOfFunction = function() {
@@ -170,6 +170,14 @@ var nameOfFunction = function() {
         officialFunction();
     } else {
         customerFunction();
+        //parenthesis check, none have parameters
+        if (helper.require('(')) {
+            if (!helper.require(')')) {
+                throwError(errors.bad_function_call_parenthesis);
+            }
+        } else {
+            throwError(errors.bad_function_call_parenthesis);
+        }
     }
 };
 var parallelFunction = function(){
@@ -197,6 +205,14 @@ var normalFunction = function(){
   else if (helper.ifRead('turnoff')) {
       interCode[interCodeIndex++] = INTERCODE_KEYS.TURN_OFF;
   }
+  //parenthesis check, none have parameters
+  if (helper.require('(')) {
+      if (!helper.require(')')) {
+          throwError(errors.bad_function_call_parenthesis);
+      }
+  } else {
+      throwError(errors.bad_function_call_parenthesis);
+  }
 }
 var officialFunction = function() {
   if (helper.read('clone') ||
@@ -216,6 +232,8 @@ var customerFunction = function () {
     } else {
         throwError(errors.not_found_function + nameFunction);
     }
+
+
 };
 
 /* Body */
