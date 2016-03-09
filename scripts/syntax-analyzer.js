@@ -9,7 +9,7 @@ syntax = {
         interCodeIndex++;
         program();
         if (interCode[interCode.length - 1] != INTERCODE_KEYS.TURN_OFF) {
-            throwError(errors.missing_turnoff);    
+            throwError(errors.missing_turnoff);
         }
         return interCode;
     }
@@ -19,7 +19,7 @@ var interCodeIndex; // intercode current index
 var interCode;      // intercode list
 
 /* Syntax errors */
-var errors = { 
+var errors = {
     missing_right_brace: "Missing closing brace",
     missing_left_brace: "Missing opening brace",
     missing_left_parenthesis: "Missing opening parenthesis",
@@ -83,10 +83,10 @@ var program = function() {
             functionsDeclarations();
             mainFunction();
             if (!helper.require('}')) {
-                throwError(errors.missing_right_brace);        
-            } 
+                throwError(errors.missing_right_brace);
+            }
         } else {
-            throwError(errors.missing_left_brace);    
+            throwError(errors.missing_left_brace);
         }
     } else {
         throwError(errors.missing_class_program);
@@ -100,10 +100,10 @@ var mainFunction = function() {
             interCode[1] = interCodeIndex;
             body();
             if (!helper.require('}')) {
-                throwError(errors.missing_right_brace);        
+                throwError(errors.missing_right_brace);
             }
         } else {
-            throwError(errors.missing_left_brace);    
+            throwError(errors.missing_left_brace);
         }
     } else {
         throwError(errors.missing_program);
@@ -128,13 +128,13 @@ var functionDeclaration = function() {
                 if (helper.require('}')) {
                     interCode[interCodeIndex++] = INTERCODE_KEYS.RET;
                 } else {
-                    throwError(errors.missing_right_brace);            
+                    throwError(errors.missing_right_brace);
                 }
             } else {
-                throwError(errors.missing_left_brace);        
+                throwError(errors.missing_left_brace);
             }
         } else {
-            throwError(errors.bad_function_declaration_parenthesis);    
+            throwError(errors.bad_function_declaration_parenthesis);
         }
     } else {
         throwError(errors.bad_function_declaration_void);
@@ -154,41 +154,59 @@ var callFunction = function() {
     nameOfFunction();
     if (helper.require('(')) {
         if (!helper.require(')')) {
-            throwError(errors.bad_function_call_parenthesis);    
-        }    
+            throwError(errors.bad_function_call_parenthesis);
+        }
     } else {
         throwError(errors.bad_function_call_parenthesis);
-    }  
+    }
 };
 
 var nameOfFunction = function() {
     if (helper.read('move') ||
         helper.read('pickbeeper') || helper.read('turnleft') ||
-        helper.read('putbeeper') || helper.read('turnoff')) {
+        helper.read('putbeeper') || helper.read('turnoff') ||
+        helper.read('clone')
+      ) {
         officialFunction();
     } else {
         customerFunction();
     }
 };
-
+var parallelFunction = function(){
+  if (helper.ifRead('givebeeper')) {
+      //interCode[interCodeIndex++] = INTERCODE_KEYS.TURN_LEFT;
+      //pending, add givebeeper to table
+  }
+  else if (helper.read('clone')) {
+      cloneExpression();
+  }
+}
+var normalFunction = function(){
+  if (helper.ifRead('turnleft')) {
+      interCode[interCodeIndex++] = INTERCODE_KEYS.TURN_LEFT;
+  }
+  else if (helper.ifRead('move')) {
+      interCode[interCodeIndex++] = INTERCODE_KEYS.MOVE;
+  }
+  else if (helper.ifRead('pickbeeper')) {
+      interCode[interCodeIndex++] = INTERCODE_KEYS.PICK_BEEPER;
+  }
+  else if (helper.ifRead('putbeeper')) {
+      interCode[interCodeIndex++] = INTERCODE_KEYS.PUT_BEEPER;
+  }
+  else if (helper.ifRead('turnoff')) {
+      interCode[interCodeIndex++] = INTERCODE_KEYS.TURN_OFF;
+  }
+}
 var officialFunction = function() {
-    if (helper.ifRead('turnleft')) {
-        interCode[interCodeIndex++] = INTERCODE_KEYS.TURN_LEFT;
-    }  
-    else if (helper.ifRead('move')) {
-        interCode[interCodeIndex++] = INTERCODE_KEYS.MOVE;
-    }
-    else if (helper.ifRead('pickbeeper')) {
-        interCode[interCodeIndex++] = INTERCODE_KEYS.PICK_BEEPER;
-    }
-    else if (helper.ifRead('putbeeper')) {
-        interCode[interCodeIndex++] = INTERCODE_KEYS.PUT_BEEPER;
-    }
-    else if (helper.ifRead('turnoff')) {
-        interCode[interCodeIndex++] = INTERCODE_KEYS.TURN_OFF;
-    }
+  if (helper.read('clone') ||
+      helper.read('givebeeper')) {
+    parallelFunction();
+  } else {
+    normalFunction();
+  }
 };
-    
+
 var customerFunction = function () {
     var nameFunction = helper.fetchToken();
     var posFunctionInCodeInter = helper.findStartPointOfFunction(nameFunction);
@@ -225,14 +243,15 @@ var expression = function() {
         }
         else if (helper.read('while')) {
             whileExpression();
-        } 
+        }
         else if (helper.read('iterate')) {
             iterateExpression();
-        } 
-        else if (helper.read('clone')) {
+        }
+        /*else if (helper.read('clone')) {
             cloneExpression();
-        } else {
-            callFunction();  
+        } */
+        else {
+            callFunction();
         }
     }
 };
@@ -254,7 +273,7 @@ var ifExpression = function() {
                     body();
 
                     if (!helper.require('}')) {
-                        throwError(errors.missing_right_brace);                
+                        throwError(errors.missing_right_brace);
                     }
 
                     if (helper.read('else')) {
@@ -271,15 +290,15 @@ var ifExpression = function() {
                     }
                 }
                 else {
-                    throwError(errors.missing_left_brace);            
+                    throwError(errors.missing_left_brace);
                 }
             }
             else {
-                throwError(errors.missing_right_parenthesis);        
+                throwError(errors.missing_right_parenthesis);
             }
         }
         else {
-            throwError(errors.missing_left_parenthesis);    
+            throwError(errors.missing_left_parenthesis);
         }
     }
     else {
@@ -295,10 +314,10 @@ var elseIf = function() {
             body();
             if (!helper.require('}'))
             {
-                throwError(errors.missing_right_brace);        
+                throwError(errors.missing_right_brace);
             }
         } else {
-            throwError(errors.missing_left_brace);    
+            throwError(errors.missing_left_brace);
         }
     } else {
         throwError(errors.missing_else_expression);
@@ -326,16 +345,16 @@ var whileExpression = function() {
                         interCode[interCodeIndex++] = start;
                         interCode[end_position] = interCodeIndex;
                     } else {
-                        throwError(errors.missing_right_brace);                
+                        throwError(errors.missing_right_brace);
                     }
                 } else {
-                    throwError(errors.missing_left_brace);            
+                    throwError(errors.missing_left_brace);
                 }
             } else {
-                throwError(errors.missing_right_parenthesis);        
+                throwError(errors.missing_right_parenthesis);
             }
         } else {
-            throwError(errors.missing_left_parenthesis);    
+            throwError(errors.missing_left_parenthesis);
         }
     } else {
         throwError(errors.missing_while_expression);
@@ -354,13 +373,13 @@ var cloneExpression = function() {
                 throwError(errors.not_found_function + nameFunction);
             }
             if (!helper.require(')')) {
-                throwError(errors.missing_right_parenthesis);  
+                throwError(errors.missing_right_parenthesis);
             }
         } else {
-            throwError(errors.missing_left_parenthesis);  
+            throwError(errors.missing_left_parenthesis);
         }
     } else {
-        throwError(errors.missing_clone_expression);  
+        throwError(errors.missing_clone_expression);
     }
 };
 
@@ -369,7 +388,7 @@ var iterateExpression = function() {
 
     if (helper.require('iterate')) {
         if (helper.require('(')) {
-            
+
             interCode[interCodeIndex++] = INTERCODE_KEYS.ITE;
 
             var value = helper.fetchToken();
@@ -385,19 +404,19 @@ var iterateExpression = function() {
                             interCode[interCodeIndex++] = INTERCODE_KEYS.DECJMP;
                             interCode[interCodeIndex++] = start;
                         } else {
-                            throwError(errors.missing_right_brace);                
+                            throwError(errors.missing_right_brace);
                         }
                     } else {
-                        throwError(errors.missing_left_brace);            
+                        throwError(errors.missing_left_brace);
                     }
                 } else {
-                    throwError(errors.missing_right_parenthesis);        
+                    throwError(errors.missing_right_parenthesis);
                 }
             } else {
-                throwError(errors.invalid_iterate_argument); 
+                throwError(errors.invalid_iterate_argument);
             }
         } else {
-            throwError(errors.missing_left_parenthesis);    
+            throwError(errors.missing_left_parenthesis);
         }
     } else {
         throwError(errors.missing_iterate_expression);
@@ -407,14 +426,14 @@ var iterateExpression = function() {
 
 
 var throwError = function(error) {
-    if (helper.getCurrentToken()) { 
+    if (helper.getCurrentToken()) {
         $("#errors").text("Syntax Error: " + error + " at line " + helper.getCurrentToken().line);
         throw new Error(error);
     } else {
         $("#errors").text("Syntax Error: " + errors.missing_class_program + " at line 1");
         throw new Error(error);
     }
-    
+
 };
 
 var simpleConditional = function() {
@@ -467,4 +486,3 @@ var composedConditional = function() {
         simpleConditional();
     }
 };
-
