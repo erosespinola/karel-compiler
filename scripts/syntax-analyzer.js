@@ -72,7 +72,21 @@ var reservedKeywords = {
     'pickbeeper': true,
     'turnleft': true,
     'putbeeper': true,
-    'turnoff': true
+    'turnoff': true,
+	'nextToKarel':true,
+	'notNextToKarel':true,
+	'frontIsFull':true,
+	'notFrontIsFull':true,
+	'nextToSon':true ,
+	'notNextToSon':true,
+	'nextToFather':true ,
+	'notNextToFather':true, 
+	'nextToDescendant':true,
+	'notNextToDescendant':true
+
+	
+	
+	
 };
 
 /* program asks for the main signature of the program,
@@ -459,6 +473,18 @@ var simpleConditional = function() {
     else if (helper.ifRead('notFacingSouth')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_FACING_SOUTH;
     else if (helper.ifRead('notFacingEast')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_FACING_EAST;
     else if (helper.ifRead('notFacingWest')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_FACING_WEST;
+	else if (helper.ifRead('nextToKarel')) interCode[interCodeIndex++] = INTERCODE_KEYS.NEXT_TO_KAREL;
+    else if (helper.ifRead('notNextToKarel')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_NEXT_TO_KAREL;
+	else if (helper.ifRead('frontIsFull')) interCode[interCodeIndex++] = INTERCODE_KEYS.FRONT_IS_FULL;
+	else if (helper.ifRead('notFrontIsFull')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_FRONT_IS_FULL;	
+	else if (helper.ifRead('nextToSon')) interCode[interCodeIndex++] = INTERCODE_KEYS.NEXT_TO_SON;
+	else if (helper.ifRead('notNextToSon')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_NEXT_TO_SON;
+	else if (helper.ifRead('nextToFather')) interCode[interCodeIndex++] = INTERCODE_KEYS.NEXT_TO_FATHER;
+	else if (helper.ifRead('notNextToFather')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_NEXT_TO_FATHER;
+	else if (helper.ifRead('nextToDescendant')) interCode[interCodeIndex++] = INTERCODE_KEYS.NEXT_TO_DESCENDANT;
+	else if (helper.ifRead('notNextToDescendant')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_NEXT_TO_DESCENDANT;	
+	
+	
     else throwError(errors.not_valid_condition);
 };
 
