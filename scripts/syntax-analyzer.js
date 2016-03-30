@@ -166,20 +166,13 @@ var nameFunction = function() {
 
 var callFunction = function() {
     nameOfFunction();
-    if (helper.require('(')) {
-        if (!helper.require(')')) {
-            throwError(errors.bad_function_call_parenthesis);
-        }
-    } else {
-        throwError(errors.bad_function_call_parenthesis);
-    }
 };
 
 var nameOfFunction = function() {
     if (helper.read('move') ||
         helper.read('pickbeeper') || helper.read('turnleft') ||
         helper.read('putbeeper') || helper.read('turnoff') ||
-        helper.read('clone')
+        helper.read('clone') ||  helper.read('givebeeper')
       ) {
         officialFunction();
     } else {
@@ -190,6 +183,13 @@ var parallelFunction = function(){
   if (helper.ifRead('givebeeper')) {
       //interCode[interCodeIndex++] = INTERCODE_KEYS.TURN_LEFT;
       //pending, add givebeeper to table
+      if (helper.require('(')) {
+          if (!helper.require(')')) {
+              throwError(errors.bad_function_call_parenthesis);
+          }
+      } else {
+          throwError(errors.bad_function_call_parenthesis);
+      }
   }
   else if (helper.read('clone')) {
       cloneExpression();
@@ -211,6 +211,14 @@ var normalFunction = function(){
   else if (helper.ifRead('turnoff')) {
       interCode[interCodeIndex++] = INTERCODE_KEYS.TURN_OFF;
   }
+  //parenthesis check, none have parameters
+  if (helper.require('(')) {
+      if (!helper.require(')')) {
+          throwError(errors.bad_function_call_parenthesis);
+      }
+  } else {
+      throwError(errors.bad_function_call_parenthesis);
+  }
 }
 var officialFunction = function() {
   if (helper.read('clone') ||
@@ -227,6 +235,13 @@ var customerFunction = function () {
     if (posFunctionInCodeInter !== '0xFF') {
         interCode[interCodeIndex++] = INTERCODE_KEYS.CALL;
         interCode[interCodeIndex++] = posFunctionInCodeInter;
+        if (helper.require('(')) {
+            if (!helper.require(')')) {
+                throwError(errors.bad_function_call_parenthesis);
+            }
+        } else {
+            throwError(errors.bad_function_call_parenthesis);
+        }
     } else {
         throwError(errors.not_found_function + nameFunction);
     }
@@ -261,9 +276,6 @@ var expression = function() {
         else if (helper.read('iterate')) {
             iterateExpression();
         }
-        /*else if (helper.read('clone')) {
-            cloneExpression();
-        } */
         else {
             callFunction();
         }
