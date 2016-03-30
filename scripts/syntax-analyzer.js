@@ -39,6 +39,7 @@ var errors = {
     not_found_function: "Not found function: ",
     not_valid_condition: 'Not a valid simple condition',
     invalid_iterate_argument: 'Invalid iterate argument',
+    invalid_givebeeper_argument: "Invalid number of beepers"
 };
 
 /* Reserved keywords for karel language */
@@ -167,12 +168,17 @@ var nameOfFunction = function() {
 };
 var parallelFunction = function(){
   if (helper.ifRead('givebeeper')) {
-      //interCode[interCodeIndex++] = INTERCODE_KEYS.TURN_LEFT;
-      //pending, add givebeeper to table
       if (helper.require('(')) {
-          if (!helper.require(')')) {
-              throwError(errors.bad_function_call_parenthesis);
-          }
+        interCode[interCodeIndex++] = INTERCODE_KEYS.GIVE_BEEPER;
+        var value = helper.fetchToken();
+        if (Number.isInteger(parseInt(value)) && value != 0) {
+            interCode[interCodeIndex++] = value;
+            if (!helper.require(')')) {
+                throwError(errors.bad_function_call_parenthesis);
+            }
+        }else {
+          throwError(errors.invalid_givebeeper_argument);
+        }
       } else {
           throwError(errors.bad_function_call_parenthesis);
       }

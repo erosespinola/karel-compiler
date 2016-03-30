@@ -32,5 +32,6 @@ const INTERCODE_KEYS = {
     NOT: 'NOT',
     ITE: 'ITE',
     WHILE: 'WHILE',
-    CLONE: 'CLONE'
+    CLONE: 'CLONE',
+    GIVE_BEEPER: "GIVE_BEEPER"
 };

@@ -8,8 +8,10 @@ const orientation = [
 var RuntimeErrors = {
     wall_at_position: "Karel can't pass through a wall",
     no_beeper_at_position: "There are no beepers at this position",
-    no_remaining_beepers: "Karel has no beepers to drop"
-
+    no_remaining_beepers: "Karel has no beepers to drop",
+    not_enough_beepers: "Karel has not enough beepers to give",
+    too_many_karels: "There are more than 2 karels in the position",
+    no_receiver_karel: "There is no one to receive beepers"
 };
 
 var speed = 500;
@@ -175,7 +177,7 @@ evaluator = {
         }
         var op = interCode[execution.counter],
             finished_step = false;
-        
+
         while (!finished_step){
             var op = interCode[execution.counter];
 
@@ -234,7 +236,7 @@ evaluator = {
                         canvas.setBeepers(karel.x, karel.y, world.grid[karel.y][karel.x].b);
                         $("#karel_" + karel.id).text(karel.beepers);
                     }
-    
+
                     break;
 
                 case INTERCODE_KEYS.PUT_BEEPER:
@@ -247,7 +249,7 @@ evaluator = {
                     } else {
                         this.throwRuntimeError(RuntimeErrors.no_remaining_beepers);
                     }
-                    
+
                     break;
 
                 case INTERCODE_KEYS.IF:
@@ -275,12 +277,12 @@ evaluator = {
                             conditionalStack.push(conditionalStack.pop() || conditionalStack.pop());
                         }
                     }
-                    
+
                     // console.log(conditionalStack[0]);
                     if (conditionalStack.pop()) {
                         execution.counter += 2;
                     }
-                    
+
                     break;
 
                 case INTERCODE_KEYS.WHILE:
@@ -308,12 +310,12 @@ evaluator = {
                             conditionalStack.push(conditionalStack.pop() || conditionalStack.pop());
                         }
                     }
-                    
+
                     // console.log(conditionalStack[0]);
                     if (conditionalStack.pop()) {
                         execution.counter += 2;
                     }
-                    
+
                     break;
                 case INTERCODE_KEYS.CLONE:
                     var tmpKarel = {
@@ -345,12 +347,45 @@ evaluator = {
                 case INTERCODE_KEYS.TURN_OFF:
                     execution.counter = interCode.length;
                     break;
+                case INTERCODE_KEYS.GIVE_BEEPER:
+                    var give_amount = interCode[execution.counter+1];
+                    if (karel.beepers >= give_amount ) {
+                        karel.beepers -= give_amount;
+                        //search for other karel in this cell
+                        var given = false;
+                        var childStack = [];
+                        childStack.push(world.karel[0]);
+                        while (childStack.length > 0){
+                          console.log("entered while");
+                          var currKarel = childStack.pop();
+                          if(karel.x === currKarel.x && karel.y === currKarel.y
+                          && karel.id != currKarel.id){ //same place with someone else
+                            currKarel.beepers = parseInt(currKarel.beepers) + parseInt(give_amount);
+                            currKarel.interactedWithBeeper = true;
+                            $("#karel_" + currKarel.id).text(currKarel.beepers);
+                            given = true;
+                            break;
+                          }
+                          currKarel.children.forEach(function(childKarel,index){
+                            childStack.push(childKarel.karel);
+                          });
+                        }
+                        if(!given){
+                          this.throwRuntimeError(RuntimeErrors.no_receiver_karel);
+                        }
+                        karel.interactedWithBeeper = true;
+                        $("#karel_" + karel.id).text(karel.beepers);
+                    } else {
+                        this.throwRuntimeError(RuntimeErrors.not_enough_beepers);
+                    }
+                    execution.counter ++; //jump over parameter
+                    break;
             }
 
             execution.counter++;
             finished_step = true;
         }
-        
+
         return execution.counter < interCode.length;
     },
     throwRuntimeError: function(error) {
