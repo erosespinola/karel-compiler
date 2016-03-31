@@ -44,36 +44,37 @@ var errors = {
 
 /* Reserved keywords for karel language */
 var reservedKeywords = {
-    'if': true,
-    'else': true,
-    'iterate': true,
-    'while': true,
-    'clone': true,
-    'class': true,
-    'program': true,
-    'void': true,
-    'frontIsClear': true,
-    'leftIsClear': true,
-    'leftIsBlocked': true,
-    'rightIsClear': true,
-    'rightIsBlocked': true,
-    'nextToABeeper': true,
-    'notNextToABeeper': true,
-    'anyBeepersInBeeperBag': true,
-    'noBeepersInBeeperBag': true,
-    'facingNorth': true,
-    'facingSouth': true,
-    'facingEast': true,
-    'facingWest': true,
-    'notFacingNorth': true,
-    'notFacingSouth': true,
-    'notFacingEast': true,
-    'notFacingWest': true,
-    'move': true,
-    'pickbeeper': true,
-    'turnleft': true,
-    'putbeeper': true,
-    'turnoff': true,
+  'if': true,
+  'else': true,
+  'iterate': true,
+  'while': true,
+  'clone': true,
+  'class': true,
+  'program': true,
+  'void': true,
+  'frontIsClear': true,
+  'leftIsClear': true,
+  'leftIsBlocked': true,
+  'rightIsClear': true,
+  'rightIsBlocked': true,
+  'nextToABeeper': true,
+  'notNextToABeeper': true,
+  'anyBeepersInBeeperBag': true,
+  'noBeepersInBeeperBag': true,
+  'facingNorth': true,
+  'facingSouth': true,
+  'facingEast': true,
+  'facingWest': true,
+  'notFacingNorth': true,
+  'notFacingSouth': true,
+  'notFacingEast': true,
+  'notFacingWest': true,
+  'move': true,
+  'pickbeeper': true,
+  'turnleft': true,
+  'putbeeper': true,
+  'turnoff': true,
+  'givebeeper': true,
 	'nextToKarel':true,
 	'notNextToKarel':true,
 	'frontIsFull':true,
@@ -81,13 +82,9 @@ var reservedKeywords = {
 	'nextToSon':true ,
 	'notNextToSon':true,
 	'nextToFather':true ,
-	'notNextToFather':true, 
+	'notNextToFather':true,
 	'nextToDescendant':true,
 	'notNextToDescendant':true
-
-	
-	
-	
 };
 
 /* program asks for the main signature of the program,
@@ -494,15 +491,15 @@ var simpleConditional = function() {
 	else if (helper.ifRead('nextToKarel')) interCode[interCodeIndex++] = INTERCODE_KEYS.NEXT_TO_KAREL;
     else if (helper.ifRead('notNextToKarel')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_NEXT_TO_KAREL;
 	else if (helper.ifRead('frontIsFull')) interCode[interCodeIndex++] = INTERCODE_KEYS.FRONT_IS_FULL;
-	else if (helper.ifRead('notFrontIsFull')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_FRONT_IS_FULL;	
+	else if (helper.ifRead('notFrontIsFull')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_FRONT_IS_FULL;
 	else if (helper.ifRead('nextToSon')) interCode[interCodeIndex++] = INTERCODE_KEYS.NEXT_TO_SON;
 	else if (helper.ifRead('notNextToSon')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_NEXT_TO_SON;
 	else if (helper.ifRead('nextToFather')) interCode[interCodeIndex++] = INTERCODE_KEYS.NEXT_TO_FATHER;
 	else if (helper.ifRead('notNextToFather')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_NEXT_TO_FATHER;
 	else if (helper.ifRead('nextToDescendant')) interCode[interCodeIndex++] = INTERCODE_KEYS.NEXT_TO_DESCENDANT;
-	else if (helper.ifRead('notNextToDescendant')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_NEXT_TO_DESCENDANT;	
-	
-	
+	else if (helper.ifRead('notNextToDescendant')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_NEXT_TO_DESCENDANT;
+
+
     else throwError(errors.not_valid_condition);
 };
 

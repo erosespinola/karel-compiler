@@ -63,7 +63,7 @@ var karelHighlightRules = function(options) {
         "storage.type": "",
         "constant.language": "void",
         "support.function": "program|if|else|clone|iterate|while|move|pickbeeper|turnleft|putbeeper|turnoff|givebeeper",
-        "constant.language.boolean": "frontIsBlocked|frontIsClear|leftIsClear|leftIsBlocked|rightIsClear|rightIsBlocked|nextToABeeper|notNextToABeeper|anyBeepersInBeeperBag|noBeepersInBeeperBag|facingNorth|facingSouth|facingEast|facingWest|notFacingNorth|notFacingSouth|notFacingEast|notFacingWest"
+        "constant.language.boolean": "frontIsBlocked|frontIsClear|leftIsClear|leftIsBlocked|rightIsClear|rightIsBlocked|nextToABeeper|notNextToABeeper|anyBeepersInBeeperBag|noBeepersInBeeperBag|facingNorth|facingSouth|facingEast|facingWest|notFacingNorth|notFacingSouth|notFacingEast|notFacingWest|nextToKarel|notNextToKarel|frontIsFull|notFrontIsFull|nextToSon|notNextToSon|nextToFather|notNextToFather|nextToDescendant|notNextToDescendant"
     }, "identifier");
 
     var escapedRe = "\\\\(?:x[0-9a-fA-F]{2}|" + // hex
