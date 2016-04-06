@@ -294,12 +294,17 @@ evaluator = {
                     }
                     continue;
                 case INTERCODE_KEYS.MOVE:
+                    if(this.evaluateCondition(execution, INTERCODE_KEYS.FRONT_IS_FULL, world, karel)){
+                      this.throwRuntimeError(RuntimeErrors.too_many_karels);
+                    }
                     karel.x += karel.orientation.x;
                     karel.y += karel.orientation.y;
 
                     if (world.grid[karel.y][karel.x].w) {
                         this.throwRuntimeError(RuntimeErrors.wall_at_position);
                     }
+
+
                     break;
 
                 case INTERCODE_KEYS.TURN_LEFT:
