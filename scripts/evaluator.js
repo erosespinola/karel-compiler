@@ -84,6 +84,7 @@ evaluator = {
 
             if (!karelRunning) {
                 this.destroyChildren(execution);
+                execution.karel.x = -1;
             }
 
         }, this);
