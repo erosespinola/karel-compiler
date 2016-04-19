@@ -8,7 +8,7 @@ var world = {
         "beepers": 0,
         "orientationIndex": 1,
         "orientation": {
-            x: -1,
+            x: 1,
             y: 0
         },
         "children": []
@@ -35,7 +35,7 @@ var world = {
         [{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0}],
         [{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": true, "b": 0},{"w": false, "b": 1},{"w": false, "b": 1},{"w": false, "b": 0}],
         [{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": true, "b": 0},{"w": false, "b": 1},{"w": false, "b": 1},{"w": false, "b": 0}],
-        [{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 1},{"w": false, "b": 1},{"w": false, "b": 0}],
+        [{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 1},{"w": false, "b": 2},{"w": false, "b": 1},{"w": false, "b": 1},{"w": false, "b": 0}],
         [{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": true, "b": 0},{"w": true, "b": 0},{"w": true, "b": 0},{"w": false, "b": 0}],
         [{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0}],
         [{"w": false, "b": 0},{"w": true, "b": 0},{"w": true, "b": 0},{"w": true, "b": 0},{"w": true, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0}],
