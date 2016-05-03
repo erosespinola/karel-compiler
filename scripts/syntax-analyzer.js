@@ -3,7 +3,7 @@ syntax = {
     parse: function(tokens) {
         interCodeIndex = 0;
         interCode = [];
-
+        errorList = [];
         helper.init(tokens);
         interCode[interCodeIndex++] = INTERCODE_KEYS.JMP;
         interCodeIndex++;
@@ -411,50 +411,68 @@ var cloneExpression = function() {
         throwError(errors.missing_clone_expression);
     }
 };
-
+//Adding support for multiple errors
+var errorList = [];
+var catchErrorToList = function(error){
+  console.log(errorList);
+  var errorObj = {error: error, line: helper.getCurrentToken()?helper.getCurrentToken().line:1};
+  errorList.push(errorObj);
+  //throw if exceeding 3
+  if(errorList.length > 3){
+    throwErrorList();
+  }
+}
+var throwErrorList = function(){
+  var output = '';
+  errorList.forEach(function(e, index){
+    output+="Syntax Error: " + e.error + " at line " + e.line +'\n';
+  });
+  console.log('out:',output);
+  $("#errors").text(output);
+  throw new Error(errorList.join(':'));
+}
 var iterateExpression = function() {
     var start;
 
-    if (helper.require('iterate')) {
-        if (helper.require('(')) {
-
-            interCode[interCodeIndex++] = INTERCODE_KEYS.ITE;
-
-            var value = helper.fetchToken();
-            if (Number.isInteger(parseInt(value))) {
-                interCode[interCodeIndex++] = value;
-                if (helper.require(')')) {
-                    if (helper.require('{')) {
-                        start = interCodeIndex;
-
-                        body();
-
-                        if (helper.require('}')) {
-                            interCode[interCodeIndex++] = INTERCODE_KEYS.DECJMP;
-                            interCode[interCodeIndex++] = start;
-                        } else {
-                            throwError(errors.missing_right_brace);
-                        }
-                    } else {
-                        throwError(errors.missing_left_brace);
-                    }
-                } else {
-                    throwError(errors.missing_right_parenthesis);
-                }
-            } else {
-                throwError(errors.invalid_iterate_argument);
-            }
-        } else {
-            throwError(errors.missing_left_parenthesis);
-        }
-    } else {
-        throwError(errors.missing_iterate_expression);
+    if (!helper.ifRead('iterate')) {
+      catchErrorToList(errors.missing_iterate_expression);
     }
+    if (!helper.ifRead('(')) {
+      catchErrorToList(errors.missing_left_parenthesis);
+    }
+    interCode[interCodeIndex++] = INTERCODE_KEYS.ITE;
+
+    var value = helper.fetchToken();
+    if (!Number.isInteger(parseInt(value))) {
+      catchErrorToList(errors.invalid_iterate_argument);
+    }
+    interCode[interCodeIndex++] = value;
+    if (!helper.ifRead(')')) {
+      catchErrorToList(errors.missing_right_parenthesis);
+    }
+    if (!helper.ifRead('{')) {
+      catchErrorToList(errors.missing_left_brace);
+    }
+    start = interCodeIndex;
+
+    body();
+
+    if (!helper.ifRead('}')) {
+      catchErrorToList(errors.missing_right_brace);
+    }
+    interCode[interCodeIndex++] = INTERCODE_KEYS.DECJMP;
+    interCode[interCodeIndex++] = start;
+    if(errorList.length > 0){throwErrorList();}
 };
 
 
 
 var throwError = function(error) {
+  //possible accumulated error catcthing
+  if (errorList.length > 0){
+    catchErrorToList(error);
+    throwErrorList();
+  }
     if (helper.getCurrentToken()) {
         $("#errors").text("Syntax Error: " + error + " at line " + helper.getCurrentToken().line);
         throw new Error(error);
@@ -471,7 +489,7 @@ var notCondition=function(){
 };
 
 var simpleConditional = function() {
-    
+
     notCondition();
 
     if (helper.ifRead('frontIsClear')) interCode[interCodeIndex++] = INTERCODE_KEYS.FRONT_IS_CLEAR;
@@ -525,7 +543,7 @@ var orCondition = function() {
 		console.log("Entre al consumo or ");
 		simpleConditional();
 
-        
+
     } else  {
         andCondition();
     }
@@ -543,7 +561,7 @@ var composedConditional= function(){
 
 	simpleConditional();
 	composedConditionalPrima();
-	
+
 };
 
 var composedConditionalPrima=function(){
@@ -553,5 +571,5 @@ var composedConditionalPrima=function(){
 	orCondition();
 	composedConditionalPrima();
 	}
-	
+
 };
