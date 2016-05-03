@@ -64,10 +64,10 @@ helper.peekCurrentToken = function() {
 helper.lookAhead = function(n) {
     if (currentToken + n >= tokens.length) return {text: null};
     return tokens[currentToken + n];
-}
+};
 
 /* Returns current token */
 helper.getCurrentToken = function () {
     if (currentToken >= tokens.length) return tokens[tokens.length - 1];
     return tokens[currentToken];
-}
+};

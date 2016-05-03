@@ -464,11 +464,15 @@ var throwError = function(error) {
     }
 
 };
-
-var simpleConditional = function() {
-    if (helper.ifRead('!')) {
+var notCondition=function(){
+	if (helper.ifRead('!')) {
         interCode[interCodeIndex++] = INTERCODE_KEYS.NOT;
     }
+};
+
+var simpleConditional = function() {
+    
+    notCondition();
 
     if (helper.ifRead('frontIsClear')) interCode[interCodeIndex++] = INTERCODE_KEYS.FRONT_IS_CLEAR;
     else if (helper.ifRead('frontIsBlocked')) interCode[interCodeIndex++] = INTERCODE_KEYS.FRONT_IS_BLOCKED;
@@ -512,18 +516,42 @@ var conditional = function() {
     }
 };
 
-var composedConditional = function() {
+var orCondition = function() {
     var ahead_token = helper.lookAhead(1).text;
+    console.log("Entre al or " + ahead_token);
 
-    if (ahead_token === '||') {
+    if (helper.ifRead('||')) {
         interCode[interCodeIndex++] = INTERCODE_KEYS.OR;
-        simpleConditional();
-        helper.require('||');
-        simpleConditional();
-    } else if (ahead_token === '&&') {
-        interCode[interCodeIndex++] = INTERCODE_KEYS.AND;
-        simpleConditional();
-        helper.require('&&');
-        simpleConditional();
+		console.log("Entre al consumo or ");
+		simpleConditional();
+
+        
+    } else  {
+        andCondition();
     }
+};
+
+var andCondition= function(){
+	if (helper.ifRead('&&')){
+	 console.log("Entre al andCondition ");
+	interCode[interCodeIndex++] = INTERCODE_KEYS.AND;
+	simpleConditional();
+    }
+};
+
+var composedConditional= function(){
+
+	simpleConditional();
+	composedConditionalPrima();
+	
+};
+
+var composedConditionalPrima=function(){
+	var ahead_token = helper.lookAhead(0).text;
+	console.log("hola " , helper.getCurrentToken());
+	if(!(helper.read(')'))){
+	orCondition();
+	composedConditionalPrima();
+	}
+	
 };

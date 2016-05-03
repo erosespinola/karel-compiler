@@ -1,0 +1,287 @@
+<-----------Case A---------------->
+class program {
+    void turnRight(){
+        turnleft()
+        turnleft()
+        turnleft()
+    }
+     void bloqueb(){
+        pickbeeper()
+        move()
+        pickbeeper()
+        pickbeeper()
+        move()
+        pickbeeper()
+        move()
+        pickbeeper()
+        turnleft()
+        move()
+        pickbeeper()
+        move()
+        pickbeeper()
+        turnleft()
+        move()
+        pickbeeper()
+        turnleft()
+        move()
+        pickbeeper()
+        move()
+        turnRight()
+        move()
+        move()
+    }
+  void  bloquea(){
+        pickbeeper()
+        move()
+        pickbeeper()
+        pickbeeper()
+        move()
+        pickbeeper()
+        move()
+        pickbeeper()
+        move()
+        pickbeeper()
+        turnRight()
+        move()
+        pickbeeper()
+        turnRight()
+        move()
+        pickbeeper()
+        move()
+        pickbeeper()
+        turnRight()
+        move()
+        turnleft()
+        move()
+        move()
+    }
+        
+	program() {
+	 
+	    move()
+	    move()
+	    move()
+	    move()
+	    bloqueb()
+	    turnleft()
+	    iterate(5){
+	     move()
+	    }
+	    turnRight()
+	    bloquea()
+	    turnoff()
+	}
+	
+}
+
+<-------------Case B----------->
+        
+    void slave(){
+         move()
+	    move()
+	    move()
+	    move()
+	    bloqueb()
+	    turnleft()
+	    iterate(5){
+	     move()
+	    }
+	    turnRight()
+	    bloquea()
+	    
+	    turnleft()
+	    iterate(5){
+	     move()
+	    }
+	    turnleft()
+	    iterate(4){
+	        move()
+	    }
+	    
+	    givebeeper(18) 
+	    
+	   
+	}
+        
+     
+	program() {
+	  clone(slave)
+	  spin()
+	 
+	  turnoff()  
+	}
+
+<-------------Case C---------->
+
+    void slaved(){
+         
+	    bloqueb()
+	    givebeeper(9)
+	    move()
+	    turnoff()
+    }    
+    void slaves(){
+        turnRight()
+	    iterate(5){
+	     move()
+	    }
+	    turnRight()
+	    bloquea()
+	    turnleft()
+	    iterate(5){
+	     move()
+	    }
+	    
+	    givebeeper(9) 
+	    
+	   turnoff()
+	}
+    
+     
+	program() {
+	  move()
+	  move()
+	  move()
+	  move()  
+	  clone(slaves)
+	  clone(slaved)
+	  spin()
+	 
+	  turnoff()  
+	}
+<-----Case D----->
+program() {
+	  move()
+	  move()
+	  move()
+	  move()
+	  turnRight()
+	    iterate(5){
+	     move()
+	    }
+	    turnRight()
+	    bloquea()
+	    turnleft()
+	    iterate(5){
+	     move()
+	    }
+	   turnRight() 
+	  putb()  
+	 
+	  turnoff()  
+	}
+void putb(){
+        putbeeper()
+        move()
+        putbeeper()
+        putbeeper()
+        move()
+        putbeeper()
+        move()
+        putbeeper()
+        turnleft()
+        move()
+        putbeeper()
+        move()
+        putbeeper()
+        turnleft()
+        move()
+        putbeeper()
+        turnleft()
+        move()
+        putbeeper()
+        move()
+        turnRight()
+        move()
+        move()
+    }
+<------------Case E------------------>
+
+
+ void  putsa(){
+        putbeeper()
+        move()
+        putbeeper()
+        putbeeper()
+        move()
+        putbeeper()
+        move()
+        putbeeper()
+        move()
+        putbeeper()
+        turnRight()
+        move()
+        putbeeper()
+        turnRight()
+        move()
+        putbeeper()
+        move()
+        putbeeper()
+        turnRight()
+        move()
+        turnleft()
+        move()
+        move()
+    }    
+    void slaved(){
+         
+	    bloqueb()
+	    turnleft()
+	    iterate(5){
+	     move()
+	    }
+	    turnRight()
+	    putsa()
+	   
+	   
+    }    
+
+	program() {
+	  move()
+	  move()
+	  move()
+	  move()
+	  clone(slaved)
+	  turnRight()
+	    iterate(5){
+	     move()
+	    }
+	    turnRight()
+	    bloquea()
+	    turnleft()
+	    iterate(5){
+	     move()
+	    }
+	   turnRight() 
+	  putb()  
+	 
+	  turnoff()  
+	}
+<----------Case F------->
+void problemaF(){
+        while(frontIsClear){
+            move()
+        }
+        turnRight()
+        iterate(18){
+            while(notNextToABeeper){
+                if(leftIsClear){
+                    turnleft()
+                    move()
+                }
+                else{
+                    if(frontIsClear){
+                        move()
+                    }
+                    else{
+                        while(frontIsBlocked){
+                            turnRight()
+                        }
+                        move()
+                    }
+                    
+                }
+            }
+            pickbeeper()
+        }
+    }
