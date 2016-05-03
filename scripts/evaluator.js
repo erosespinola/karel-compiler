@@ -84,6 +84,7 @@ evaluator = {
 
             if (!karelRunning) {
                 this.destroyChildren(execution);
+                execution.karel.x = -1;
             }
 
         }, this);
@@ -219,17 +220,20 @@ evaluator = {
                 childStack.push(world.karel[0]);
                 while (childStack.length > 0){
                   var currKarel = childStack.pop();
-                  var isFather = false;
-                  currKarel.children.forEach(function(childKarel,index){
-                    if (childKarel.karel.id === karel.id){
-                      isFather = true;
-                      childStack.push(childKarel.karel);
-                    }
-                  });
                   if(karel.x === currKarel.x && karel.y === currKarel.y
-                  && isFather){ //same place with someone else
-                    return true;
+                  && karel.id != currKarel.id){ //same place with someone else
+                    var fatherIsNext = false;
+                    currKarel.children.forEach(function(childKarel,index){
+                      var currChild = childKarel.karel;
+                      if(karel.id === currChild.id){ //same as one child
+                        fatherIsNext = true;
+                      }
+                    });
+                    if(fatherIsNext){return true};
                   }
+                  currKarel.children.forEach(function(childKarel,index){
+                    childStack.push(childKarel.karel);
+                  });
                 }
                 return false;
             case INTERCODE_KEYS.NOT_NEXT_TO_FATHER:
