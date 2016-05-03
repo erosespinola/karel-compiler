@@ -415,7 +415,7 @@ var cloneExpression = function() {
 var errorList = [];
 var catchErrorToList = function(error){
   console.log(errorList);
-  var errorObj = {error: error, line: helper.getCurrentToken()?helper.getCurrentToken().line:1};
+  var errorObj = {error: error, line: helper.getCurrentToken()?helper.getCurrentTokenForError().line:1};
   errorList.push(errorObj);
   //throw if exceeding 3
   if(errorList.length > 3){
@@ -474,7 +474,7 @@ var throwError = function(error) {
     throwErrorList();
   }
     if (helper.getCurrentToken()) {
-        $("#errors").text("Syntax Error: " + error + " at line " + helper.getCurrentToken().line);
+        $("#errors").text("Syntax Error: " + error + " at line " + helper.getCurrentTokenForError().line);
         throw new Error(error);
     } else {
         $("#errors").text("Syntax Error: " + errors.missing_class_program + " at line 1");

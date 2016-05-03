@@ -24,7 +24,7 @@ helper.require = function(token) {
     return tokens[currentToken++].text === token;
 };
 
-/* Checks if the current token is like the given one 
+/* Checks if the current token is like the given one
     if so moves to the following token */
 helper.ifRead = function(token) {
     if (helper.read(token)) {
@@ -41,7 +41,7 @@ helper.fetchToken = function() {
     return tokens[currentToken++].text;
 };
 
-/* Adds a function with the given name and the given memory 
+/* Adds a function with the given name and the given memory
     address to the symbol table*/
 helper.addNewFunction = function(name, index) {
     symbolTable[name] = index;
@@ -70,4 +70,11 @@ helper.lookAhead = function(n) {
 helper.getCurrentToken = function () {
     if (currentToken >= tokens.length) return tokens[tokens.length - 1];
     return tokens[currentToken];
+};
+/* Returns current token -2 */
+helper.getCurrentTokenForError = function () {
+    var errorToken = currentToken -2;
+    if (errorToken >= tokens.length) return tokens[tokens.length - 1];
+    if (errorToken < 0 ) return tokens[0];
+    return tokens[errorToken];
 };
