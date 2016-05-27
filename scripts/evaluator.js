@@ -8,8 +8,10 @@ const orientation = [
 var RuntimeErrors = {
     wall_at_position: "Karel can't pass through a wall",
     no_beeper_at_position: "There are no beepers at this position",
-    no_remaining_beepers: "Karel has no beepers to drop"
-
+    no_remaining_beepers: "Karel has no beepers to drop",
+    not_enough_beepers: "Karel has not enough beepers to give",
+    too_many_karels: "There are more than 2 karels in the position",
+    no_receiver_karel: "There is no one to receive beepers"
 };
 
 var speed = 500;
@@ -82,6 +84,7 @@ evaluator = {
 
             if (!karelRunning) {
                 this.destroyChildren(execution);
+                execution.karel.x = -1;
             }
 
         }, this);
@@ -157,17 +160,102 @@ evaluator = {
                 return (karel.orientationIndex === 3);
 
             case INTERCODE_KEYS.NOT_FACING_NORTH:
-                return !this,evaluateCondition(execution, INTERCODE_KEYS.FACING_NORTH, world, karel);
+                return !this.evaluateCondition(execution, INTERCODE_KEYS.FACING_NORTH, world, karel);
 
             case INTERCODE_KEYS.NOT_FACING_EAST:
-                return !this,evaluateCondition(execution, INTERCODE_KEYS.FACING_EAST, world, karel);
+                return !this.evaluateCondition(execution, INTERCODE_KEYS.FACING_EAST, world, karel);
 
             case INTERCODE_KEYS.NOT_FACING_SOUTH:
-                return !this,evaluateCondition(execution, INTERCODE_KEYS.FACING_SOUTH, world, karel);
+                return !this.evaluateCondition(execution, INTERCODE_KEYS.FACING_SOUTH, world, karel);
 
             case INTERCODE_KEYS.NOT_FACING_WEST:
-                return !this,evaluateCondition(execution, INTERCODE_KEYS.FACING_WEST, world, karel);
-        }
+                return !this.evaluateCondition(execution, INTERCODE_KEYS.FACING_WEST, world, karel);
+            case INTERCODE_KEYS.NEXT_TO_KAREL:
+                var childStack = [];
+                childStack.push(world.karel[0]);
+                while (childStack.length > 0){
+                  var currKarel = childStack.pop();
+                  if(karel.x === currKarel.x && karel.y === currKarel.y
+                  && karel.id != currKarel.id){ //same place with someone else
+                    return true;
+                  }
+                  currKarel.children.forEach(function(childKarel,index){
+                    childStack.push(childKarel.karel);
+                  });
+                }
+                return false;
+            case INTERCODE_KEYS.NOT_NEXT_TO_KAREL:
+                return !this.evaluateCondition(execution, INTERCODE_KEYS.NEXT_TO_KAREL, world, karel);
+            case INTERCODE_KEYS.FRONT_IS_FULL:
+                var frontX = karel.x + karel.orientation.x;
+                var frontY = karel.y + karel.orientation.y;
+                var countKarells = 0;
+                var childStack = [];
+                childStack.push(world.karel[0]);
+                while (childStack.length > 0){
+                  var currKarel = childStack.pop();
+                  if(frontX === currKarel.x && frontY === currKarel.y){ //same place with someone else
+                    countKarells++;
+                  }
+                  currKarel.children.forEach(function(childKarel,index){
+                    childStack.push(childKarel.karel);
+                  });
+                }
+                return countKarells >= 2;
+            case INTERCODE_KEYS.NOT_FRONT_IS_FULL:
+                return !this.evaluateCondition(execution, INTERCODE_KEYS.FRONT_IS_FULL, world, karel);
+            case INTERCODE_KEYS.NEXT_TO_SON:
+                var sonIsNext = false;
+                karel.children.forEach(function(childKarel,index){
+                  var currChild = childKarel.karel;
+                  if(karel.x === currChild.x && karel.y === currChild.y){ //same place with someone else
+                    sonIsNext = true;
+                  }
+                });
+                return sonIsNext;
+            case INTERCODE_KEYS.NOT_NEXT_TO_SON:
+                return !this.evaluateCondition(execution, INTERCODE_KEYS.NEXT_TO_SON, world, karel);
+            case INTERCODE_KEYS.NEXT_TO_FATHER:
+                var childStack = [];
+                childStack.push(world.karel[0]);
+                while (childStack.length > 0){
+                  var currKarel = childStack.pop();
+                  if(karel.x === currKarel.x && karel.y === currKarel.y
+                  && karel.id != currKarel.id){ //same place with someone else
+                    var fatherIsNext = false;
+                    currKarel.children.forEach(function(childKarel,index){
+                      var currChild = childKarel.karel;
+                      if(karel.id === currChild.id){ //same as one child
+                        fatherIsNext = true;
+                      }
+                    });
+                    if(fatherIsNext){return true};
+                  }
+                  currKarel.children.forEach(function(childKarel,index){
+                    childStack.push(childKarel.karel);
+                  });
+                }
+                return false;
+            case INTERCODE_KEYS.NOT_NEXT_TO_FATHER:
+                return !this.evaluateCondition(execution, INTERCODE_KEYS.NEXT_TO_FATHER, world, karel);
+            case INTERCODE_KEYS.NEXT_TO_DESCENDANT:
+                var childStack = [];
+                childStack.push(karel);
+                while (childStack.length > 0){
+                  var currKarel = childStack.pop();
+                  if(karel.x === currKarel.x && karel.y === currKarel.y
+                  && karel.id != currKarel.id){ //same place with someone else
+                    return true;
+                  }
+                  currKarel.children.forEach(function(childKarel,index){
+                    childStack.push(childKarel.karel);
+                  });
+                }
+                return false;
+            case INTERCODE_KEYS.NOT_NEXT_TO_DESCENDANT:
+                return !this.evaluateCondition(execution, INTERCODE_KEYS.NEXT_TO_DESCENDANT, world, karel);
+
+        } //close switch
     },
     evaluateStep: function(execution, world, karel) {
         if (execution.counter >= interCode.length) {
@@ -175,7 +263,7 @@ evaluator = {
         }
         var op = interCode[execution.counter],
             finished_step = false;
-        
+
         while (!finished_step){
             var op = interCode[execution.counter];
 
@@ -210,12 +298,17 @@ evaluator = {
                     }
                     continue;
                 case INTERCODE_KEYS.MOVE:
+                    if(this.evaluateCondition(execution, INTERCODE_KEYS.FRONT_IS_FULL, world, karel)){
+                      this.throwRuntimeError(RuntimeErrors.too_many_karels);
+                    }
                     karel.x += karel.orientation.x;
                     karel.y += karel.orientation.y;
 
                     if (world.grid[karel.y][karel.x].w) {
                         this.throwRuntimeError(RuntimeErrors.wall_at_position);
                     }
+
+
                     break;
 
                 case INTERCODE_KEYS.TURN_LEFT:
@@ -234,7 +327,7 @@ evaluator = {
                         canvas.setBeepers(karel.x, karel.y, world.grid[karel.y][karel.x].b);
                         $("#karel_" + karel.id).text(karel.beepers);
                     }
-    
+
                     break;
 
                 case INTERCODE_KEYS.PUT_BEEPER:
@@ -247,7 +340,7 @@ evaluator = {
                     } else {
                         this.throwRuntimeError(RuntimeErrors.no_remaining_beepers);
                     }
-                    
+
                     break;
 
                 case INTERCODE_KEYS.IF:
@@ -261,6 +354,7 @@ evaluator = {
                         if (element === INTERCODE_KEYS.AND || element === INTERCODE_KEYS.OR || element === INTERCODE_KEYS.NOT) {
                             operatorStack.push(element);
                         } else {
+                          console.log(element, this.evaluateCondition(execution, element, world, karel));
                             conditionalStack.push(this.evaluateCondition(execution, element, world, karel));
                         }
                     } while (interCode[execution.counter + 1] !== 'JMP');
@@ -275,12 +369,12 @@ evaluator = {
                             conditionalStack.push(conditionalStack.pop() || conditionalStack.pop());
                         }
                     }
-                    
+
                     // console.log(conditionalStack[0]);
                     if (conditionalStack.pop()) {
                         execution.counter += 2;
                     }
-                    
+
                     break;
 
                 case INTERCODE_KEYS.WHILE:
@@ -308,12 +402,12 @@ evaluator = {
                             conditionalStack.push(conditionalStack.pop() || conditionalStack.pop());
                         }
                     }
-                    
+
                     // console.log(conditionalStack[0]);
                     if (conditionalStack.pop()) {
                         execution.counter += 2;
                     }
-                    
+
                     break;
                 case INTERCODE_KEYS.CLONE:
                     var tmpKarel = {
@@ -345,12 +439,44 @@ evaluator = {
                 case INTERCODE_KEYS.TURN_OFF:
                     execution.counter = interCode.length;
                     break;
+                case INTERCODE_KEYS.GIVE_BEEPER:
+                    var give_amount = interCode[execution.counter+1];
+                    if (karel.beepers >= give_amount ) {
+                        karel.beepers -= give_amount;
+                        //search for other karel in this cell
+                        var given = false;
+                        var childStack = [];
+                        childStack.push(world.karel[0]);
+                        while (childStack.length > 0){
+                          var currKarel = childStack.pop();
+                          if(karel.x === currKarel.x && karel.y === currKarel.y
+                          && karel.id != currKarel.id){ //same place with someone else
+                            currKarel.beepers = parseInt(currKarel.beepers) + parseInt(give_amount);
+                            currKarel.interactedWithBeeper = true;
+                            $("#karel_" + currKarel.id).text(currKarel.beepers);
+                            given = true;
+                            break;
+                          }
+                          currKarel.children.forEach(function(childKarel,index){
+                            childStack.push(childKarel.karel);
+                          });
+                        }
+                        if(!given){
+                          this.throwRuntimeError(RuntimeErrors.no_receiver_karel);
+                        }
+                        karel.interactedWithBeeper = true;
+                        $("#karel_" + karel.id).text(karel.beepers);
+                    } else {
+                        this.throwRuntimeError(RuntimeErrors.not_enough_beepers);
+                    }
+                    execution.counter ++; //jump over parameter
+                    break;
             }
 
             execution.counter++;
             finished_step = true;
         }
-        
+
         return execution.counter < interCode.length;
     },
     throwRuntimeError: function(error) {

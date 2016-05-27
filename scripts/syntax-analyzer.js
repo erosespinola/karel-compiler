@@ -3,13 +3,13 @@ syntax = {
     parse: function(tokens) {
         interCodeIndex = 0;
         interCode = [];
-
+        errorList = [];
         helper.init(tokens);
         interCode[interCodeIndex++] = INTERCODE_KEYS.JMP;
         interCodeIndex++;
         program();
         if (interCode[interCode.length - 1] != INTERCODE_KEYS.TURN_OFF) {
-            throwError(errors.missing_turnoff);    
+            throwError(errors.missing_turnoff);
         }
         return interCode;
     }
@@ -19,7 +19,7 @@ var interCodeIndex; // intercode current index
 var interCode;      // intercode list
 
 /* Syntax errors */
-var errors = { 
+var errors = {
     missing_right_brace: "Missing closing brace",
     missing_left_brace: "Missing opening brace",
     missing_left_parenthesis: "Missing opening parenthesis",
@@ -39,40 +39,52 @@ var errors = {
     not_found_function: "Not found function: ",
     not_valid_condition: 'Not a valid simple condition',
     invalid_iterate_argument: 'Invalid iterate argument',
+    invalid_givebeeper_argument: "Invalid number of beepers"
 };
 
 /* Reserved keywords for karel language */
 var reservedKeywords = {
-    'if': true,
-    'else': true,
-    'iterate': true,
-    'while': true,
-    'clone': true,
-    'class': true,
-    'program': true,
-    'void': true,
-    'frontIsClear': true,
-    'leftIsClear': true,
-    'leftIsBlocked': true,
-    'rightIsClear': true,
-    'rightIsBlocked': true,
-    'nextToABeeper': true,
-    'notNextToABeeper': true,
-    'anyBeepersInBeeperBag': true,
-    'noBeepersInBeeperBag': true,
-    'facingNorth': true,
-    'facingSouth': true,
-    'facingEast': true,
-    'facingWest': true,
-    'notFacingNorth': true,
-    'notFacingSouth': true,
-    'notFacingEast': true,
-    'notFacingWest': true,
-    'move': true,
-    'pickbeeper': true,
-    'turnleft': true,
-    'putbeeper': true,
-    'turnoff': true
+  'if': true,
+  'else': true,
+  'iterate': true,
+  'while': true,
+  'clone': true,
+  'class': true,
+  'program': true,
+  'void': true,
+  'frontIsClear': true,
+  'leftIsClear': true,
+  'leftIsBlocked': true,
+  'rightIsClear': true,
+  'rightIsBlocked': true,
+  'nextToABeeper': true,
+  'notNextToABeeper': true,
+  'anyBeepersInBeeperBag': true,
+  'noBeepersInBeeperBag': true,
+  'facingNorth': true,
+  'facingSouth': true,
+  'facingEast': true,
+  'facingWest': true,
+  'notFacingNorth': true,
+  'notFacingSouth': true,
+  'notFacingEast': true,
+  'notFacingWest': true,
+  'move': true,
+  'pickbeeper': true,
+  'turnleft': true,
+  'putbeeper': true,
+  'turnoff': true,
+  'givebeeper': true,
+	'nextToKarel':true,
+	'notNextToKarel':true,
+	'frontIsFull':true,
+	'notFrontIsFull':true,
+	'nextToSon':true ,
+	'notNextToSon':true,
+	'nextToFather':true ,
+	'notNextToFather':true,
+	'nextToDescendant':true,
+	'notNextToDescendant':true
 };
 
 /* program asks for the main signature of the program,
@@ -83,10 +95,10 @@ var program = function() {
             functionsDeclarations();
             mainFunction();
             if (!helper.require('}')) {
-                throwError(errors.missing_right_brace);        
-            } 
+                throwError(errors.missing_right_brace);
+            }
         } else {
-            throwError(errors.missing_left_brace);    
+            throwError(errors.missing_left_brace);
         }
     } else {
         throwError(errors.missing_class_program);
@@ -100,10 +112,10 @@ var mainFunction = function() {
             interCode[1] = interCodeIndex;
             body();
             if (!helper.require('}')) {
-                throwError(errors.missing_right_brace);        
+                throwError(errors.missing_right_brace);
             }
         } else {
-            throwError(errors.missing_left_brace);    
+            throwError(errors.missing_left_brace);
         }
     } else {
         throwError(errors.missing_program);
@@ -128,13 +140,13 @@ var functionDeclaration = function() {
                 if (helper.require('}')) {
                     interCode[interCodeIndex++] = INTERCODE_KEYS.RET;
                 } else {
-                    throwError(errors.missing_right_brace);            
+                    throwError(errors.missing_right_brace);
                 }
             } else {
-                throwError(errors.missing_left_brace);        
+                throwError(errors.missing_left_brace);
             }
         } else {
-            throwError(errors.bad_function_declaration_parenthesis);    
+            throwError(errors.bad_function_declaration_parenthesis);
         }
     } else {
         throwError(errors.bad_function_declaration_void);
@@ -152,49 +164,87 @@ var nameFunction = function() {
 
 var callFunction = function() {
     nameOfFunction();
-    if (helper.require('(')) {
-        if (!helper.require(')')) {
-            throwError(errors.bad_function_call_parenthesis);    
-        }    
-    } else {
-        throwError(errors.bad_function_call_parenthesis);
-    }  
 };
 
 var nameOfFunction = function() {
     if (helper.read('move') ||
         helper.read('pickbeeper') || helper.read('turnleft') ||
-        helper.read('putbeeper') || helper.read('turnoff')) {
+        helper.read('putbeeper') || helper.read('turnoff') ||
+        helper.read('clone') ||  helper.read('givebeeper')
+      ) {
         officialFunction();
     } else {
         customerFunction();
     }
 };
-
+var parallelFunction = function(){
+  if (helper.ifRead('givebeeper')) {
+      if (helper.require('(')) {
+        interCode[interCodeIndex++] = INTERCODE_KEYS.GIVE_BEEPER;
+        var value = helper.fetchToken();
+        if (Number.isInteger(parseInt(value)) && value != 0) {
+            interCode[interCodeIndex++] = value;
+            if (!helper.require(')')) {
+                throwError(errors.bad_function_call_parenthesis);
+            }
+        }else {
+          throwError(errors.invalid_givebeeper_argument);
+        }
+      } else {
+          throwError(errors.bad_function_call_parenthesis);
+      }
+  }
+  else if (helper.read('clone')) {
+      cloneExpression();
+  }
+}
+var normalFunction = function(){
+  if (helper.ifRead('turnleft')) {
+      interCode[interCodeIndex++] = INTERCODE_KEYS.TURN_LEFT;
+  }
+  else if (helper.ifRead('move')) {
+      interCode[interCodeIndex++] = INTERCODE_KEYS.MOVE;
+  }
+  else if (helper.ifRead('pickbeeper')) {
+      interCode[interCodeIndex++] = INTERCODE_KEYS.PICK_BEEPER;
+  }
+  else if (helper.ifRead('putbeeper')) {
+      interCode[interCodeIndex++] = INTERCODE_KEYS.PUT_BEEPER;
+  }
+  else if (helper.ifRead('turnoff')) {
+      interCode[interCodeIndex++] = INTERCODE_KEYS.TURN_OFF;
+  }
+  //parenthesis check, none have parameters
+  if (helper.require('(')) {
+      if (!helper.require(')')) {
+          throwError(errors.bad_function_call_parenthesis);
+      }
+  } else {
+      throwError(errors.bad_function_call_parenthesis);
+  }
+}
 var officialFunction = function() {
-    if (helper.ifRead('turnleft')) {
-        interCode[interCodeIndex++] = INTERCODE_KEYS.TURN_LEFT;
-    }  
-    else if (helper.ifRead('move')) {
-        interCode[interCodeIndex++] = INTERCODE_KEYS.MOVE;
-    }
-    else if (helper.ifRead('pickbeeper')) {
-        interCode[interCodeIndex++] = INTERCODE_KEYS.PICK_BEEPER;
-    }
-    else if (helper.ifRead('putbeeper')) {
-        interCode[interCodeIndex++] = INTERCODE_KEYS.PUT_BEEPER;
-    }
-    else if (helper.ifRead('turnoff')) {
-        interCode[interCodeIndex++] = INTERCODE_KEYS.TURN_OFF;
-    }
+  if (helper.read('clone') ||
+      helper.read('givebeeper')) {
+    parallelFunction();
+  } else {
+    normalFunction();
+  }
 };
-    
+
 var customerFunction = function () {
     var nameFunction = helper.fetchToken();
     var posFunctionInCodeInter = helper.findStartPointOfFunction(nameFunction);
     if (posFunctionInCodeInter !== '0xFF') {
         interCode[interCodeIndex++] = INTERCODE_KEYS.CALL;
         interCode[interCodeIndex++] = posFunctionInCodeInter;
+        if (helper.require('(')) {
+            if (!helper.require(')')) {
+                throwError(errors.bad_function_call_parenthesis);
+            }
+        } else {
+            throwError(errors.bad_function_call_parenthesis);
+        }
     } else {
         throwError(errors.not_found_function + nameFunction);
     }
@@ -225,14 +275,12 @@ var expression = function() {
         }
         else if (helper.read('while')) {
             whileExpression();
-        } 
+        }
         else if (helper.read('iterate')) {
             iterateExpression();
-        } 
-        else if (helper.read('clone')) {
-            cloneExpression();
-        } else {
-            callFunction();  
+        }
+        else {
+            callFunction();
         }
     }
 };
@@ -254,7 +302,7 @@ var ifExpression = function() {
                     body();
 
                     if (!helper.require('}')) {
-                        throwError(errors.missing_right_brace);                
+                        throwError(errors.missing_right_brace);
                     }
 
                     if (helper.read('else')) {
@@ -271,15 +319,15 @@ var ifExpression = function() {
                     }
                 }
                 else {
-                    throwError(errors.missing_left_brace);            
+                    throwError(errors.missing_left_brace);
                 }
             }
             else {
-                throwError(errors.missing_right_parenthesis);        
+                throwError(errors.missing_right_parenthesis);
             }
         }
         else {
-            throwError(errors.missing_left_parenthesis);    
+            throwError(errors.missing_left_parenthesis);
         }
     }
     else {
@@ -295,10 +343,10 @@ var elseIf = function() {
             body();
             if (!helper.require('}'))
             {
-                throwError(errors.missing_right_brace);        
+                throwError(errors.missing_right_brace);
             }
         } else {
-            throwError(errors.missing_left_brace);    
+            throwError(errors.missing_left_brace);
         }
     } else {
         throwError(errors.missing_else_expression);
@@ -326,16 +374,16 @@ var whileExpression = function() {
                         interCode[interCodeIndex++] = start;
                         interCode[end_position] = interCodeIndex;
                     } else {
-                        throwError(errors.missing_right_brace);                
+                        throwError(errors.missing_right_brace);
                     }
                 } else {
-                    throwError(errors.missing_left_brace);            
+                    throwError(errors.missing_left_brace);
                 }
             } else {
-                throwError(errors.missing_right_parenthesis);        
+                throwError(errors.missing_right_parenthesis);
             }
         } else {
-            throwError(errors.missing_left_parenthesis);    
+            throwError(errors.missing_left_parenthesis);
         }
     } else {
         throwError(errors.missing_while_expression);
@@ -354,73 +402,95 @@ var cloneExpression = function() {
                 throwError(errors.not_found_function + nameFunction);
             }
             if (!helper.require(')')) {
-                throwError(errors.missing_right_parenthesis);  
+                throwError(errors.missing_right_parenthesis);
             }
         } else {
-            throwError(errors.missing_left_parenthesis);  
+            throwError(errors.missing_left_parenthesis);
         }
     } else {
-        throwError(errors.missing_clone_expression);  
+        throwError(errors.missing_clone_expression);
     }
 };
-
+//Adding support for multiple errors
+var errorList = [];
+var catchErrorToList = function(error){
+  console.log(errorList);
+  var errorObj = {error: error, line: helper.getCurrentToken()?helper.getCurrentTokenForError().line:1};
+  errorList.push(errorObj);
+  //throw if exceeding 3
+  if(errorList.length > 3){
+    throwErrorList();
+  }
+}
+var throwErrorList = function(){
+  var output = '';
+  errorList.forEach(function(e, index){
+    output+="Syntax Error: " + e.error + " at line " + e.line +'\n';
+  });
+  console.log('out:',output);
+  $("#errors").text(output);
+  throw new Error(errorList.join(':'));
+}
 var iterateExpression = function() {
     var start;
 
-    if (helper.require('iterate')) {
-        if (helper.require('(')) {
-            
-            interCode[interCodeIndex++] = INTERCODE_KEYS.ITE;
-
-            var value = helper.fetchToken();
-            if (Number.isInteger(parseInt(value))) {
-                interCode[interCodeIndex++] = value;
-                if (helper.require(')')) {
-                    if (helper.require('{')) {
-                        start = interCodeIndex;
-
-                        body();
-
-                        if (helper.require('}')) {
-                            interCode[interCodeIndex++] = INTERCODE_KEYS.DECJMP;
-                            interCode[interCodeIndex++] = start;
-                        } else {
-                            throwError(errors.missing_right_brace);                
-                        }
-                    } else {
-                        throwError(errors.missing_left_brace);            
-                    }
-                } else {
-                    throwError(errors.missing_right_parenthesis);        
-                }
-            } else {
-                throwError(errors.invalid_iterate_argument); 
-            }
-        } else {
-            throwError(errors.missing_left_parenthesis);    
-        }
-    } else {
-        throwError(errors.missing_iterate_expression);
+    if (!helper.ifRead('iterate')) {
+      catchErrorToList(errors.missing_iterate_expression);
     }
+    if (!helper.ifRead('(')) {
+      catchErrorToList(errors.missing_left_parenthesis);
+    }
+    interCode[interCodeIndex++] = INTERCODE_KEYS.ITE;
+
+    var value = helper.fetchToken();
+    if (!Number.isInteger(parseInt(value))) {
+      catchErrorToList(errors.invalid_iterate_argument);
+    }
+    interCode[interCodeIndex++] = value;
+    if (!helper.ifRead(')')) {
+      catchErrorToList(errors.missing_right_parenthesis);
+    }
+    if (!helper.ifRead('{')) {
+      catchErrorToList(errors.missing_left_brace);
+    }
+    start = interCodeIndex;
+
+    body();
+
+    if (!helper.ifRead('}')) {
+      catchErrorToList(errors.missing_right_brace);
+    }
+    interCode[interCodeIndex++] = INTERCODE_KEYS.DECJMP;
+    interCode[interCodeIndex++] = start;
+    if(errorList.length > 0){throwErrorList();}
 };
 
 
 
 var throwError = function(error) {
-    if (helper.getCurrentToken()) { 
-        $("#errors").text("Syntax Error: " + error + " at line " + helper.getCurrentToken().line);
+  //possible accumulated error catcthing
+  if (errorList.length > 0){
+    catchErrorToList(error);
+    throwErrorList();
+  }
+    if (helper.getCurrentToken()) {
+        $("#errors").text("Syntax Error: " + error + " at line " + helper.getCurrentTokenForError().line);
         throw new Error(error);
     } else {
         $("#errors").text("Syntax Error: " + errors.missing_class_program + " at line 1");
         throw new Error(error);
     }
-    
+
+};
+var notCondition=function(){
+	if (helper.ifRead('!')) {
+        interCode[interCodeIndex++] = INTERCODE_KEYS.NOT;
+    }
 };
 
 var simpleConditional = function() {
-    if (helper.ifRead('!')) {
-        interCode[interCodeIndex++] = INTERCODE_KEYS.NOT;
-    }
+
+    notCondition();
 
     if (helper.ifRead('frontIsClear')) interCode[interCodeIndex++] = INTERCODE_KEYS.FRONT_IS_CLEAR;
     else if (helper.ifRead('frontIsBlocked')) interCode[interCodeIndex++] = INTERCODE_KEYS.FRONT_IS_BLOCKED;
@@ -440,6 +510,18 @@ var simpleConditional = function() {
     else if (helper.ifRead('notFacingSouth')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_FACING_SOUTH;
     else if (helper.ifRead('notFacingEast')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_FACING_EAST;
     else if (helper.ifRead('notFacingWest')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_FACING_WEST;
+	else if (helper.ifRead('nextToKarel')) interCode[interCodeIndex++] = INTERCODE_KEYS.NEXT_TO_KAREL;
+    else if (helper.ifRead('notNextToKarel')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_NEXT_TO_KAREL;
+	else if (helper.ifRead('frontIsFull')) interCode[interCodeIndex++] = INTERCODE_KEYS.FRONT_IS_FULL;
+	else if (helper.ifRead('notFrontIsFull')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_FRONT_IS_FULL;
+	else if (helper.ifRead('nextToSon')) interCode[interCodeIndex++] = INTERCODE_KEYS.NEXT_TO_SON;
+	else if (helper.ifRead('notNextToSon')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_NEXT_TO_SON;
+	else if (helper.ifRead('nextToFather')) interCode[interCodeIndex++] = INTERCODE_KEYS.NEXT_TO_FATHER;
+	else if (helper.ifRead('notNextToFather')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_NEXT_TO_FATHER;
+	else if (helper.ifRead('nextToDescendant')) interCode[interCodeIndex++] = INTERCODE_KEYS.NEXT_TO_DESCENDANT;
+	else if (helper.ifRead('notNextToDescendant')) interCode[interCodeIndex++] = INTERCODE_KEYS.NOT_NEXT_TO_DESCENDANT;
+
+
     else throwError(errors.not_valid_condition);
 };
 
@@ -452,19 +534,42 @@ var conditional = function() {
     }
 };
 
-var composedConditional = function() {
+var orCondition = function() {
     var ahead_token = helper.lookAhead(1).text;
+    console.log("Entre al or " + ahead_token);
 
-    if (ahead_token === '||') {
+    if (helper.ifRead('||')) {
         interCode[interCodeIndex++] = INTERCODE_KEYS.OR;
-        simpleConditional();
-        helper.require('||');
-        simpleConditional();
-    } else if (ahead_token === '&&') {
-        interCode[interCodeIndex++] = INTERCODE_KEYS.AND;
-        simpleConditional();
-        helper.require('&&');
-        simpleConditional();
+		console.log("Entre al consumo or ");
+		simpleConditional();
+
+
+    } else  {
+        andCondition();
     }
 };
 
+var andCondition= function(){
+	if (helper.ifRead('&&')){
+	 console.log("Entre al andCondition ");
+	interCode[interCodeIndex++] = INTERCODE_KEYS.AND;
+	simpleConditional();
+    }
+};
+
+var composedConditional= function(){
+
+	simpleConditional();
+	composedConditionalPrima();
+
+};
+
+var composedConditionalPrima=function(){
+	var ahead_token = helper.lookAhead(0).text;
+	console.log("hola " , helper.getCurrentToken());
+	if(!(helper.read(')'))){
+	orCondition();
+	composedConditionalPrima();
+	}
+
+};
