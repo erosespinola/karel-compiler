@@ -1,0 +1,16 @@
+class program {
+    program() {
+        if (facingEast && frontIsClear) {
+            move()
+        } else {
+            turnleft()
+        }
+        
+        if (!frontIsClear) {
+            turnleft()
+            move()
+        }
+        
+        turnoff()
+    }
+}

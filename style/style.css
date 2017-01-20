@@ -14,7 +14,7 @@
     height: 450px;
 }
 
-div[id^="example"] {
+div[id^="demo"] {
     height: 200px !important;
 }
 

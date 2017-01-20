@@ -1,0 +1,21 @@
+class program {
+    
+    void cloneaction() {
+        iterate(3) {
+            turnleft()
+        }
+        move()
+        move()
+        turnleft()
+        move()
+    }
+    
+    program() {
+        clone(cloneaction)
+        while(frontIsClear) {
+            move()
+        }
+        
+        turnoff()
+    }
+}

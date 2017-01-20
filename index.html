@@ -56,7 +56,7 @@
 
       <div class="col s12 m12 l6">
         <div class="form-group">
-          <h5><i class="fa fa-terminal"></i> Output</h5>
+          <h5><i class="fa fa-terminal"></i> Description</h5>
           <div id="canvas-container">
             <canvas id="canvas"></canvas>
           </div>
@@ -97,31 +97,7 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="col s12 m12 l6">
-        <div class="form-group">
-          <div>
-            <h5><i class="fa fa-code"></i> Basic program</h5>
-            <div id="example1"></div>
-          </div>
-          <div class="copy-code-button">
-            <a href="#" class="btn btn-success" id="code_example1-btn" onclick="compile_example('example1')">Copy into editor</a>
-          </div>
-        </div>
-      </div>
-      <div class="col s12 m12 l6">
-        <div class="form-group">
-          <h5><i class="fa fa-play"></i> Output</h5>
-          <div>
-            This is the smallest possible program in Karel, it only executes the turnoff instruction (required in all Karel programs).
-            <br>In concept it is similar to the following C++ code: 
-            <pre><code>int main() {
-  return 0;
-}</code></pre>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div id="demos"></div>    
     
   </div>
 
@@ -139,12 +115,38 @@
       <a href="#!" onclick="saveBeepers()" class=" modal-action modal-close waves-effect waves-green btn-flat">Save</a>
     </div>
   </div>
+
+  <template id="demo-template">
+    <div class="row">
+      <div class="col s12 m12 l6">
+        <div class="form-group">
+          <div>
+            <h5><span class="fa fa-code"></span> <span class="demo-title">Basic program</span></h5>
+            <div class="demo-editor"></div>
+          </div>
+          <div class="copy-code-button">
+            <a href="#" class="btn btn-success demo-button">Copy into editor</a>
+          </div>
+        </div>
+      </div>
+      <div class="col s12 m12 l6">
+        <div class="form-group">
+          <!--<h5><i class="fa fa-info-circle"></i> Description</h5>-->
+          <h5>&nbsp;</h5>
+          <div class="demo-description">
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+    
   
   <script src="scripts/beepers.js"></script>
   <script src="scripts/compile.js"></script>
 
   <!-- Setup code editor -->
-  <script src="scripts/code-editor.js"></script>
+  <script src="scripts/editor-setup.js"></script>
   <!-- Code examples -->
   <script src="scripts/code-examples.js"></script>
 

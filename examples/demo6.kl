@@ -1,0 +1,15 @@
+class program {
+    
+    void turnright() {
+        iterate(3) {
+            turnleft()    
+        }
+    }
+    
+    program() {
+        turnright()
+        move()
+        
+        turnoff()
+    }
+}

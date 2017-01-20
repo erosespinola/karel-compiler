@@ -1,0 +1,44 @@
+[
+    {
+        "id": "demo-1",
+        "title": "Basic Program",
+        "description": "This is the smallest possible program in Karel, it only executes the turnoff instruction (required in all Karel programs).<br>In concept it is similar to the following C++ code: <pre><code>int main() {\n\treturn 0;\n}</code></pre>",
+        "code": "class program {\r\n\tprogram() {\r\n\t\tturnoff()\r\n\t}\r\n}"
+    },
+    {
+        "id": "demo-2",
+        "title": "Move Karel",
+        "description": "To navigate in the world of Karel you can use any combination of the functions <code>move()</code> and <code>turnleft()</code>.",
+        "code": "class program {\r\n\tprogram() {\r\n\t\tmove()\r\n\t\tturnleft()\r\n\t\tmove()\r\n\t\tturnoff()\r\n\t}\r\n}"
+    },
+    {
+        "id": "demo-3",
+        "title": "If/Else",
+        "description": "If/else statements can be used with simple or any combination of 2 conditionals. <br>The avaible conditionales are: <pre><code>frontIsClear\nleftIsClear\nleftIsBlocked\nrightIsClear\nrightIsBlocked\nnextToABeeper\nnotNextToABeeper\nanyBeepersInBeeperBag\nnoBeepersInBeeperBag\nfacingNorth\nfacingSouth\nfacingEast\nfacingWest\nnotFacingNorth\nnotFacingSouth\nnotFacingEast\nnotFacingWest</code></pre>",
+        "code": "class program {\r\n\tprogram() {\r\n\t\tif (facingEast && frontIsClear) {\r\n\t\t\tmove()\r\n\t\t} else {\r\n\t\t\tturnleft()\r\n\t\t}\r\n\r\n\t\tif (!frontIsClear) {\r\n\t\t\tturnleft()\r\n\t\t\tmove()\r\n\t\t}\r\n\t    \r\n\t\tturnoff()\r\n\t}\r\n}"
+    },
+    {
+        "id": "demo-4",
+        "title": "Iterate",
+        "description": "<code>iterate(number)</code> can be use the perform repetitive actions. This function receives an integer number as a parameter.",
+        "code": "class program {\r\n\tprogram() {\r\n\t\titerate(3) {\r\n\t\t\tmove()\r\n\t\t}\r\n\t\tturnoff()\r\n\t}\r\n}"
+    },
+    {
+        "id": "demo-5",
+        "title": "While",
+        "description": "<code>while(boolean)</code> can be use the perform repetitive and conditional actions. The while statement must be use with any combination of conditionals (list of available conditionals in the if/else demo).",
+        "code": "class program {\r\n\tprogram() {\r\n\t\twhile(frontIsClear) {\r\n\t\t\tmove()\r\n\t\t}\r\n\t\tturnoff()\r\n\t}\r\n}"
+    },
+    {
+        "id": "demo-6",
+        "title": "Functions",
+        "description": "Functions are available too, can be used to create more complex and common used actions.",
+        "code": "class program {\r\n\t\r\n\tvoid turnright() {\r\n\t\titerate(3) {\r\n\t\t\tturnleft()\t\r\n\t\t}\r\n\t}\r\n\t\r\n\tprogram() {\r\n\t\tturnright()\r\n\t\tmove()\r\n\t\t\r\n\t\tturnoff()\r\n\t}\r\n}"
+    },
+    {
+        "id": "demo-7",
+        "title": "Clone",
+        "description": "A new feature not present in the original karel compiler is the <code>clone(function)</code> statement. It allows to create an new instance of karel (child process) and assign to it a function to perform.",
+        "code": "class program {\r\n\t\r\n\tvoid cloneaction() {\r\n\t\titerate(3) {\r\n\t\t\tturnleft()\r\n\t\t}\r\n\t\tmove()\r\n\t\tmove()\r\n\t\tturnleft()\r\n\t\tmove()\r\n\t}\r\n\t\r\n\tprogram() {\r\n\t\tclone(cloneaction)\r\n\t\twhile(frontIsClear) {\r\n\t\t\tmove()\r\n\t\t}\r\n\t\t\r\n\t\tturnoff()\r\n\t}\r\n}"
+    }
+]

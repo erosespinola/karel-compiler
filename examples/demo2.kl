@@ -1,0 +1,10 @@
+class program {
+    program() {
+        if (frontIsClear) {
+            move()
+        } else {
+            turnleft()
+        }
+        turnoff()
+    }
+}
