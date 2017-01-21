@@ -7,6 +7,7 @@ function setup_editor(id, code) {
 	$.get(code, function(data) {
 		var editor = ace.edit(id);
 		editor.setTheme('ace/theme/monokai');
+		editor.getSession().setOption("useWorker", false);
 		editor.$blockScrolling = Infinity;
 		editor.getSession().setMode('ace/mode/karel');
 		editor.getSession().setValue(data, -1);
