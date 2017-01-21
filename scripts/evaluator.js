@@ -354,7 +354,7 @@ evaluator = {
                         if (element === INTERCODE_KEYS.AND || element === INTERCODE_KEYS.OR || element === INTERCODE_KEYS.NOT) {
                             operatorStack.push(element);
                         } else {
-                          console.log(element, this.evaluateCondition(execution, element, world, karel));
+                            //console.log(element, this.evaluateCondition(execution, element, world, karel));
                             conditionalStack.push(this.evaluateCondition(execution, element, world, karel));
                         }
                     } while (interCode[execution.counter + 1] !== 'JMP');

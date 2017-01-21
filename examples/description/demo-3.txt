@@ -1,0 +1,21 @@
+If/else statements can be used with simple or any combination of 2 conditionals.<br>
+The avaible conditionales are: 
+<pre><code>
+frontIsClear
+leftIsClear
+leftIsBlocked
+rightIsClear
+rightIsBlocked
+nextToABeeper
+notNextToABeeper
+anyBeepersInBeeperBag
+noBeepersInBeeperBag
+facingNorth
+facingSouth
+facingEast
+facingWest
+notFacingNorth
+notFacingSouth
+notFacingEast
+notFacingWest
+</code></pre>

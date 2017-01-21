@@ -1,0 +1,1 @@
+A new feature not present in the original karel compiler is the <code>clone(function)</code> statement. It allows to create an new instance of karel (child process) and assign to it a function to perform.

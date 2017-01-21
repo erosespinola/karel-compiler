@@ -1,0 +1,1 @@
+<code>iterate(number)</code> can be use the perform repetitive actions. This function receives an integer number as a parameter.

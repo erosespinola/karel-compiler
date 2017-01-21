@@ -1,0 +1,1 @@
+To navigate in the world of Karel you can use any combination of the functions <code>move()</code> and <code>turnleft()</code>.

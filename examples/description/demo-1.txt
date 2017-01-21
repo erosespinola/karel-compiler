@@ -1,0 +1,8 @@
+This is the smallest possible program in Karel, it only executes the turnoff instruction (required in all Karel programs).<br>
+In concept it is similar to the following C++ code: 
+<pre><code>
+int main() 
+{
+	return 0;
+}
+</code></pre>

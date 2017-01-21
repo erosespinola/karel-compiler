@@ -1,0 +1,1 @@
+<code>while(boolean)</code> can be use the perform repetitive and conditional actions. The while statement must be use with any combination of conditionals (list of available conditionals in the if/else demo).
