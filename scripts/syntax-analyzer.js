@@ -84,7 +84,8 @@ var reservedKeywords = {
 	'nextToFather':true ,
 	'notNextToFather':true,
 	'nextToDescendant':true,
-	'notNextToDescendant':true
+	'notNextToDescendant':true,
+  'wait':true
 };
 
 /* program asks for the main signature of the program,
@@ -170,7 +171,8 @@ var nameOfFunction = function() {
     if (helper.read('move') ||
         helper.read('pickbeeper') || helper.read('turnleft') ||
         helper.read('putbeeper') || helper.read('turnoff') ||
-        helper.read('clone') ||  helper.read('givebeeper')
+        helper.read('clone') ||  helper.read('givebeeper') ||
+        helper.read('wait')
       ) {
         officialFunction();
     } else {
@@ -213,6 +215,9 @@ var normalFunction = function(){
   }
   else if (helper.ifRead('turnoff')) {
       interCode[interCodeIndex++] = INTERCODE_KEYS.TURN_OFF;
+  }
+  else if (helper.ifRead('wait')) {
+      interCode[interCodeIndex++] = INTERCODE_KEYS.WAIT;
   }
   //parenthesis check, none have parameters
   if (helper.require('(')) {

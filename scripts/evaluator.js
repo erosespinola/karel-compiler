@@ -471,6 +471,9 @@ evaluator = {
                     }
                     execution.counter ++; //jump over parameter
                     break;
+                case INTERCODE_KEYS.WAIT:
+                    // Do nothing for this step
+                    break;
             }
 
             execution.counter++;
