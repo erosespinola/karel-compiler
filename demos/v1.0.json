@@ -1,0 +1,44 @@
+[
+    {
+        "id": "1-basic",
+        "title": "Basic Program",
+        "description": "demos/v1.0/description/1-basic.txt",
+        "code": "demos/v1.0/code/1-basic.kl"
+    },
+    {
+        "id": "2-move",
+        "title": "Move Karel",
+        "description": "demos/v1.0/description/2-move.txt",
+        "code": "demos/v1.0/code/2-move.kl"
+    },
+    {
+        "id": "3-conditionals",
+        "title": "If/Else",
+        "description": "demos/v1.0/description/3-conditionals.txt",
+        "code": "demos/v1.0/code/3-conditionals.kl"
+    },
+    {
+        "id": "4-iterate",
+        "title": "Iterate",
+        "description": "demos/v1.0/description/4-iterate.txt",
+        "code": "demos/v1.0/code/4-iterate.kl"
+    },
+    {
+        "id": "5-while",
+        "title": "While",
+        "description": "demos/v1.0/description/5-while.txt",
+        "code": "demos/v1.0/code/5-while.kl"
+    },
+    {
+        "id": "6-functions",
+        "title": "Functions",
+        "description": "demos/v1.0/description/6-functions.txt",
+        "code": "demos/v1.0/code/6-functions.kl"
+    },
+    {
+        "id": "7-clone",
+        "title": "Clone/Parallel Functions",
+        "description": "demos/v1.0/description/7-clone.txt",
+        "code": "demos/v1.0/code/7-clone.kl"
+    }
+]

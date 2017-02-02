@@ -1,0 +1,12 @@
+For v1.1 Karel we have added more functionality, now Karel is able to share beepers with all his descendants (and viceversa) using the <code>givebeeper(number)</code> function. <br>
+Also, there are new conditionals available in the world of Karel:
+<pre>
+<code>
+nextToSon
+notNextToSon
+nextToFather
+notNextToFather
+nextToDescendant
+notNextToDescendant
+</code>
+</pre>

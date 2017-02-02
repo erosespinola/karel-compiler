@@ -14,8 +14,8 @@
     height: 450px;
 }
 
-div[id^="demo"] {
-    height: 200px !important;
+.demo-editor {
+    height: 250px !important;
 }
 
 .copy-code-button {
