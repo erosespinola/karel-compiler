@@ -73,10 +73,10 @@ if ('content' in document.createElement('template')) {
 	$.getJSON("demos/v1.1.json", function(demos) {
 		render_demos('#demos11', demos);
 
-	}).fail(function(jqxhr, textStatus, error){
-		console.log(jqxhr);
-		console.log(textStatus);
-		console.log(error);
+	});
+
+	$.getJSON("demos/v1.2.json", function(demos) {
+		render_demos('#demos12', demos);
 
 	});
 

@@ -1,0 +1,25 @@
+class program {
+    void clonefunction() {
+        move()
+        iterate(10) {
+            turnleft()
+        }
+    }
+
+    program() {
+        clone(clonefunction)
+
+        iterate(4) {
+            turnleft()
+        }
+        
+        move()
+        if (nextToDescendant) {
+            iterate(3) {
+                move()   
+            }
+        }
+
+        turnoff()
+    }
+}
