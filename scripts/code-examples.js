@@ -11,8 +11,6 @@ function setup_editor(id, code) {
 		editor.$blockScrolling = Infinity;
 		editor.getSession().setMode('ace/mode/karel');
 		editor.getSession().setValue(data, -1);
-		console.log(editor);
-		console.log(id, data);
 	});
 }
 

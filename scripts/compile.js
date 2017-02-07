@@ -1,9 +1,9 @@
 var world = {
-    "rows": 10,
-    "cols": 10,
+    "rows": 11,
+    "cols": 12,
     "karel": [{
         "x": 1,
-        "y": 3,
+        "y": 5,
         "id": 0,
         "beepers": 0,
         "orientationIndex": 1,
@@ -13,37 +13,20 @@ var world = {
         },
         "children": []
     }],
-    /*"grid": [
-         [{"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}],
-         [{"w": true, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}, {"w": false, "b": 1}, {"w": true, "b": 0}],
-         [{"w": true, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}],
-         [{"w": true, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}],
-         [{"w": true, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}],
-         [{"w": true, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}],
-         [{"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}],
-         [{"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}],
-         [{"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}],
-         [{"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}],
-         [{"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}],
-         [{"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}],
-         [{"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}],
-         [{"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}],
-         [{"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}],
-         [{"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}]
-     ]*/
     "grid": [
-        [{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0}],
-        [{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": true, "b": 0},{"w": false, "b": 1},{"w": false, "b": 1},{"w": false, "b": 0}],
-        [{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": true, "b": 0},{"w": false, "b": 1},{"w": false, "b": 1},{"w": false, "b": 0}],
-        [{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 1},{"w": false, "b": 2},{"w": false, "b": 1},{"w": false, "b": 1},{"w": false, "b": 0}],
-        [{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": true, "b": 0},{"w": true, "b": 0},{"w": true, "b": 0},{"w": false, "b": 0}],
-        [{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0}],
-        [{"w": false, "b": 0},{"w": true, "b": 0},{"w": true, "b": 0},{"w": true, "b": 0},{"w": true, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0}],
-        [{"w": false, "b": 0},{"w": false, "b": 1},{"w": false, "b": 1},{"w": false, "b": 1},{"w": true, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0}],
-        [{"w": false, "b": 0},{"w": false, "b": 1},{"w": false, "b": 1},{"w": false, "b": 1},{"w": false, "b": 2},{"w": false, "b": 1},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0}],
-        [{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0},{"w": false, "b": 0}]
-    ]
-}
+        [{"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}],
+        [{"w": true, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 1}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}],
+        [{"w": true, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}],
+        [{"w": true, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}, {"w": false, "b": 2}, {"w": true, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}],
+        [{"w": true, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}],
+        [{"w": true, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 1}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}],
+        [{"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}],
+        [{"w": true, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}],
+        [{"w": true, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 1}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}],
+        [{"w": true, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 0}, {"w": false, "b": 1}, {"w": true, "b": 0}],
+        [{"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}, {"w": true, "b": 0}]
+     ]
+};
 
 // Add walls to world
 for (var i = 1; i < world.rows - 1; i++) {

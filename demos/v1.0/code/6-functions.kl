@@ -7,6 +7,9 @@ class program {
     }
     
     program() {
+        iterate(4){
+            move()
+        }
         turnright()
         move()
         

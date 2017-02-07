@@ -3,10 +3,10 @@ class program {
     	move()
     	move()
     	move()
-    	move()
     	pickbeeper()
-    	turnleft()
     	move()
+        turnleft()
+        move()
     	putbeeper()
     	move()
     	

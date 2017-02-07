@@ -4,16 +4,23 @@ class program {
         iterate(3) {
             turnleft()
         }
-        move()
-        move()
+        iterate(3){
+            move()
+        }
         turnleft()
         move()
     }
     
     program() {
+        iterate(4){
+            move()
+        }
         clone(cloneaction)
         while(frontIsClear) {
             move()
+        }
+        iterate(2){
+            turnleft()    
         }
         
         turnoff()

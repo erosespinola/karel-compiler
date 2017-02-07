@@ -3,6 +3,8 @@ class program {
         while(frontIsClear) {
             move()
         }
+        turnleft()
+        move()
         
         turnoff()
     }

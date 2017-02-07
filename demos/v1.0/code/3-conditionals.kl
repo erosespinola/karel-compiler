@@ -6,7 +6,8 @@ class program {
             turnleft()
         }
         
-        if (!frontIsClear) {
+        if (!frontIsBlocked) {
+            move()
             turnleft()
             move()
         }
