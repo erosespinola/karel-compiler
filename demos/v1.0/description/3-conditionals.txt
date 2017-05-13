@@ -2,6 +2,7 @@ If/else statements can be used with simple or any combination of 2 conditionals.
 The avaible conditionales are: 
 <pre><code>
 frontIsClear
+frontIsBlocked
 leftIsClear
 leftIsBlocked
 rightIsClear

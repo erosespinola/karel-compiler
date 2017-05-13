@@ -8,4 +8,9 @@ var previousProgram = localStorage.getItem('karelProgram');
 
 if (previousProgram) {
   editor.getSession().setValue(previousProgram, -1);
+} else {
+	$.get("demos/default/demo.kl", function(data) {
+		editor.getSession().setValue(data, -1)
+	});
+	
 }

@@ -1,0 +1,115 @@
+class program {
+    void turnaround() {
+        turnleft()
+        turnleft()
+    }
+    
+    void turnright() {
+        iterate(3) {
+            turnleft()
+        }
+    }
+    
+    void followRightWall() {
+        while (frontIsClear) {
+            move()
+            if (rightIsClear) {
+                turnright()
+            } else {
+                if (frontIsClear) {
+                    wait()
+                } else {
+                    if (leftIsClear) {
+                        turnleft()
+                    } else {
+                       turnaround() 
+                    }
+                }
+            }
+        }
+    }
+    
+    void backAndForth() {
+        while (frontIsClear) {
+            move()
+            if (nextToABeeper) {
+                pickbeeper()
+                turnaround()
+            } else {
+                if (frontIsBlocked) {
+                    if (anyBeepersInBeeperBag) {
+                        putbeeper()
+                    }
+                    turnaround()
+                }
+            }
+        }
+    }
+    
+    void moveInCircles() {
+        while (frontIsClear) {
+            move()
+            if (frontIsBlocked) {
+                turnleft()
+            }
+        }
+    }
+    
+    void thirdClone() {
+        iterate(3) {
+            turnleft()
+        }
+        while (frontIsClear) {
+            move()
+        }
+        turnleft()
+        moveInCircles()
+    }
+    
+    void secondClone() {
+        iterate(3) {
+            turnleft()
+        }
+        while (frontIsClear) {
+            move()
+        }
+        clone(thirdClone)
+        turnleft()
+        followRightWall()
+        while (frontIsClear) {
+            move()
+        }
+        iterate(3) {
+            turnleft()
+        }
+        backAndForth()
+    }
+
+    void firstClone() {
+        turnleft()
+        backAndForth()
+    }
+    
+    program() {
+        move()
+        move()
+        clone(firstClone)
+        move()
+        move()
+        clone(secondClone)
+        while (frontIsClear) {
+            move()
+        }
+        turnleft()
+        while (frontIsClear) {
+            move()
+        }
+        turnleft()
+        wait()
+        wait()
+        wait()
+        backAndForth()
+        
+        turnoff()
+    }
+}

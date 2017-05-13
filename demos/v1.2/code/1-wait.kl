@@ -2,7 +2,8 @@ class program {
 
     program() {
         move()
-        iterate(2) {
+        move()
+        iterate(3) {
             wait()
         }
         move()
